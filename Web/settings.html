@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI — Settings & System Configuration</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #050912;
+            --bg-secondary: #080f1d;
+            --card: #101a2a;
+            --card-light: #142238;
+            --border: #1e3554;
+
+            --royal-blue: #4169e1;
+            --royal-blue-dark: #3154c6;
+            --blue-light: #6d8cff;
+            --blue-glow: rgba(65, 105, 225, 0.35);
+
+            --white: #f5f8ff;
+            --text: #d9e3f5;
+            --muted: #8293ad;
+
+            --success: #42d392;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================== */
+        nav {
+            height: 70px;
+            width: 100%;
+            background: rgba(5, 9, 18, 0.95);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--royal-blue), #2747a9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 18px var(--blue-glow);
+        }
+
+        .brand-icon::before {
+            content: "🛡";
+            font-size: 18px;
+        }
+
+        .brand span:last-child {
+            color: var(--blue-light);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--blue-light);
+        }
+
+        .nav-button {
+            background: var(--royal-blue);
+            color: white !important;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 5px 18px rgba(65, 105, 225, 0.3);
+        }
+
+        .nav-button:hover {
+            background: var(--royal-blue-dark);
+            transform: translateY(-1px);
+        }
+
+        /* =========================
+           HERO HEADER
+        ========================== */
+        .hero {
+            padding: 50px 20px 30px;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(65, 105, 225, 0.12), transparent 50%),
+                        linear-gradient(rgba(5, 9, 18, 0.95), rgba(5, 9, 18, 1));
+        }
+
+        .eyebrow {
+            display: inline-block;
+            border: 1px solid rgba(65, 105, 225, 0.5);
+            background: rgba(65, 105, 225, 0.1);
+            color: var(--blue-light);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: clamp(30px, 4.5vw, 48px);
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        h1 span {
+            color: var(--blue-light);
+            text-shadow: 0 0 25px rgba(65, 105, 225, 0.4);
+        }
+
+        .hero p {
+            max-width: 600px;
+            color: var(--muted);
+            font-size: 14px;
+            margin: 0 auto;
+        }
+
+        /* =========================
+           SETTINGS LAYOUT
+        ========================== */
+        .container {
+            width: min(1100px, 92%);
+            margin: 30px auto;
+        }
+
+        .settings-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* SIDEBAR NAV TABS */
+        .settings-sidebar {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            position: sticky;
+            top: 90px;
+        }
+
+        .sidebar-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 12px 14px;
+        }
+
+        .nav-tab-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.3s;
+            margin-bottom: 4px;
+        }
+
+        .nav-tab-btn:hover {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .nav-tab-btn.active {
+            background: rgba(65, 105, 225, 0.15);
+            color: var(--blue-light);
+            border: 1px solid rgba(65, 105, 225, 0.3);
+        }
+
+        /* CONTENT PANELS */
+        .settings-content {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 35px;
+            min-height: 550px;
+        }
+
+        .panel-section {
+            display: none;
+        }
+
+        .panel-section.active {
+            display: block;
+        }
+
+        .panel-header {
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+        }
+
+        .panel-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .panel-header p {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* FORM CONTROLS */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .form-group .sub-label {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: #070d18;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--royal-blue);
+            box-shadow: 0 0 12px var(--blue-glow);
+        }
+
+        /* TOGGLE SWITCHES */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(30, 53, 84, 0.5);
+        }
+
+        .toggle-info h4 {
+            font-size: 14px;
+            color: var(--white);
+        }
+
+        .toggle-info p {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background-color: #17263c;
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid var(--border);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--muted);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--royal-blue);
+            border-color: var(--blue-light);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+            background-color: white;
+        }
+
+        /* COLOR PICKER ACCENTS */
+        .color-options {
+            display: flex;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .color-dot {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.3s;
+        }
+
+        .color-dot:hover,
+        .color-dot.active {
+            border-color: white;
+            transform: scale(1.15);
+        }
+
+        /* BUTTON BAR */
+        .action-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-primary {
+            background: var(--royal-blue);
+            color: white;
+            border: none;
+            padding: 12px 26px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 18px rgba(65, 105, 225, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--royal-blue-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 11px 20px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-secondary:hover {
+            color: var(--white);
+            border-color: var(--royal-blue);
+        }
+
+        .btn-danger {
+            background: rgba(248, 113, 113, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            padding: 11px 20px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* TOAST NOTIFICATION */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--card-light);
+            border: 1px solid var(--royal-blue);
+            color: white;
+            padding: 14px 22px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 3000;
+            font-size: 14px;
+        }
+
+        /* BOTTOM NAV MOBILE */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .bottom-nav a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .bottom-nav a.active {
+            color: var(--blue-light);
+        }
+
+        @media (max-width: 850px) {
+            .settings-layout { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="guide.html" class="brand">
+            <div class="brand-icon"></div>
+            <span>CyberShield <span>AI</span></span>
+        </a>
+
+        <div class="nav-links">
+            <a href="guide.html">🛡️ Guidance & Research</a>
+            <a href="settings.html" class="active">⚙️ Settings</a>
+            <a href="dashboard.html">🏠 Dashboard</a>
+            <a href="login.html" class="nav-button">🔐 Sign In</a>
+        </div>
+    </nav>
+
+    <!-- HERO HEADER -->
+    <section class="hero">
+        <div class="eyebrow">CYBERSHIELD AI PLATFORM</div>
+        <h1>Settings & <span>Configuration</span></h1>
+        <p>Manage zero-trust security postures, threat detection sensitivity, AI rules, and privacy preferences.</p>
+    </section>
+
+    <!-- SETTINGS CONTAINER -->
+    <div class="container">
+        <div class="settings-layout">
+
+            <!-- SIDEBAR TABS -->
+            <div class="settings-sidebar">
+                <div class="sidebar-title">Categories</div>
+                <button class="nav-tab-btn active" onclick="showPanel('profile', this)">👤 Profile & Identity</button>
+                <button class="nav-tab-btn" onclick="showPanel('security', this)">🛡️ Security & Threats</button>
+                <button class="nav-tab-btn" onclick="showPanel('ai', this)">🤖 AI Assistant Rules</button>
+                <button class="nav-tab-btn" onclick="showPanel('privacy', this)">🔐 Privacy & Telemetry</button>
+                <button class="nav-tab-btn" onclick="showPanel('appearance', this)">🎨 Theme & Accent</button>
+                <button class="nav-tab-btn" onclick="showPanel('apikeys', this)">🔑 API Integrations</button>
+                <button class="nav-tab-btn" onclick="showPanel('system', this)">⚡ System & Data</button>
+            </div>
+
+            <!-- SETTINGS CONTENT PANELS -->
+            <div class="settings-content">
+                <form id="settingsForm" onsubmit="saveSettings(event)">
+
+                    <!-- 1. PROFILE & ACCOUNT -->
+                    <div class="panel-section active" id="panel-profile">
+                        <div class="panel-header">
+                            <h2>User Profile & Identity</h2>
+                            <p>Manage administrator credentials and multi-factor security clearance.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="prof-name" class="form-control" value="Shreya Security Admin">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Security Email Address</label>
+                            <input type="email" id="prof-email" class="form-control" value="shreya@cybershield.ai">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Security Clearance Role</label>
+                            <input type="text" id="prof-role" class="form-control" value="Lead Cybersecurity Engineer" readonly style="opacity: 0.7;">
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <h4>Enforce Two-Factor Authentication (2FA)</h4>
+                                <p>Require TOTP authenticator or FIDO2 hardware key on every login.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="prof-2fa" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 2. SECURITY & THREAT DETECTION -->
+                    <div class="panel-section" id="panel-security">
+                        <div class="panel-header">
+                            <h2>Security & Threat Detection</h2>
+                            <p>Configure real-time heuristics and automated malware quarantine policies.</p>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <h4>Real-Time File Shield Guard</h4>
+                                <p>Continuously monitor background file writes and memory execution.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="sec-realtime" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label>Threat Detection Sensitivity</label>
+                            <div class="sub-label">Higher sensitivity increases protection against zero-day exploits.</div>
+                            <select id="sec-sensitivity" class="form-control">
+                                <option value="low">Low (Basic Signature Check)</option>
+                                <option value="medium">Medium (Standard Defense)</option>
+                                <option value="high" selected>High (Advanced Heuristic AI)</option>
+                                <option value="paranoid">Paranoid (Zero-Trust Aggressive Isolation)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Automated Scan Interval</label>
+                            <select id="sec-scan-interval" class="form-control">
+                                <option value="hourly">Hourly Deep Scan</option>
+                                <option value="daily" selected>Daily Background Scan</option>
+                                <option value="weekly">Weekly Full Disk Audit</option>
+                                <option value="manual">Manual Scans Only</option>
+                            </select>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <h4>Deep Heuristic Code Analysis</h4>
+                                <p>Inspect obfuscated PowerShell and binary execution chains.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="sec-heuristics" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <h4>Auto-Quarantine Suspicious Files</h4>
+                                <p>Isolate flagged threats into encrypted vault prior to user review.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="sec-quarantine" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 3. AI ASSISTANT RULES -->
+                    <div class="panel-section" id="panel-ai">
+                        <div class="panel-header">
+                            <h2>AI Assistant & Guidance Tuning</h2>
+                            <p>Configure model selection and dynamic cybersecurity advice prompt rules.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>AI Assistant Engine Model</label>
+                            <select id="ai-model" class="form-control">
+                                <option value="CyberShield-DeepSense-v2" selected>CyberShield-DeepSense-v2 (High Precision)</option>
+                                <option value="CyberShield-Standard">CyberShield-Standard (Fast Response)</option>
+                            </select>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <h4>Auto-Suggest Security Guides</h4>
+                                <p>Proactively pop up relevant guide recommendations during threat alerts.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="ai-auto-suggest" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label>Custom Security Prompt Instructions</label>
+                            <div class="sub-label">Set custom behavioral rules for your AI Assistant advisor.</div>
+                            <textarea id="ai-custom-rules" class="form-control" rows="4">Prioritize immediate ransomware isolation and email header domain verification.</textarea>
+                        </div>
+                    </div>
+
+                    <!-- 4. PRIVACY & TELEMETRY -->
+                    <div class="panel-section" id="panel-privacy">
+                        <div class="panel-header">
+                            <h2>Privacy & Telemetry</h2>
+                            <p>Enforce zero-trust data anonymization and log retention periods.</p>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <h4>Differential Privacy Telemetry</h4>
+                                <p>Share anonymized threat statistics using Laplace noise injection.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="priv-telemetry">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <h4>Automated Breach Alerts</h4>
+                                <p>Notify immediately if credentials match HaveIBeenPwned leak feeds.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="priv-breach-alerts" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label>Security Log Retention Period</label>
+                            <select id="priv-log-days" class="form-control">
+                                <option value="7">7 Days</option>
+                                <option value="30" selected>30 Days (Recommended)</option>
+                                <option value="90">90 Days</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 5. APPEARANCE & THEME -->
+                    <div class="panel-section" id="panel-appearance">
+                        <div class="panel-header">
+                            <h2>Theme & Aesthetics</h2>
+                            <p>Customize CyberShield-AI accent colors and UI preferences.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Primary Accent Color</label>
+                            <div class="color-options">
+                                <div class="color-dot active" style="background: #4169e1;" onclick="setAccent('#4169e1', this)"></div>
+                                <div class="color-dot" style="background: #00f2fe;" onclick="setAccent('#00f2fe', this)"></div>
+                                <div class="color-dot" style="background: #10b981;" onclick="setAccent('#10b981', this)"></div>
+                                <div class="color-dot" style="background: #8b5cf6;" onclick="setAccent('#8b5cf6', this)"></div>
+                            </div>
+                        </div>
+
+                        <div class="toggle-row" style="margin-top: 20px;">
+                            <div class="toggle-info">
+                                <h4>Audio Threat Sound Alerts</h4>
+                                <p>Play sound effects during high-risk security alerts.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="app-sound" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 6. API KEYS & INTEGRATIONS -->
+                    <div class="panel-section" id="panel-apikeys">
+                        <div class="panel-header">
+                            <h2>API Keys & Threat Feeds</h2>
+                            <p>Manage encrypted API integration tokens for VirusTotal and HIBP.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>VirusTotal API Key</label>
+                            <input type="password" id="api-vt" class="form-control" value="vt_live_9876451203abcdef">
+                        </div>
+
+                        <div class="form-group">
+                            <label>HaveIBeenPwned (HIBP) Key</label>
+                            <input type="password" id="api-hibp" class="form-control" value="hibp_sec_0918237465">
+                        </div>
+
+                        <div class="form-group">
+                            <label>CyberShield Custom Token</label>
+                            <input type="password" id="api-cs" class="form-control" value="cs_ai_tok_8877665544332211">
+                        </div>
+                    </div>
+
+                    <!-- 7. SYSTEM & DATA -->
+                    <div class="panel-section" id="panel-system">
+                        <div class="panel-header">
+                            <h2>System & Data Management</h2>
+                            <p>Backup, restore factory defaults, or purge application cache.</p>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            <div>
+                                <h4 style="margin-bottom: 4px;">Export Settings Configuration</h4>
+                                <p style="font-size: 13px; color: var(--muted); margin-bottom: 10px;">Download your custom settings posture as a JSON file.</p>
+                                <button type="button" class="btn-secondary" onclick="exportSettingsFile()">📥 Export Settings JSON</button>
+                            </div>
+
+                            <hr style="border-color: var(--border); margin: 10px 0;">
+
+                            <div>
+                                <h4 style="margin-bottom: 4px;">Reset Settings to Factory Defaults</h4>
+                                <p style="font-size: 13px; color: var(--muted); margin-bottom: 10px;">Revert all security profiles, threat rules, and accent colors to default values.</p>
+                                <button type="button" class="btn-danger" onclick="resetFactorySettings()">🔄 Reset Factory Defaults</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COMMON ACTION BAR -->
+                    <div class="action-bar">
+                        <button type="button" class="btn-secondary" onclick="fetchSettings()">Cancel / Reload</button>
+                        <button type="submit" class="btn-primary">💾 Save All Settings</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast" id="toast">
+        <span id="toastIcon">✓</span>
+        <span id="toastMsg">Settings saved successfully!</span>
+    </div>
+
+    <!-- BOTTOM NAV FOR MOBILE -->
+    <div class="bottom-nav">
+        <a href="guide.html">🛡️ Guide</a>
+        <a href="settings.html" class="active">⚙️ Settings</a>
+        <a href="dashboard.html">🏠 Dashboard</a>
+        <a href="login.html">🔐 Login</a>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const API_BASE = "";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchSettings();
+        });
+
+        function showPanel(panelId, btn) {
+            document.querySelectorAll(".panel-section").forEach(p => p.classList.remove("active"));
+            document.querySelectorAll(".nav-tab-btn").forEach(b => b.classList.remove("active"));
+            
+            document.getElementById(`panel-${panelId}`).classList.add("active");
+            btn.classList.add("active");
+        }
+
+        async function fetchSettings() {
+            try {
+                const res = await fetch(`${API_BASE}/api/settings`);
+                const data = await res.json();
+                if (data.status === "success") {
+                    populateSettingsForm(data.settings);
+                }
+            } catch (err) {
+                showToast("⚠️ Could not connect to backend app.py", "danger");
+            }
+        }
+
+        function populateSettingsForm(s) {
+            if (s.profile) {
+                document.getElementById("prof-name").value = s.profile.name || "";
+                document.getElementById("prof-email").value = s.profile.email || "";
+                document.getElementById("prof-role").value = s.profile.role || "";
+                document.getElementById("prof-2fa").checked = !!s.profile.two_factor_enabled;
+            }
+
+            if (s.security) {
+                document.getElementById("sec-realtime").checked = !!s.security.realtime_shield;
+                document.getElementById("sec-sensitivity").value = s.security.threat_sensitivity || "high";
+                document.getElementById("sec-scan-interval").value = s.security.scan_interval || "daily";
+                document.getElementById("sec-heuristics").checked = !!s.security.deep_heuristics;
+                document.getElementById("sec-quarantine").checked = !!s.security.auto_quarantine;
+            }
+
+            if (s.ai_assistant) {
+                document.getElementById("ai-model").value = s.ai_assistant.model || "CyberShield-DeepSense-v2";
+                document.getElementById("ai-auto-suggest").checked = !!s.ai_assistant.auto_suggest_guides;
+                document.getElementById("ai-custom-rules").value = s.ai_assistant.custom_rules || "";
+            }
+
+            if (s.privacy) {
+                document.getElementById("priv-telemetry").checked = !!s.privacy.telemetry_enabled;
+                document.getElementById("priv-breach-alerts").checked = !!s.privacy.breach_notifications;
+                document.getElementById("priv-log-days").value = s.privacy.log_retention_days || 30;
+            }
+
+            if (s.appearance) {
+                document.getElementById("app-sound").checked = !!s.appearance.sound_alerts;
+            }
+
+            if (s.api_keys) {
+                document.getElementById("api-vt").value = s.api_keys.virustotal_key || "";
+                document.getElementById("api-hibp").value = s.api_keys.hibp_key || "";
+                document.getElementById("api-cs").value = s.api_keys.cybershield_token || "";
+            }
+        }
+
+        async function saveSettings(e) {
+            e.preventDefault();
+
+            const payload = {
+                profile: {
+                    name: document.getElementById("prof-name").value,
+                    email: document.getElementById("prof-email").value,
+                    two_factor_enabled: document.getElementById("prof-2fa").checked
+                },
+                security: {
+                    realtime_shield: document.getElementById("sec-realtime").checked,
+                    threat_sensitivity: document.getElementById("sec-sensitivity").value,
+                    scan_interval: document.getElementById("sec-scan-interval").value,
+                    deep_heuristics: document.getElementById("sec-heuristics").checked,
+                    auto_quarantine: document.getElementById("sec-quarantine").checked
+                },
+                ai_assistant: {
+                    model: document.getElementById("ai-model").value,
+                    auto_suggest_guides: document.getElementById("ai-auto-suggest").checked,
+                    custom_rules: document.getElementById("ai-custom-rules").value
+                },
+                privacy: {
+                    telemetry_enabled: document.getElementById("priv-telemetry").checked,
+                    breach_notifications: document.getElementById("priv-breach-alerts").checked,
+                    log_retention_days: parseInt(document.getElementById("priv-log-days").value)
+                },
+                appearance: {
+                    sound_alerts: document.getElementById("app-sound").checked
+                },
+                api_keys: {
+                    virustotal_key: document.getElementById("api-vt").value,
+                    hibp_key: document.getElementById("api-hibp").value,
+                    cybershield_token: document.getElementById("api-cs").value
+                }
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/settings`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.status === "success") {
+                    showToast("✓ Settings updated successfully!", "success");
+                } else {
+                    showToast("⚠️ Error saving settings", "danger");
+                }
+            } catch (err) {
+                showToast("⚠️ Backend error. Make sure app.py is running.", "danger");
+            }
+        }
+
+        async function resetFactorySettings() {
+            if (!confirm("Are you sure you want to reset all CyberShield settings to factory defaults?")) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/settings/reset`, { method: "POST" });
+                const data = await res.json();
+                if (data.status === "success") {
+                    populateSettingsForm(data.settings);
+                    showToast("🔄 Reset to factory default settings!", "success");
+                }
+            } catch (err) {
+                showToast("⚠️ Could not reset settings.", "danger");
+            }
+        }
+
+        function exportSettingsFile() {
+            window.location.href = `${API_BASE}/api/settings/export`;
+        }
+
+        function setAccent(color, dot) {
+            document.querySelectorAll(".color-dot").forEach(d => d.classList.remove("active"));
+            dot.classList.add("active");
+            document.documentElement.style.setProperty('--royal-blue', color);
+            showToast(`Accent color updated to ${color}`, "success");
+        }
+
+        function showToast(msg, type = "success") {
+            const toast = document.getElementById("toast");
+            document.getElementById("toastMsg").textContent = msg;
+            document.getElementById("toastIcon").textContent = type === "success" ? "✓" : "⚠️";
+            toast.style.borderColor = type === "success" ? "var(--royal-blue)" : "var(--danger)";
+            toast.style.display = "flex";
+            setTimeout(() => { toast.style.display = "none"; }, 3500);
+        }
+    </script>
+</body>
+</html>
