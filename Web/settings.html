@@ -827,10 +827,22 @@
 
     <!-- BOTTOM NAV FOR MOBILE -->
     <div class="bottom-nav">
-        <a href="guide.html">🛡️ Guide</a>
-        <a href="settings.html" class="active">⚙️ Settings</a>
-        <a href="dashboard.html">🏠 Dashboard</a>
-        <a href="login.html">🔐 Login</a>
+        <a href="guide.html" onclick="window.location.href='guide.html'; return true;">
+            <span style="font-size: 16px; margin-bottom: 2px;">🛡️</span>
+            <span>Guide</span>
+        </a>
+        <a href="settings.html" class="active" onclick="window.location.href='settings.html'; return true;">
+            <span style="font-size: 16px; margin-bottom: 2px;">⚙️</span>
+            <span>Settings</span>
+        </a>
+        <a href="dashboard.html" onclick="window.location.href='dashboard.html'; return true;">
+            <span style="font-size: 16px; margin-bottom: 2px;">🏠</span>
+            <span>Dashboard</span>
+        </a>
+        <a href="login.html" onclick="window.location.href='login.html'; return true;">
+            <span style="font-size: 16px; margin-bottom: 2px;">🔐</span>
+            <span>Login</span>
+        </a>
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
