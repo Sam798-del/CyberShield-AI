@@ -497,8 +497,26 @@
         }
 
         @media (max-width: 850px) {
-            .settings-layout { grid-template-columns: 1fr; }
+            nav { padding: 0 4%; }
             .nav-links { display: none; }
+            .hero { padding: 35px 15px 20px; }
+            h1 { font-size: 28px; }
+            .settings-layout { grid-template-columns: 1fr; gap: 20px; }
+            .settings-sidebar {
+                position: static;
+                display: flex;
+                overflow-x: auto;
+                gap: 8px;
+                padding: 10px;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            .settings-sidebar::-webkit-scrollbar { display: none; }
+            .sidebar-title { display: none; }
+            .nav-tab-btn { flex-shrink: 0; width: auto; padding: 9px 14px; font-size: 13px; margin-bottom: 0; }
+            .settings-content { padding: 22px 18px; min-height: auto; }
+            .action-bar { flex-direction: column-reverse; gap: 12px; }
+            .action-bar button { width: 100%; }
         }
     </style>
 </head>

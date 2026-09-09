@@ -6,6 +6,7 @@ Developed for CyberShield-AI Application Suite (Shreya Module: Guidance & Settin
 import os
 import json
 import sqlite3
+import socket
 from flask import Flask, request, jsonify, send_from_directory, Response
 from flask_cors import CORS
 
@@ -495,6 +496,25 @@ def get_paper_content(paper_id):
         
     return jsonify({"status": "error", "message": "Research paper file not found"}), 404
 
+def get_local_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        return "127.0.0.1"
+
 if __name__ == "__main__":
-    print("Starting CyberShield-AI Backend Server on http://127.0.0.1:5000")
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    local_ip = get_local_ip()
+    print("=" * 65)
+    print("      CyberShield-AI Server (Mobile & Desktop Enabled)")
+    print("=" * 65)
+    print(f"  📱 Phone Access (Guidance): http://{local_ip}:5000/guide.html")
+    print(f"  📱 Phone Access (Settings): http://{local_ip}:5000/settings.html")
+    print(f"  💻 Local PC (Guidance):    http://127.0.0.1:5000/guide.html")
+    print(f"  💻 Local PC (Settings):    http://127.0.0.1:5000/settings.html")
+    print("=" * 65 + "\n")
+    app.run(host="0.0.0.0", port=5000, debug=True)
+
