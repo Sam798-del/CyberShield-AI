@@ -511,10 +511,11 @@ if __name__ == "__main__":
     print("=" * 65)
     print("      CyberShield-AI Server (Mobile & Desktop Enabled)")
     print("=" * 65)
-    print(f"  📱 Phone Access (Guidance): http://{local_ip}:5000/guide.html")
-    print(f"  📱 Phone Access (Settings): http://{local_ip}:5000/settings.html")
-    print(f"  💻 Local PC (Guidance):    http://127.0.0.1:5000/guide.html")
-    print(f"  💻 Local PC (Settings):    http://127.0.0.1:5000/settings.html")
+    print(f"  [Mobile Phone Access] Guidance: http://{local_ip}:5000/guide.html")
+    print(f"  [Mobile Phone Access] Settings: http://{local_ip}:5000/settings.html")
+    print(f"  [Local PC Access]     Guidance: http://127.0.0.1:5000/guide.html")
+    print(f"  [Local PC Access]     Settings: http://127.0.0.1:5000/settings.html")
     print("=" * 65 + "\n")
     app.run(host="0.0.0.0", port=5000, debug=True)
+
 
