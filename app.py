@@ -494,7 +494,166 @@ def get_paper_content(paper_id):
             content = f.read()
         return jsonify({"status": "success", "id": paper_id, "content": content})
         
-    return jsonify({"status": "error", "message": "Research paper file not found"}), 404
+# --- STATIC ROUTES FOR PHISHING & CYBERBULLYING ---
+
+@app.route("/phishing")
+@app.route("/phishing.html")
+def serve_phishing():
+    return send_from_directory(WEB_DIR, "phishing.html")
+
+@app.route("/cyberbullying")
+@app.route("/cyberbullying.html")
+def serve_cyberbullying():
+    return send_from_directory(WEB_DIR, "cyberbullying.html")
+
+# --- DETECTION API ENDPOINTS (SHREYA MODULES) ---
+
+@app.route("/api/detect/phishing", methods=["POST"])
+def detect_phishing():
+    data = request.get_json() or {}
+    target = data.get("target", "").strip()
+    
+    if not target:
+        return jsonify({"status": "error", "message": "URL or email text is required"}), 400
+        
+    t_lower = target.lower()
+    flags = []
+    score = 0
+    
+    # URL / Domain Heuristics
+    if t_lower.startswith("http://") or t_lower.startswith("https://") or "www." in t_lower or "." in t_lower:
+        if "http://" in t_lower:
+            flags.append("Unencrypted connection (HTTP instead of HTTPS)")
+            score += 25
+        if any(bad_tld in t_lower for bad_tld in [".xyz", ".top", ".tk", ".club", ".work", ".gq", ".cf"]):
+            flags.append("High-risk top-level domain (TLD) associated with spam/phishing")
+            score += 30
+        if any(spoof in t_lower for spoof in ["paypa1", "g00gle", "micros0ft", "app1e", "amaz0n", "sec-login", "verify-account"]):
+            flags.append("Lookalike domain / typosquatting detected")
+            score += 45
+        if "@" in t_lower:
+            flags.append("Embedded user credentials / '@' symbol in URL")
+            score += 35
+        if len(t_lower) > 75:
+            flags.append("Excessively long URL path designed to obscure hostname")
+            score += 15
+        if t_lower.count("-") > 3:
+            flags.append("Multiple hyphens in domain name (common in fake phishing portals)")
+            score += 20
+            
+    # Text / Email Content Heuristics
+    if any(keyword in t_lower for keyword in ["account suspended", "urgent action required", "verify your account", "unauthorized login", "click link below", "update billing"]):
+        flags.append("Urgent call-to-action / social engineering trigger words")
+        score += 35
+    if any(keyword in t_lower for keyword in ["password reset", "gift card", "bank wire", "ssn", "social security"]):
+        flags.append("Sensitive credential / financial information solicitation")
+        score += 30
+
+    score = min(score, 100)
+    
+    if score >= 75:
+        risk_level = "CRITICAL PHISHING THREAT"
+        status_color = "danger"
+    elif score >= 45:
+        risk_level = "HIGH RISK"
+        status_color = "warning"
+    elif score >= 20:
+        risk_level = "MODERATE CAUTION"
+        status_color = "warning"
+    else:
+        risk_level = "SAFE / LOW RISK"
+        status_color = "success"
+        if not flags:
+            flags.append("No obvious phishing indicators detected.")
+
+    return jsonify({
+        "status": "success",
+        "target": target,
+        "risk_score": score,
+        "risk_level": risk_level,
+        "status_color": status_color,
+        "flags": flags,
+        "recommendation": "Do NOT enter credentials or click links. Report email domain immediately." if score >= 45 else "URL/content appears safe, but maintain standard security vigilance."
+    })
+
+@app.route("/api/detect/cyberbullying", methods=["POST"])
+def detect_cyberbullying():
+    data = request.get_json() or {}
+    text = data.get("text", "").strip()
+    
+    if not text:
+        return jsonify({"status": "error", "message": "Input text is required"}), 400
+        
+    t_lower = text.lower()
+    categories = {
+        "insult": False,
+        "harassment": False,
+        "threat": False,
+        "profanity": False,
+        "hate_speech": False
+    }
+    flagged_words = []
+    score = 0
+    
+    # Harassment / Bullying Lexicon Analysis
+    insult_words = ["stupid", "idiot", "loser", "ugly", "fat", "dumb", "hate you", "freak", "trash", "worthless"]
+    harass_words = ["kill yourself", "die", "go die", "nobody likes you", "shut up", "get a life", "creep", "stalk"]
+    threat_words = ["i will find you", "beat you", "hurt you", "destroy you", "track your ip", "expose you"]
+    profanity_words = ["bitch", "bastard", "fuck", "shit", "asshole"]
+    
+    for w in insult_words:
+        if w in t_lower:
+            categories["insult"] = True
+            flagged_words.append(w)
+            score += 25
+            
+    for w in harass_words:
+        if w in t_lower:
+            categories["harassment"] = True
+            flagged_words.append(w)
+            score += 40
+            
+    for w in threat_words:
+        if w in t_lower:
+            categories["threat"] = True
+            flagged_words.append(w)
+            score += 50
+            
+    for w in profanity_words:
+        if w in t_lower:
+            categories["profanity"] = True
+            flagged_words.append(w)
+            score += 15
+
+    score = min(score, 100)
+    flagged_words = list(set(flagged_words))
+    
+    if score >= 70:
+        toxicity_level = "HIGHLY TOXIC / SEVERE HARASSMENT"
+        status_color = "danger"
+    elif score >= 35:
+        toxicity_level = "MODERATE TOXICITY DETECTED"
+        status_color = "warning"
+    else:
+        toxicity_level = "SAFE / NON-TOXIC CONTENT"
+        status_color = "success"
+
+    return jsonify({
+        "status": "success",
+        "text": text,
+        "toxicity_score": score,
+        "toxicity_level": toxicity_level,
+        "status_color": status_color,
+        "categories": categories,
+        "flagged_words": flagged_words,
+        "safety_actions": [
+            "Block the sender on social media/chat platforms.",
+            "Take screenshot evidence for documentation.",
+            "Report the toxic content to platform moderators.",
+            "Reach out to a trusted counselor or cyber safety hotline."
+        ] if score >= 35 else ["No safety action required."]
+    })
+
 
 def get_local_ip():
     try:
