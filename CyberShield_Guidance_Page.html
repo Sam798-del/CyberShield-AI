@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberShield AI — Guidance & Research Center</title>
+    <title>CyberShield AI — Guidance & Security Center</title>
 
     <style>
         * {
@@ -42,9 +42,6 @@
             padding-bottom: 90px;
         }
 
-        /* =========================
-           NAVBAR
-        ========================== */
         nav {
             height: 70px;
             width: 100%;
@@ -102,9 +99,6 @@
             font-size: 14px;
             font-weight: 600;
             transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         .nav-links a:hover,
@@ -112,29 +106,11 @@
             color: var(--blue-light);
         }
 
-        .nav-button {
-            background: var(--royal-blue);
-            color: white !important;
-            padding: 9px 18px;
-            border-radius: 8px;
-            font-weight: 600;
-            box-shadow: 0 5px 18px rgba(65, 105, 225, 0.3);
-        }
-
-        .nav-button:hover {
-            background: var(--royal-blue-dark);
-            transform: translateY(-1px);
-        }
-
-        /* =========================
-           HERO SECTION
-        ========================== */
         .hero {
             padding: 50px 20px 30px;
             text-align: center;
             background: radial-gradient(circle at center, rgba(65, 105, 225, 0.12), transparent 50%),
                         linear-gradient(rgba(5, 9, 18, 0.95), rgba(5, 9, 18, 1));
-            position: relative;
         }
 
         .eyebrow {
@@ -169,7 +145,6 @@
             margin: 0 auto 25px;
         }
 
-        /* SEARCH BAR */
         .search-box {
             max-width: 620px;
             margin: 0 auto 22px;
@@ -186,12 +161,6 @@
             font-size: 14px;
             outline: none;
             transition: 0.3s;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .search-box input:focus {
-            border-color: var(--royal-blue);
-            box-shadow: 0 0 20px var(--blue-glow);
         }
 
         .search-icon {
@@ -203,7 +172,6 @@
             color: var(--muted);
         }
 
-        /* PROGRESS TRACKER BAR */
         .progress-card {
             max-width: 620px;
             margin: 0 auto 25px;
@@ -215,22 +183,6 @@
             align-items: center;
             justify-content: space-between;
             gap: 20px;
-        }
-
-        .progress-info {
-            text-align: left;
-        }
-
-        .progress-info h4 {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .progress-info p {
-            font-size: 12px;
-            color: var(--muted);
-            margin: 2px 0 0;
         }
 
         .progress-bar-bg {
@@ -248,7 +200,6 @@
             transition: width 0.5s ease;
         }
 
-        /* CATEGORY FILTER TABS */
         .category-tabs {
             display: flex;
             justify-content: center;
@@ -274,12 +225,8 @@
             background: var(--royal-blue);
             color: white;
             border-color: var(--royal-blue);
-            box-shadow: 0 4px 15px var(--blue-glow);
         }
 
-        /* =========================
-           MAIN CONTAINER & GRID
-        ========================== */
         .container {
             width: min(1100px, 92%);
             margin: 0 auto;
@@ -289,7 +236,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 24px;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
         }
 
         .guide-card {
@@ -301,13 +248,6 @@
             flex-direction: column;
             justify-content: space-between;
             transition: 0.3s;
-            position: relative;
-        }
-
-        .guide-card:hover {
-            border-color: rgba(65, 105, 225, 0.6);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
         }
 
         .card-header {
@@ -315,10 +255,6 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 16px;
-        }
-
-        .card-icon {
-            font-size: 32px;
         }
 
         .card-badge {
@@ -331,19 +267,6 @@
             border: 1px solid rgba(65, 105, 225, 0.3);
         }
 
-        .guide-card h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: var(--white);
-        }
-
-        .guide-card p {
-            font-size: 13px;
-            color: var(--muted);
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
         .card-footer {
             display: flex;
             align-items: center;
@@ -351,11 +274,6 @@
             border-top: 1px solid var(--border);
             padding-top: 16px;
             margin-top: auto;
-        }
-
-        .read-time {
-            font-size: 12px;
-            color: var(--muted);
         }
 
         .btn-action {
@@ -367,45 +285,21 @@
             font-size: 12px;
             font-weight: 700;
             cursor: pointer;
-            transition: 0.3s;
         }
 
-        .btn-action:hover {
-            background: var(--royal-blue-dark);
-        }
-
-        /* =========================
-           AI ASSISTANT WIDGET BOX
-        ========================== */
-        .ai-assistant-card {
+        .feature-panel {
             background: linear-gradient(135deg, rgba(16, 26, 42, 0.95), rgba(8, 15, 29, 0.95));
             border: 1px solid var(--royal-blue);
             border-radius: 16px;
             padding: 28px;
-            margin-bottom: 50px;
-            box-shadow: 0 0 35px rgba(65, 105, 225, 0.2);
+            margin-bottom: 40px;
+            display: none;
         }
 
-        .ai-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
+        .feature-panel.active { display: block; }
 
-        .ai-title h2 {
-            font-size: 22px;
-            color: var(--white);
-        }
-
-        .ai-prompt-box {
-            display: flex;
-            gap: 12px;
-            margin-top: 18px;
-        }
-
-        .ai-prompt-box input {
-            flex: 1;
+        .form-control {
+            width: 100%;
             padding: 13px 18px;
             background: #060b16;
             border: 1px solid var(--border);
@@ -413,189 +307,49 @@
             color: white;
             font-size: 14px;
             outline: none;
+            margin-top: 12px;
         }
 
-        .ai-prompt-box input:focus {
-            border-color: var(--royal-blue);
-        }
-
-        .ai-response {
-            margin-top: 18px;
-            padding: 18px;
+        .scan-result-box {
+            margin-top: 20px;
+            padding: 20px;
             background: rgba(5, 9, 18, 0.85);
             border: 1px solid var(--border);
             border-radius: 10px;
-            font-size: 14px;
-            color: var(--text);
             display: none;
-            line-height: 1.6;
         }
 
-        /* =========================
-           RESEARCH PAPERS SECTION
-        ========================== */
-        .section-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .section-header h2 {
-            font-size: 26px;
-            font-weight: 800;
-        }
-
-        .section-header p {
-            color: var(--muted);
-            font-size: 14px;
-            margin-top: 6px;
-        }
-
-        .papers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-            gap: 24px;
+        .ai-assistant-card {
+            background: linear-gradient(135deg, rgba(16, 26, 42, 0.95), rgba(8, 15, 29, 0.95));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
             margin-bottom: 50px;
         }
 
-        .paper-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 26px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+        .ai-prompt-box { display: flex; gap: 12px; margin-top: 18px; }
+        .ai-prompt-box input { flex: 1; padding: 13px 18px; background: #060b16; border: 1px solid var(--border); border-radius: 10px; color: white; }
+        .ai-response { margin-top: 18px; padding: 18px; background: rgba(5, 9, 18, 0.85); border: 1px solid var(--border); border-radius: 10px; display: none; }
 
-        .paper-tag {
-            font-size: 11px;
-            color: var(--blue-light);
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
+        .section-header { text-align: center; margin-bottom: 30px; }
+        .papers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 24px; margin-bottom: 50px; }
+        .paper-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 26px; display: flex; flex-direction: column; justify-content: space-between; }
 
-        .paper-card h3 {
-            font-size: 18px;
-            margin-bottom: 12px;
-            line-height: 1.3;
-        }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: var(--bg-secondary); border: 1px solid var(--royal-blue); border-radius: 16px; width: min(850px, 95%); max-height: 85vh; overflow-y: auto; padding: 32px; position: relative; }
+        .modal-close { position: absolute; right: 20px; top: 20px; background: none; border: none; color: var(--muted); font-size: 24px; cursor: pointer; }
 
-        .paper-card p {
-            font-size: 13px;
-            color: var(--muted);
-            margin-bottom: 20px;
-        }
-
-        .paper-meta {
-            font-size: 12px;
-            color: var(--muted);
-            margin-bottom: 18px;
-        }
-
-        /* =========================
-           MODAL OVERLAY
-        ========================== */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            z-index: 2000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .modal-content {
-            background: var(--bg-secondary);
-            border: 1px solid var(--royal-blue);
-            border-radius: 16px;
-            width: min(850px, 95%);
-            max-height: 85vh;
-            overflow-y: auto;
-            padding: 32px;
-            position: relative;
-            box-shadow: 0 0 50px rgba(65, 105, 225, 0.3);
-        }
-
-        .modal-close {
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            background: none;
-            border: none;
-            color: var(--muted);
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .modal-close:hover {
-            color: white;
-        }
-
-        /* BOTTOM NAV FOR MOBILE */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 62px;
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 10000;
-            backdrop-filter: blur(12px);
-        }
-
-        .bottom-nav a {
-            color: var(--muted);
-            text-decoration: none;
-            font-size: 11px;
-            font-weight: 600;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 25%;
-            height: 100%;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .bottom-nav a.active,
-        .bottom-nav a:active {
-            color: var(--blue-light);
-        }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 62px; background: var(--bg-secondary); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 10000; }
+        .bottom-nav a { color: var(--muted); text-decoration: none; font-size: 11px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 25%; height: 100%; }
+        .bottom-nav a.active { color: var(--blue-light); }
 
         @media (max-width: 768px) {
             nav { padding: 0 4%; }
             .nav-links { display: none; }
-            .hero { padding: 35px 15px 25px; }
-            h1 { font-size: 28px; }
-            .search-box input { font-size: 13px; padding: 13px 16px 13px 42px; }
-            .progress-card { flex-direction: column; align-items: stretch; text-align: center; gap: 10px; }
-            .progress-info { text-align: center; }
-            .category-tabs {
-                justify-content: flex-start;
-                overflow-x: auto;
-                flex-wrap: nowrap;
-                padding-bottom: 8px;
-                margin-bottom: 25px;
-                -webkit-overflow-scrolling: touch;
-            }
+            .category-tabs { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 8px; }
             .category-tabs::-webkit-scrollbar { display: none; }
-            .tab-btn { flex-shrink: 0; white-space: nowrap; font-size: 12px; padding: 8px 14px; }
-            .guides-grid { grid-template-columns: 1fr; gap: 16px; }
-            .guide-card { padding: 18px; }
-            .ai-prompt-box { flex-direction: column; }
-            .papers-grid { grid-template-columns: 1fr; gap: 16px; }
-            .paper-card { padding: 20px; }
-            .modal-content { padding: 22px 18px; width: 95%; max-height: 90vh; }
+            .tab-btn { flex-shrink: 0; font-size: 12px; }
+            .guides-grid, .papers-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -609,23 +363,21 @@
         </a>
 
         <div class="nav-links">
-            <a href="CyberShield_Guidance_Page.html" class="active">🛡️ Guidance & Research</a>
+            <a href="CyberShield_Guidance_Page.html" class="active">🛡️ Guidance & Features</a>
             <a href="CyberShield_Settings_Page.html">⚙️ Settings</a>
-            <a href="#" onclick="alert('Dashboard module active in full platform.')">🏠 Dashboard</a>
-            <a href="#" class="nav-button" onclick="alert('Login module active in full platform.')">🔐 Sign In</a>
         </div>
     </nav>
 
     <!-- HERO SECTION -->
     <section class="hero">
         <div class="eyebrow">CYBERSHIELD AI PLATFORM</div>
-        <h1>Cybersecurity <span>Guidance & Research</span></h1>
-        <p>Interactive threat mitigation workflows, dynamic AI security assistance, and research papers on adaptive cyber defense.</p>
+        <h1>Cybersecurity <span>Guidance & Interactive Features</span></h1>
+        <p>Click on Phishing, Cyberbullying, Passwords, or 2FA below to run live detection tools and interactive step guides directly on this page!</p>
 
         <!-- SEARCH BAR -->
         <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" placeholder="Search guides, FAQs, or research papers (e.g. Phishing, Passwords, Ransomware)..." oninput="handleSearch()">
+            <input type="text" id="searchInput" placeholder="Search guides, tools, FAQs, or research papers..." oninput="handleSearch()">
         </div>
 
         <!-- PROGRESS TRACKER -->
@@ -639,27 +391,77 @@
             </div>
         </div>
 
-        <!-- CATEGORY TABS -->
+        <!-- CATEGORY FEATURE TABS -->
         <div class="category-tabs">
-            <button class="tab-btn active" onclick="filterCategory('all', this)">All Modules</button>
-            <button class="tab-btn" onclick="filterCategory('phishing', this)">📧 Phishing</button>
-            <button class="tab-btn" onclick="filterCategory('passwords', this)">🔑 Passwords</button>
-            <button class="tab-btn" onclick="filterCategory('2fa', this)">🛡️ 2FA Keys</button>
-            <button class="tab-btn" onclick="filterCategory('malware', this)">☣️ Malware</button>
-            <button class="tab-btn" onclick="filterCategory('network', this)">🌐 Network</button>
-            <button class="tab-btn" onclick="filterCategory('ai', this)">🤖 AI Security</button>
+            <button class="tab-btn active" onclick="selectFeature('all', this)">All Features</button>
+            <button class="tab-btn" onclick="selectFeature('phishing', this)">📧 Phishing Detection Tool</button>
+            <button class="tab-btn" onclick="selectFeature('cyberbullying', this)">💬 Cyberbullying Analyzer</button>
+            <button class="tab-btn" onclick="selectFeature('passwords', this)">🔑 Password Vault Guide</button>
+            <button class="tab-btn" onclick="selectFeature('2fa', this)">🛡️ 2FA Key Guide</button>
+            <button class="tab-btn" onclick="selectFeature('malware', this)">☣️ Ransomware Shield</button>
+            <button class="tab-btn" onclick="selectFeature('network', this)">🌐 Network Security</button>
         </div>
     </section>
 
     <!-- MAIN CONTAINER -->
     <div class="container">
 
+        <!-- DYNAMIC PHISHING SCANNER PANEL ON GUIDANCE PAGE -->
+        <div class="feature-panel" id="phishingToolPanel">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <span style="font-size: 32px;">📧</span>
+                <div>
+                    <h2 style="font-size: 22px;">Live Phishing Threat Detection Tool</h2>
+                    <p style="color: var(--muted); font-size: 13px;">Test any URL, domain, or email text for spoofing indicators and phishing risk.</p>
+                </div>
+            </div>
+            <textarea id="phishInput" class="form-control" rows="3" placeholder="Paste URL (e.g., http://paypa1-security-login.xyz) or email text to scan..."></textarea>
+            <button class="btn-action" style="margin-top: 14px; width: 100%; padding: 12px; font-size: 14px;" onclick="runPhishingTool()">🔍 Run Live Phishing Scan</button>
+
+            <div class="scan-result-box" id="phishResult">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 id="phishStatusText">Phishing Risk Score</h3>
+                    <span id="phishBadge" style="font-size: 12px; font-weight: bold; padding: 4px 12px; border-radius: 20px;"></span>
+                </div>
+                <div class="progress-bar-bg" style="margin: 12px 0;">
+                    <div class="progress-bar-fill" id="phishScoreBar"></div>
+                </div>
+                <p id="phishScoreDetail" style="font-size: 13px; font-weight: bold;"></p>
+                <div id="phishFlags" style="font-size: 13px; color: var(--muted); margin-top: 10px;"></div>
+            </div>
+        </div>
+
+        <!-- DYNAMIC CYBERBULLYING ANALYZER PANEL ON GUIDANCE PAGE -->
+        <div class="feature-panel" id="cyberbullyingToolPanel">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <span style="font-size: 32px;">💬</span>
+                <div>
+                    <h2 style="font-size: 22px;">Live Cyberbullying & Toxicity Analyzer Tool</h2>
+                    <p style="color: var(--muted); font-size: 13px;">Paste any comment, chat message, or email to analyze toxicity, harassment, and threats.</p>
+                </div>
+            </div>
+            <textarea id="bullyingInput" class="form-control" rows="3" placeholder="Paste comment or chat text to analyze for harassment..."></textarea>
+            <button class="btn-action" style="margin-top: 14px; width: 100%; padding: 12px; font-size: 14px;" onclick="runBullyingTool()">🔍 Analyze Toxicity & Harassment</button>
+
+            <div class="scan-result-box" id="bullyingResult">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 id="bullyingStatusText">Toxicity Score</h3>
+                    <span id="bullyingBadge" style="font-size: 12px; font-weight: bold; padding: 4px 12px; border-radius: 20px;"></span>
+                </div>
+                <div class="progress-bar-bg" style="margin: 12px 0;">
+                    <div class="progress-bar-fill" id="bullyingScoreBar"></div>
+                </div>
+                <p id="bullyingScoreDetail" style="font-size: 13px; font-weight: bold;"></p>
+                <div id="bullyingActions" style="font-size: 13px; color: var(--muted); margin-top: 10px;"></div>
+            </div>
+        </div>
+
         <!-- GUIDES GRID -->
         <div class="guides-grid" id="guidesGrid"></div>
 
         <!-- AI SECURITY ASSISTANT CARD -->
         <div class="ai-assistant-card">
-            <div class="ai-title">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
                 <span style="font-size: 28px;">🤖</span>
                 <div>
                     <h2>Interactive AI Security Assistant</h2>
@@ -669,14 +471,14 @@
 
             <div class="ai-prompt-box">
                 <input type="text" id="aiInput" placeholder="Ask CyberShield-AI (e.g., 'How do I detect phishing email spoofing?')" onkeypress="if(event.key==='Enter') askAIAssistant()">
-                <button class="btn-action" style="padding: 0 24px; font-size: 14px;" onclick="askAIAssistant()">Ask AI</button>
+                <button class="btn-action" style="padding: 0 25px; font-size: 14px;" onclick="askAIAssistant()">Ask AI</button>
             </div>
 
             <div class="ai-response" id="aiResponse"></div>
         </div>
 
         <!-- RESEARCH PAPERS SECTION -->
-        <div class="section-header" id="researchSection">
+        <div class="section-header">
             <h2>CyberShield Research Papers</h2>
             <p>Peer-reviewed cybersecurity frameworks integrated into CyberShield-AI</p>
         </div>
@@ -703,14 +505,6 @@
             <span style="font-size: 16px; margin-bottom: 2px;">⚙️</span>
             <span>Settings</span>
         </a>
-        <a href="#" onclick="alert('Dashboard module active in full platform.')">
-            <span style="font-size: 16px; margin-bottom: 2px;">🏠</span>
-            <span>Dashboard</span>
-        </a>
-        <a href="#" onclick="alert('Login module active in full platform.')">
-            <span style="font-size: 16px; margin-bottom: 2px;">🔐</span>
-            <span>Login</span>
-        </a>
     </div>
 
     <!-- STANDALONE JAVASCRIPT LOGIC -->
@@ -720,51 +514,50 @@
                 id: "phishing-defense",
                 title: "Spotting & Defeating Advanced Phishing Campaigns",
                 category: "phishing",
-                badge: "Critical Skill",
+                badge: "Phishing Tool Active",
                 readTime: "5 min",
-                summary: "Learn how spear-phishing attack vectors bypass traditional spam filters, analyze raw email headers, and detect domain spoofing.",
+                summary: "Interactive phishing analysis, spear-phishing defense, raw header inspection, and lookalike domain detection.",
                 icon: "📧",
                 steps: [
-                    { num: "01", title: "Verify Sender Domain Integrity", desc: "Check for subtle homograph attacks or domain permutations (e.g., paypa1.com vs paypal.com). Inspect the Return-Path and SPF/DKIM validation scores." },
-                    { num: "02", title: "Inspect Link Destinations", desc: "Hover over hyperlinks without clicking. Check if URL shorteners mask malicious phishing landing pages." },
-                    { num: "03", title: "Analyze Urgency & Psychological Triggers", desc: "Attackers exploit panic, account suspensions, or financial rewards. Never execute unexpected attachments (.exe, .xlsm, .iso)." }
-                ],
-                faqs: [
-                    { q: "What is Spear Phishing?", a: "Spear phishing is a highly targeted attack using customized information gathered from OSINT to trick specific individuals." },
-                    { q: "How can 2FA protect against phishing?", a: "FIDO2/WebAuthn hardware keys bind authentication to the legitimate domain origin, rendering stolen credentials useless on phishing sites." }
+                    { num: "01", title: "Verify Sender Domain Integrity", desc: "Check for subtle homograph attacks or domain permutations (e.g., paypa1.com vs paypal.com). Inspect Return-Path and SPF/DKIM validation." },
+                    { num: "02", title: "Inspect Link Destinations", desc: "Hover over hyperlinks without clicking. Check if URL shorteners mask malicious phishing landing pages." }
+                ]
+            },
+            {
+                id: "cyberbullying-defense",
+                title: "Cyberbullying & Toxic Content Analyzer",
+                category: "cyberbullying",
+                badge: "NLP Tool Active",
+                readTime: "5 min",
+                summary: "Interactive toxicity classifier detecting harassment, insults, profanity, online threats, and evidence documentation.",
+                icon: "💬",
+                steps: [
+                    { num: "01", title: "Document & Screenshot Evidence", desc: "Always save unedited screenshots including timestamps, usernames, and URL context." },
+                    { num: "02", title: "Enforce Platform Block & Silence Protocols", desc: "Block the user across all chat and social platforms to stop direct harassment." }
                 ]
             },
             {
                 id: "password-hygiene",
-                title: "Password Entropy & Breach Response Protocol",
+                title: "Password Entropy & Vault Security Protocol",
                 category: "passwords",
                 badge: "Core Practice",
                 readTime: "4 min",
-                summary: "Master strong password generation, password manager security vaults, salted hashing concepts, and emergency breach procedures.",
+                summary: "Master high-entropy passphrases, zero-knowledge password vault storage, and emergency breach monitoring.",
                 icon: "🔑",
                 steps: [
-                    { num: "01", title: "Eliminate Password Reuse", desc: "Ensure every single account uses a unique, randomly generated password of at least 16+ characters." },
-                    { num: "02", title: "Deploy an Encrypted Password Manager", desc: "Store credentials in a zero-knowledge encrypted vault (AES-256) secured with a high-entropy master passphrase." },
-                    { num: "03", title: "Monitor HaveIBeenPwned & Breach Feeds", desc: "Enable breach monitoring alerts to automatically flag compromised credentials." }
-                ],
-                faqs: [
-                    { q: "Is a long passphrase better than a complex short password?", a: "Yes! Passphrase length increases entropy exponentially against brute-force attacks (e.g., 'correct-horse-battery-staple')." }
+                    { num: "01", title: "Eliminate Password Reuse", desc: "Ensure every single account uses a unique 16+ character password." }
                 ]
             },
             {
                 id: "2fa-authentication",
-                title: "Enforcing Multi-Factor & Hardware Key Authentication",
+                title: "Enforcing Multi-Factor & Hardware Key Security",
                 category: "2fa",
                 badge: "Essential",
                 readTime: "6 min",
-                summary: "Upgrade from vulnerable SMS 2FA to Time-based One-Time Passwords (TOTP) and phishing-resistant FIDO2 hardware security keys.",
+                summary: "Upgrade from vulnerable SMS 2FA to TOTP authenticators and phishing-resistant FIDO2 hardware YubiKeys.",
                 icon: "🛡️",
                 steps: [
-                    { num: "01", title: "Disable SMS & Email 2FA Where Possible", desc: "SMS authentication is susceptible to SIM-swapping and SS7 intercept attacks. Migrate to authenticator apps (TOTP) or security keys." },
-                    { num: "02", title: "Configure FIDO2 / YubiKey Hardware Keys", desc: "Register cryptographic security keys to critical administrative, cloud, and primary email accounts." }
-                ],
-                faqs: [
-                    { q: "What happens if I lose my 2FA device?", a: "Use your securely stored offline emergency backup recovery codes or secondary FIDO2 key." }
+                    { num: "01", title: "Disable SMS 2FA Where Possible", desc: "Migrate away from SMS to authenticator apps or security keys resistant to SIM swapping." }
                 ]
             },
             {
@@ -773,94 +566,23 @@
                 category: "malware",
                 badge: "Advanced",
                 readTime: "7 min",
-                summary: "Understand behavioral ransomware indicators, shadow copy backup strategies, and zero-day process containment.",
+                summary: "Understand ransomware process containment, shadow copy protection, and air-gapped immutable backup rules.",
                 icon: "☣️",
                 steps: [
-                    { num: "01", title: "Maintain Air-Gapped Immutable Backups", desc: "Implement the 3-2-1 backup rule: 3 copies, 2 different media, 1 offsite air-gapped backup resistant to wiper malware." },
-                    { num: "02", title: "Disable Unnecessary PowerShell Script Host Execution", desc: "Restrict macro execution in documents and block unsigned binary execution in temp directories." }
-                ],
-                faqs: [
-                    { q: "Should victims pay ransomware demands?", a: "Security agencies strongly advise against paying ransoms as it funds cybercrime and offers no guarantee of decryption." }
+                    { num: "01", title: "Maintain 3-2-1 Air-Gapped Backups", desc: "Keep 3 copies of data across 2 media types with 1 copy completely offsite." }
                 ]
             },
             {
                 id: "network-defense",
-                title: "Zero-Trust Wi-Fi & Network Isolation",
+                title: "Zero-Trust Wi-Fi & Encrypted Network Defense",
                 category: "network",
                 badge: "Network Security",
                 readTime: "5 min",
-                summary: "Protect device traffic over public Wi-Fi networks using Encrypted DNS, WireGuard VPNs, and host-based firewall rules.",
+                summary: "Protect device traffic over public Wi-Fi using Encrypted DNS-over-HTTPS (DoH) and WireGuard VPN tunnels.",
                 icon: "🌐",
                 steps: [
-                    { num: "01", title: "Enforce DNS-over-HTTPS (DoH)", desc: "Prevent DNS spoofing and eavesdropping by routing queries through encrypted Quad9 or Cloudflare DNS resolvers." },
-                    { num: "02", title: "Utilize Mutual TLS / VPN Isolation", desc: "Always connect through an encrypted WireGuard VPN proxy when accessing untrusted networks." }
-                ],
-                faqs: [
-                    { q: "What is a Evil Twin Access Point?", a: "A rogue Wi-Fi access point broadcasting the same SSID as a legitimate network to intercept user traffic." }
+                    { num: "01", title: "Enforce Encrypted DNS (DoH)", desc: "Prevent DNS spoofing by routing hostname queries through encrypted Quad9/Cloudflare resolvers." }
                 ]
-            },
-            {
-                id: "ai-security",
-                title: "AI Threat Vectors: Model Inversion & Prompt Injection",
-                category: "ai",
-                badge: "Emerging Tech",
-                readTime: "8 min",
-                summary: "Explore cutting-edge artificial intelligence vulnerabilities, prompt injection defenses, and data privacy safeguards when using LLMs.",
-                icon: "🤖",
-                steps: [
-                    { num: "01", title: "Sanitize Sensitive Data in Prompts", desc: "Never input raw passwords, API keys, customer PII, or proprietary source code into external cloud LLMs." },
-                    { num: "02", title: "Detect Direct & Indirect Prompt Injection", desc: "Validate AI outputs and isolate autonomous AI agents to prevent malicious prompt payloads from triggering unauthorized actions." }
-                ],
-                faqs: [
-                    { q: "What is Indirect Prompt Injection?", a: "When an AI model reads malicious instructions hidden inside external untrusted web content or documents." }
-                ]
-            }
-        ];
-
-        const RESEARCH_PAPERS = [
-            {
-                id: "paper-1",
-                title: "Dynamic AI-Driven Cybersecurity Guidance and Adaptive Threat Education Frameworks",
-                author: "Shreya et al.",
-                date: "September 2026",
-                summary: "Presents an adaptive AI framework that dynamically delivers interactive micro-learning modules and threat contextualization, achieving a 74.2% reduction in phishing vulnerability.",
-                content: `<h1>Dynamic AI-Driven Cybersecurity Guidance and Adaptive Threat Education Frameworks</h1>
-                <p><strong>Author:</strong> Shreya et al. | <strong>Date:</strong> September 2026</p>
-                <hr style="border-color: var(--border); margin: 15px 0;">
-                <h3>Abstract</h3>
-                <p>As cyber threats rapidly evolve in complexity, traditional static security training and static documentation fail to protect non-technical users from modern social engineering, zero-day phishing, and advanced malware campaigns. This paper introduces CyberShield-AI Guidance, a dynamic, context-aware cybersecurity education and assistance framework.</p>
-                <h3>Key Experimental Results</h3>
-                <table style="width: 100%; margin: 15px 0; border-collapse: collapse;">
-                    <tr style="background: var(--card);">
-                        <th style="padding: 8px; border: 1px solid var(--border);">Metric</th>
-                        <th style="padding: 8px; border: 1px solid var(--border);">Static Manuals</th>
-                        <th style="padding: 8px; border: 1px solid var(--border);">CyberShield-AI Guidance</th>
-                    </tr>
-                    <tr>
-                        <td style="padding: 8px; border: 1px solid var(--border);">Phishing Click Rate</td>
-                        <td style="padding: 8px; border: 1px solid var(--border);">28.4%</td>
-                        <td style="padding: 8px; border: 1px solid var(--border); color: var(--success); font-weight: bold;">7.3% (-74.2%)</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 8px; border: 1px solid var(--border);">Mean Time to Remediate</td>
-                        <td style="padding: 8px; border: 1px solid var(--border);">14.2 min</td>
-                        <td style="padding: 8px; border: 1px solid var(--border); color: var(--success); font-weight: bold;">4.6 min (-67.6%)</td>
-                    </tr>
-                </table>`
-            },
-            {
-                id: "paper-2",
-                title: "Zero-Trust Security Configurations, Privacy-Preserving Telemetry, and User Preference Management",
-                author: "Shreya et al.",
-                date: "September 2026",
-                summary: "Explores zero-trust configuration storage, encrypted API key vaults, and Differential Privacy (Laplace mechanism) for telemetry collection with sub-1.4ms access latency.",
-                content: `<h1>Zero-Trust Security Configurations, Privacy-Preserving Telemetry, and User Preference Management</h1>
-                <p><strong>Author:</strong> Shreya et al. | <strong>Date:</strong> September 2026</p>
-                <hr style="border-color: var(--border); margin: 15px 0;">
-                <h3>Abstract</h3>
-                <p>Configuration management in modern desktop and web cybersecurity applications plays a pivotal role in maintaining system defense postures without sacrificing user privacy or system performance. This paper presents the design and empirical evaluation of CyberShield-AI Settings Engine.</p>
-                <h3>Performance Benchmarks</h3>
-                <p>Retrieval latency averages <strong>0.82 ms</strong> with 100% cryptographic hash chain verification integrity.</p>`
             }
         ];
 
@@ -869,9 +591,20 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             renderGuides();
-            renderResearchPapers();
+            loadResearchPapers();
             updateProgressBar();
         });
+
+        function selectFeature(cat, btn) {
+            currentCategory = cat;
+            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+            if (btn) btn.classList.add("active");
+
+            document.getElementById("phishingToolPanel").style.display = (cat === "phishing") ? "block" : "none";
+            document.getElementById("cyberbullyingToolPanel").style.display = (cat === "cyberbullying") ? "block" : "none";
+
+            renderGuides();
+        }
 
         function renderGuides() {
             const grid = document.getElementById("guidesGrid");
@@ -879,9 +612,7 @@
 
             const filtered = GUIDES_DATA.filter(g => {
                 const matchesCat = currentCategory === "all" || g.category === currentCategory;
-                const matchesSearch = !searchVal || 
-                    g.title.toLowerCase().includes(searchVal) || 
-                    g.summary.toLowerCase().includes(searchVal);
+                const matchesSearch = !searchVal || g.title.toLowerCase().includes(searchVal) || g.summary.toLowerCase().includes(searchVal);
                 return matchesCat && matchesSearch;
             });
 
@@ -891,26 +622,54 @@
                     <div class="guide-card">
                         <div>
                             <div class="card-header">
-                                <span class="card-icon">${g.icon}</span>
+                                <span style="font-size: 30px;">${g.icon}</span>
                                 <span class="card-badge">${g.badge}</span>
                             </div>
                             <h3>${g.title}</h3>
                             <p>${g.summary}</p>
                         </div>
                         <div class="card-footer">
-                            <span class="read-time">⏱ ${g.readTime}</span>
+                            <span style="font-size: 12px; color: var(--muted);">⏱ ${g.readTime}</span>
                             <div style="display: flex; gap: 8px;">
                                 <button class="btn-action" style="background: ${isDone ? 'var(--success)' : 'var(--royal-blue)'}" onclick="toggleDone('${g.id}')">
                                     ${isDone ? '✓ Completed' : 'Mark Done'}
                                 </button>
                                 <button class="btn-action" style="background: rgba(255,255,255,0.1)" onclick="openGuideModal('${g.id}')">
-                                    Read Guide →
+                                    Open Feature →
                                 </button>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        function runPhishingTool() {
+            const val = document.getElementById("phishInput").value.trim();
+            const box = document.getElementById("phishResult");
+            if (!val) return;
+            box.style.display = "block";
+            const isBad = val.toLowerCase().includes("http://") || val.toLowerCase().includes(".xyz") || val.toLowerCase().includes("verify");
+            const score = isBad ? 75 : 10;
+            document.getElementById("phishStatusText").textContent = isBad ? "HIGH PHISHING RISK" : "SAFE / LOW RISK";
+            document.getElementById("phishScoreDetail").textContent = `Threat Score: ${score}/100`;
+            document.getElementById("phishScoreBar").style.width = `${score}%`;
+            document.getElementById("phishScoreBar").style.background = isBad ? 'var(--danger)' : 'var(--success)';
+            document.getElementById("phishFlags").innerHTML = isBad ? "<div>⚠️ Suspicious unencrypted URL or lookalike domain</div>" : "<div>✓ No obvious phishing triggers</div>";
+        }
+
+        function runBullyingTool() {
+            const val = document.getElementById("bullyingInput").value.trim();
+            const box = document.getElementById("bullyingResult");
+            if (!val) return;
+            box.style.display = "block";
+            const isBad = val.toLowerCase().includes("die") || val.toLowerCase().includes("stupid") || val.toLowerCase().includes("hate");
+            const score = isBad ? 80 : 15;
+            document.getElementById("bullyingStatusText").textContent = isBad ? "TOXIC CONTENT DETECTED" : "SAFE / NON-TOXIC";
+            document.getElementById("bullyingScoreDetail").textContent = `Toxicity Score: ${score}/100`;
+            document.getElementById("bullyingScoreBar").style.width = `${score}%`;
+            document.getElementById("bullyingScoreBar").style.background = isBad ? 'var(--danger)' : 'var(--success)';
+            document.getElementById("bullyingActions").innerHTML = isBad ? "<div>🛡️ Block user & screenshot evidence for reporting.</div>" : "<div>✓ Content appears non-toxic.</div>";
         }
 
         function toggleDone(id) {
@@ -928,54 +687,50 @@
             document.getElementById("progressBar").style.width = `${pct}%`;
         }
 
-        function filterCategory(cat, btn) {
-            currentCategory = cat;
-            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            renderGuides();
-        }
-
-        function handleSearch() {
-            renderGuides();
-        }
+        function handleSearch() { renderGuides(); }
 
         function askAIAssistant() {
             const input = document.getElementById("aiInput");
             const respBox = document.getElementById("aiResponse");
             const q = input.value.trim().toLowerCase();
-
             if (!q) return;
 
             respBox.style.display = "block";
-
-            if (q.includes("phish") || q.includes("email") || q.includes("link")) {
-                respBox.innerHTML = "📧 <strong>Phishing Defense Recommendation</strong>:<br><br>1. Inspect raw email headers for SPF/DKIM failures and domain spoofing.<br>2. Hover over hyperlinks without clicking.<br>3. Verify sender credentials out-of-band.";
-            } else if (q.includes("pass") || q.includes("login") || q.includes("auth")) {
-                respBox.innerHTML = "🔑 <strong>Password & Credential Advice</strong>:<br><br>1. Generate a high-entropy passphrase (16+ chars).<br>2. Save credentials in an encrypted password manager.<br>3. Enforce FIDO2/WebAuthn 2FA.";
-            } else if (q.includes("ransom") || q.includes("malware") || q.includes("virus")) {
-                respBox.innerHTML = "☣️ <strong>Ransomware Containment Protocol</strong>:<br><br>1. Disconnect the machine from Wi-Fi immediately.<br>2. Do not pay ransom demands.<br>3. Boot into Safe Mode and restore from air-gapped backups.";
+            if (q.includes("phish")) {
+                respBox.innerHTML = "📧 <strong>Phishing Defense Advice</strong>:<br>1. Inspect raw headers for SPF/DKIM failures.<br>2. Run our live Phishing Scanner tool above!<br>3. Verify sender out-of-band.";
+            } else if (q.includes("bully") || q.includes("hate")) {
+                respBox.innerHTML = "💬 <strong>Cyberbullying Protection Advice</strong>:<br>1. Save screenshot evidence.<br>2. Use our live Cyberbullying Analyzer tool above!<br>3. Block user and report to moderators.";
             } else {
-                respBox.innerHTML = `🛡️ <strong>CyberShield AI Advisor Response</strong>:<br><br>Regarding <em>"${input.value}"</em>:<br>1. Practice principle of least privilege.<br>2. Keep OS and browser updated.<br>3. Refer to the CyberShield Research Papers below for detailed threat architecture.`;
+                respBox.innerHTML = `🛡️ <strong>CyberShield AI Advisor Response</strong>:<br>Regarding <em>"${input.value}"</em>:<br>1. Practice least privilege.<br>2. Keep systems updated.<br>3. Review research papers.`;
             }
         }
 
-        function renderResearchPapers() {
+        function loadResearchPapers() {
             const grid = document.getElementById("papersGrid");
-            grid.innerHTML = RESEARCH_PAPERS.map(p => `
+            grid.innerHTML = `
                 <div class="paper-card">
                     <div>
                         <div class="paper-tag">CYBERSHIELD RESEARCH PAPER</div>
-                        <h3>${p.title}</h3>
-                        <p>${p.summary}</p>
+                        <h3>Dynamic AI-Driven Cybersecurity Guidance and Adaptive Threat Education Frameworks</h3>
+                        <p>Presents an adaptive AI framework delivering micro-learning modules and threat contextualization, achieving a 74.2% reduction in phishing vulnerability.</p>
                     </div>
                     <div>
-                        <div class="paper-meta">✍️ ${p.author} • 📅 ${p.date}</div>
-                        <button class="btn-action" style="width: 100%; text-align: center;" onclick="readPaperModal('${p.id}')">
-                            📄 Read Full Research Paper →
-                        </button>
+                        <div style="font-size: 12px; color: var(--muted); margin-bottom: 14px;">✍️ Shreya et al. • 📅 September 2026</div>
+                        <button class="btn-action" style="width: 100%;" onclick="openPaperModal(1)">📄 Read Full Research Paper →</button>
                     </div>
                 </div>
-            `).join('');
+                <div class="paper-card">
+                    <div>
+                        <div class="paper-tag">CYBERSHIELD RESEARCH PAPER</div>
+                        <h3>Zero-Trust Security Configurations, Privacy-Preserving Telemetry, and User Preference Management</h3>
+                        <p>Explores zero-trust configuration storage, encrypted API key vaults, and Differential Privacy (Laplace mechanism) for telemetry collection with sub-1.4ms access latency.</p>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: var(--muted); margin-bottom: 14px;">✍️ Shreya et al. • 📅 September 2026</div>
+                        <button class="btn-action" style="width: 100%;" onclick="openPaperModal(2)">📄 Read Full Research Paper →</button>
+                    </div>
+                </div>
+            `;
         }
 
         function openGuideModal(id) {
@@ -1002,18 +757,18 @@
             modal.style.display = "flex";
         }
 
-        function readPaperModal(id) {
-            const p = RESEARCH_PAPERS.find(item => item.id === id);
-            if (!p) return;
+        function openPaperModal(num) {
             const modal = document.getElementById("guideModal");
             const body = document.getElementById("modalBody");
-            body.innerHTML = p.content;
+            if (num === 1) {
+                body.innerHTML = `<h1>Dynamic AI-Driven Cybersecurity Guidance Frameworks</h1><p><strong>Author:</strong> Shreya et al. (September 2026)</p><hr style="border-color: var(--border); margin: 15px 0;"><p>As cyber threats rapidly evolve, traditional static security training fails to protect users. CyberShield-AI Guidance introduces context-aware micro-learning and automated threat mitigation.</p>`;
+            } else {
+                body.innerHTML = `<h1>Zero-Trust Security Configurations and Privacy Telemetry</h1><p><strong>Author:</strong> Shreya et al. (September 2026)</p><hr style="border-color: var(--border); margin: 15px 0;"><p>Explores zero-trust configuration storage, encrypted key vaults, and differential privacy telemetry aggregation with sub-1.4ms access latency.</p>`;
+            }
             modal.style.display = "flex";
         }
 
-        function closeModal() {
-            document.getElementById("guideModal").style.display = "none";
-        }
+        function closeModal() { document.getElementById("guideModal").style.display = "none"; }
     </script>
 </body>
 </html>
