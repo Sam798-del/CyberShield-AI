@@ -35,7 +35,7 @@ def main():
     time.sleep(1.5)
     
     print("\nSelect Desktop Module to Launch:")
-    print("1. 🛡️  CyberShield Guidance & Research Center (Shreya)")
+    print("1. 🛡️  CyberShield Guidance Center")
     print("2. ⚙️  CyberShield Settings & System Configuration (Shreya)")
     print("3. 🏠  Launch Full Web Platform (http://127.0.0.1:5000)")
     

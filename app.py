@@ -14,7 +14,6 @@ from flask_cors import CORS
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 PAGES_DIR = os.path.join(FRONTEND_DIR, "pages")
-RESEARCH_DIR = os.path.join(BASE_DIR, "Research_Papers")
 DB_PATH = os.path.join(BASE_DIR, "cybershield.db")
 
 app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path="")
@@ -334,7 +333,7 @@ def health_check():
         "status": "online",
         "app": "CyberShield-AI",
         "developer": "Shreya",
-        "modules": ["Guidance Engine", "Settings Engine", "Research Papers Vault"]
+        "modules": ["Guidance Engine", "Settings Engine"]
     })
 
 # --- GUIDANCE API ---
@@ -391,7 +390,7 @@ def ask_ai_assistant():
     elif "setting" in q_lower or "config" in q_lower:
         answer = "⚙️ **CyberShield Settings Guidance**:\n\nNavigate to the **Settings** page (`settings.html`) in CyberShield-AI to configure real-time shield sensitivity, customize your AI assistant prompt rules, toggle privacy telemetry, and enter your VirusTotal/HIBP API keys."
     else:
-        answer = f"🛡️ **CyberShield AI Security Response**:\n\nBased on your security query: *\"{question}\"*\n\n1. Always enforce the principle of least privilege (PoLP) across your operating system.\n2. Ensure your operating system and application dependencies receive real-time security patches.\n3. Refer to Shreya's Research Papers in the Guide tab for deep-dive technical architectures on AI guidance and zero-trust configuration models."
+        answer = f"🛡️ <strong>CyberShield AI Security Response</strong>:\n\nBased on your security query: <em>\"{question}\"</em>\n\n1. Always enforce the principle of least privilege (PoLP) across your operating system.\n2. Ensure your operating system and application dependencies receive real-time security patches.\n3. Follow security guidelines."
         
     return jsonify({
         "status": "success",
@@ -479,41 +478,7 @@ def export_settings():
         headers={"Content-Disposition": "attachment;filename=cybershield_settings_export.json"}
     )
 
-# --- RESEARCH PAPERS API ---
 
-@app.route("/api/research-papers", methods=["GET"])
-def get_research_papers():
-    papers = [
-        {
-            "id": "paper-1",
-            "title": "Dynamic AI-Driven Cybersecurity Guidance and Adaptive Threat Education Frameworks",
-            "author": "Shreya et al.",
-            "date": "September 2026",
-            "filename": "Paper1_Dynamic_AI_Driven_Cybersecurity_Guidance.md",
-            "summary": "Presents an adaptive AI framework that dynamically delivers interactive micro-learning modules and threat contextualization, achieving a 74.2% reduction in phishing vulnerability.",
-            "tags": ["AI Education", "Phishing Defense", "Adaptive Learning", "Threat Guidance"]
-        },
-        {
-            "id": "paper-2",
-            "title": "Zero-Trust Security Configurations, Privacy-Preserving Telemetry, and User Preference Management",
-            "author": "Shreya et al.",
-            "date": "September 2026",
-            "filename": "Paper2_Zero_Trust_Security_Configurations_and_Privacy_Preserving_Telemetry.md",
-            "summary": "Explores zero-trust configuration storage, encrypted API key vaults, and Differential Privacy (Laplace mechanism) for telemetry collection with sub-1.4ms access latency.",
-            "tags": ["Zero-Trust", "Settings Architecture", "Differential Privacy", "AES-256 Storage"]
-        }
-    ]
-    return jsonify({"status": "success", "papers": papers})
-
-@app.route("/api/research-papers/<paper_id>", methods=["GET"])
-def get_paper_content(paper_id):
-    filename = "Paper1_Dynamic_AI_Driven_Cybersecurity_Guidance.md" if paper_id in ["1", "paper-1"] else "Paper2_Zero_Trust_Security_Configurations_and_Privacy_Preserving_Telemetry.md"
-    file_path = os.path.join(RESEARCH_DIR, filename)
-    
-    if os.path.exists(file_path):
-        with open(file_path, "r", encoding="utf-8") as f:
-            content = f.read()
-        return jsonify({"status": "success", "id": paper_id, "content": content})
         
 # --- STATIC ROUTES FOR PHISHING & CYBERBULLYING ---
 

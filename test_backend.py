@@ -1,6 +1,6 @@
 """
 CyberShield-AI Backend & Integration Test Suite
-Verifies all REST API endpoints for Guidance, Settings, AI Assistant, and Research Papers.
+Verifies all REST API endpoints for Guidance, Settings, and AI Assistant.
 """
 
 import sys
@@ -82,17 +82,6 @@ class CyberShieldBackendTestCase(unittest.TestCase):
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["settings"]["security"]["threat_sensitivity"], "high")
-
-    def test_08_get_research_papers(self):
-        res = self.app.get('/api/research-papers')
-        data = json.loads(res.data)
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(len(data["papers"]), 2)
-        
-        res_paper1 = self.app.get('/api/research-papers/paper-1')
-        data_p1 = json.loads(res_paper1.data)
-        self.assertEqual(res_paper1.status_code, 200)
-        self.assertIn("Dynamic AI-Driven Cybersecurity Guidance", data_p1["content"])
 
 if __name__ == '__main__':
     unittest.main()
