@@ -1,7 +1,7 @@
 """
 CyberShield AI Desktop Application - Main Entry Point
 Integrates Guidance Center, Settings Engine, and Backend REST Service.
-Author: Shreya (Guidance & Settings Lead)
+
 """
 
 import sys
