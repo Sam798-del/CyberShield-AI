@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CyberShield AI Security Analyzer</title>
+  <title>CyberShield AI — Security Analyzer</title>
   <style>
     :root {
       --bg: #071027;
@@ -36,7 +36,7 @@
       border-right: 1px solid rgba(111,129,201,.18);
       background: linear-gradient(180deg, rgba(10,20,48,.97), rgba(6,15,35,.98));
     }
-    .brand { display: flex; align-items: center; gap: 10px; padding: 0 9px 22px; }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 0 9px 22px; cursor: pointer; }
     .brand svg { width: 28px; height: 33px; color: #7b70ff; filter: drop-shadow(0 4px 12px rgba(94,90,255,.28)); }
     .brand-name { font-size: 14px; font-weight: 800; letter-spacing: -.03em; }
     .brand-tagline { font-size: 7px; color: #7d8bb8; margin-top: 2px; }
@@ -62,7 +62,7 @@
     .top-actions { display: flex; align-items: center; gap: 17px; }
     .icon-button { border: 0; color: #bdc6e5; background: transparent; padding: 6px; display: grid; place-items: center; border-radius: 7px; }
     .icon-button:hover { color: #fff; background: rgba(116,124,215,.15); }
-    .avatar { width: 25px; height: 25px; border: 1px solid rgba(255,255,255,.25); border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg,#604bff,#8068fb); color: #fff; font-size: 10px; font-weight: 800; }
+    .avatar { width: 25px; height: 25px; border: 1px solid rgba(255,255,255,.25); border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg,#604bff,#8068fb); color: #fff; font-size: 10px; font-weight: 800; cursor: pointer; }
     .page { width: 100%; max-width: 934px; margin: 0 auto; padding: 23px 28px 46px; }
     .page-heading { display: flex; align-items: flex-start; gap: 13px; margin-bottom: 17px; }
     .page-heading h1 { margin: 0; font-size: 17px; letter-spacing: -.03em; }
@@ -88,13 +88,13 @@
     .password-analysis { display: grid; grid-template-columns: 1.12fr .88fr; gap: 7px; padding: 0 14px 10px; }
     .score-card, .crack-card { border: 1px solid rgba(79,112,193,.31); border-radius: 8px; background: rgba(7,22,51,.62); min-height: 101px; }
     .score-card { display: flex; align-items: center; padding: 12px; gap: 13px; }
-    .score-ring { width: 67px; height: 67px; flex: 0 0 auto; border-radius: 50%; display: grid; place-items: center; position: relative; }
-    .score-ring::before { content: ""; position: absolute; inset: 7px; background: #0d234d; border-radius: 50%; }
+    .score-ring { width: 110px; height: 110px; flex: 0 0 auto; border-radius: 50%; display: grid; place-items: center; position: relative; }
+    .score-ring::before { content: ""; position: absolute; inset: 10px; background: #0d234d; border-radius: 50%; }
     .score-value { position: relative; z-index: 1; display: flex; align-items: baseline; gap: 2px; }
-    .score-value strong { font-size: 21px; line-height: 1; }
-    .score-value small { font-size: 7px; color: #8d9ac3; }
-    .score-detail h3 { margin: 0; color: #ff638d; font-size: 13px; }
-    .score-detail p { margin: 4px 0 7px; color: #a3acd0; font-size: 8px; }
+    .score-value strong { font-size: 32px; line-height: 1; font-weight: 800; }
+    .score-value small { font-size: 11px; color: #8d9ac3; }
+    .score-detail h3 { margin: 0; color: #ff638d; font-size: 16px; font-weight: 800; }
+    .score-detail p { margin: 4px 0 7px; color: #a3acd0; font-size: 10px; }
     .meter { width: 82px; height: 5px; border-radius: 9px; background: #213661; overflow: hidden; }
     .meter span { display: block; height: 100%; border-radius: inherit; }
     .crack-card { padding: 12px; }
@@ -154,6 +154,8 @@
 </head>
 <body>
   <div id="app"></div>
+  <script src="../js/state.js"></script>
+  <script src="../js/utils.js"></script>
   <script>
     const icons = {
       shield: '<svg viewBox="0 0 24 24"><path d="M12 3 20 6v5c0 5-3.3 8.7-8 10-4.7-1.3-8-5-8-10V6l8-3Z"/></svg>',
@@ -191,12 +193,23 @@
       { service:'LinkedIn', status:'High Risk', description:'This email appeared in a LinkedIn-related exposure. Exposed information: Email, Profile data.', source:'Known Breach Database', lastSeen:'2021', details:'Email, Profile data', steps:['Open LinkedIn → Me → Settings & Privacy → Sign in & security.','Choose Change password and save a new unique password.','Open Two-step verification and connect an authenticator app or phone.','Review Where you’re signed in and sign out unfamiliar sessions.'] },
       { service:'Gmail', status:'High Risk', description:'This email has a Google account exposure. Review your password and recent account activity.', source:'Google Security Checkup', lastSeen:'2024', details:'Email, Recovery data', steps:['Open myaccount.google.com → Security → How you sign in to Google.','Choose Password and create a unique password with 12+ characters.','Open 2-Step Verification and complete the setup.','Check Your devices and remove any device you do not recognize.'] }
     ];
-    const state = { mode:'password', activeNav:'Security Analyzer', password:'Neeraja@2007', showPassword:false, score:42, email:'neeraja@gmail.com', profile:null, scanned:false, fixed:false, modal:false, generated:'k7!Q9#fZq4sLm8@vT2#', notice:null };
+    
+    // Initialize default state
+    let defaultEmail = 'neeraja.shinde@cybershield.ai';
+    if (window.CyberShieldState) {
+      const csState = window.CyberShieldState.getState();
+      if (csState.user && csState.user.email) {
+        defaultEmail = csState.user.email;
+      }
+    }
+
+    const state = { mode:'password', activeNav:'Security Analyzer', password:'Neeraja@2007', showPassword:false, score:42, email:defaultEmail, profile:null, scanned:false, fixed:false, modal:false, generated:'k7!Q9#fZq4sLm8@vT2#', notice:null };
+    
     function esc(value) { return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
     function logo(name) { return '<span class="service-logo service-logo-' + name.toLowerCase() + '">' + ({Gmail:'G',Instagram:'◎',LinkedIn:'in',Facebook:'f',Spotify:'●',YouTube:'▶',Amazon:'a'}[name] || '?') + '</span>'; }
     function profileFor(address) {
       const normalized = address.trim().toLowerCase();
-      if (normalized === 'neeraja@gmail.com') {
+      if (normalized === 'neeraja@gmail.com' || normalized === 'neeraja.shinde@cybershield.ai') {
         const services = [
           ['Gmail','Verified','safe','2024','No exposure'],['Instagram','At Risk','risk','2023','Email, Username'],['LinkedIn','Need Review','warn','2021','Email'],
           ['Facebook','Verified','safe','2024','No exposure'],['Spotify','Verified','safe','2024','No exposure'],['YouTube','Need Review','warn','2022','Email'],['Amazon','High Risk','risk','2020','Email, Phone']
@@ -216,43 +229,96 @@
       });
       return { email:address, serviceCount:7, lowRisk:services.filter(s=>s.tone==='safe').length, review:services.filter(s=>s.tone==='warn').length, highRisk:services.filter(s=>s.tone==='risk').length, services, topRisk };
     }
+    
     state.profile = profileFor(state.email);
+    
     function notice(title,message,tone='') { state.notice = {title,message,tone}; render(); clearTimeout(notice.timer); notice.timer = setTimeout(() => { state.notice = null; render(); }, 4200); }
     function serviceNodes(profile) { return profile.services.map((service,index) => '<div class="service-node '+service.tone+' '+nodeClasses[index]+'">'+logo(service.name)+'<div><strong>'+esc(service.name)+'</strong><small>'+esc(service.status)+'</small></div></div>').join(''); }
+    
     function passwordView() {
       const tone = state.score >= 70 ? 'Strong' : state.score >= 45 ? 'Fair' : 'Weak';
       const color = state.score >= 70 ? '#2bd6a8' : state.score >= 45 ? '#f2c14d' : '#ee4e81';
       const reasons = state.score < 70 ? ['Contains your name (Neeraja)','Uses a common year (2007)','Simple structure (Name + Symbol + Year)','Common password pattern detected'] : ['Strong length and character variety detected'];
       return '<div class="password-view"><section class="panel"><div class="panel-header"><div class="panel-title"><div class="title-icon">'+icons.lock+'</div><div><h2>Password Security</h2><p class="panel-subtitle">Analyze your password, detect risks, and get personalized suggestions.</p></div></div><span class="ai-badge">'+icons.sparkle+' AI Powered</span></div><form class="input-row" onsubmit="event.preventDefault(); analyzePassword()"><div class="field-wrap"><input id="password-input" class="text-field" type="'+(state.showPassword?'text':'password')+'" value="'+esc(state.password)+'" oninput="state.password=this.value"></div><button type="button" class="icon-button field-action" onclick="state.showPassword=!state.showPassword;render()">'+(state.showPassword?icons.eyeOff:icons.eye)+'</button></div><button class="primary-button" type="submit"><span>'+icons.sparkle+' Analyze</span></button></form><div class="password-analysis"><div class="score-card"><div class="score-ring" style="background:conic-gradient('+color+' 0 '+state.score+'%,#273e73 '+state.score+'% 100%)"><div class="score-value"><strong>'+state.score+'</strong><small>/100</small></div></div><div class="score-detail"><h3 style="color:'+color+'">'+tone+'</h3><p>'+(state.score>=70?'Your password is harder to guess.':'Your password is easy to guess.')+'</p><div class="meter"><span style="width:'+state.score+'%;background:'+color+'"></span></div></div></div><div class="crack-card"><div class="crack-label">'+icons.clock+' Estimated Crack Time</div><div class="crack-time">'+(state.score>=70?'Several years':state.score>=45?'About 3 days':'Less than 1 hour')+'</div><div class="crack-note">'+(state.score>=70?'Strong combinations resist common cracking tools.':'This password can be cracked quickly with common tools.')+'</div></div></div><div class="risk-grid"><div class="risk-card"><h3>Why is it '+tone.toLowerCase()+'? <span>'+(state.score<70?'Pattern Detected':'Good Practice')+'</span></h3><ul class="risk-list">'+reasons.map(item=>'<li>'+icons.alert+' '+item+'</li>').join('')+'</ul></div><div class="risk-card"><h3>Quick Fix Suggestions</h3><ul class="risk-list fix-list"><li>'+icons.check+' Use 12+ characters</li><li>'+icons.check+' Avoid personal info</li><li>'+icons.check+' Add random words</li><li>'+icons.check+' Use a mix of characters</li></ul></div></div></section><section class="panel reuses-panel"><div class="subpanel-heading">'+icons.link+'<div><h3>Password Reuse Check</h3><p>Check if your password is used across multiple accounts.</p></div></div><div class="table-wrap"><table><thead><tr><th>Account</th><th>Status</th><th>Risk</th><th></th></tr></thead><tbody><tr><td><div class="account">'+logo('Gmail')+' Gmail</div></td><td><span class="status-pill danger">Reused</span></td><td style="color:#f06991">High Risk</td><td>'+icons.arrow+'</td></tr><tr><td><div class="account">'+logo('Instagram')+' Instagram</div></td><td><span class="status-pill danger">Reused</span></td><td style="color:#f06991">High Risk</td><td>'+icons.arrow+'</td></tr><tr><td><div class="account">'+logo('LinkedIn')+' College Portal</div></td><td><span class="status-pill safe">Unique</span></td><td style="color:#31d5ae">Safe</td><td>'+icons.arrow+'</td></tr><tr><td><div class="account">'+logo('LinkedIn')+' LinkedIn</div></td><td><span class="status-pill unknown">Unknown</span></td><td style="color:#8e9dbd">Not verified</td><td>'+icons.arrow+'</td></tr></tbody></table></div></section><section class="panel generate-panel"><div class="subpanel-heading">'+icons.sparkle+'<div><h3>Generate a Strong Password</h3><p>Create a secure password with one click.</p></div></div><div class="generate-row"><div class="generate-input">'+esc(state.generated)+'<button class="copy-button" onclick="copyValue(state.generated)">'+icons.copy+'</button></div><button class="primary-button generate-action" onclick="generatePassword()"><span>'+icons.refresh+' Generate New</span></button></div><div class="feature-list"><span>'+icons.check+' 20 characters</span><span>'+icons.check+' Uppercase + lowercase</span><span>'+icons.check+' Numbers + symbols</span></div></section></div>';
     }
+
     function emailView() {
       const p = state.profile, r = p.topRisk;
-      const modal = state.modal ? '<div class="fix-modal-backdrop" onclick="state.modal=false;render()"><section class="fix-modal" onclick="event.stopPropagation()"><div class="fix-modal-heading"><div>'+icons.alert+'<div><strong>Fix your '+esc(r.service)+' risk</strong><p>Follow these steps from the '+esc(r.service)+' app or website.</p></div></div><button class="icon-button" onclick="state.modal=false;render()">'+icons.close+'</button></div><ol class="fix-steps">'+r.steps.map((step,i)=>'<li class="fix-step"><span class="fix-step-number">'+(i+1)+'</span><div><strong>'+(['Open '+r.service+' security','Change your password','Turn on two-factor authentication','Sign out unknown devices'][i])+'</strong><p>'+esc(step)+'</p></div></li>').join('')+'</ol><div class="fix-modal-note">'+icons.check+'<span>After completing the steps, click the button below to mark this local demo risk as fixed.</span></div><button class="fix-button" onclick="state.fixed=true;state.modal=false;render()">'+icons.check+' Fix '+esc(r.service)+' Risk</button></section></div>' : '';
+      const modal = state.modal ? '<div class="fix-modal-backdrop" onclick="state.modal=false;render()"><section class="fix-modal" onclick="event.stopPropagation()"><div class="fix-modal-heading"><div>'+icons.alert+'<div><strong>Fix your '+esc(r.service)+' risk</strong><p>Follow these steps from the '+esc(r.service)+' app or website.</p></div></div><button class="icon-button" onclick="state.modal=false;render()">'+icons.close+'</button></div><ol class="fix-steps">'+r.steps.map((step,i)=>'<li class="fix-step"><span class="fix-step-number">'+(i+1)+'</span><div><strong>'+(['Open '+r.service+' security','Change your password','Turn on two-factor authentication','Sign out unknown devices'][i])+'</strong><p>'+esc(step)+'</p></div></li>').join('')+'</ol><div class="fix-modal-note">'+icons.check+'<span>After completing the steps, click the button below to mark this risk as fixed.</span></div><button class="fix-button" onclick="markRiskFixed()">'+icons.check+' Fix '+esc(r.service)+' Risk</button></section></div>' : '';
       return '<div class="email-view"><section class="panel footprint-card"><div class="panel-header"><div class="panel-title"><div class="title-icon">'+icons.mail+'</div><div><h2>Email Security Footprint</h2><p class="panel-subtitle">Enter your email to check where it’s been used, exposed or linked.</p></div></div></div><form class="input-row" onsubmit="event.preventDefault();scanEmail()"><div class="field-wrap"><input id="email-input" class="text-field" type="email" value="'+esc(state.email)+'" oninput="state.email=this.value"></div><button class="primary-button" type="submit"><span>'+icons.search+' Scan Footprint</span></button></form>'+(state.scanned?'<div class="scan-status">'+icons.check+' Local scan refreshed for '+esc(state.email)+'</div>':'')+'<div class="footprint-stage"><div class="footprint-summary"><div class="summary-icon">'+icons.mail+'</div><div><strong>Your Digital Footprint</strong><span>'+p.serviceCount+' services detected for '+esc(p.email)+'</span></div></div><div class="footprint-donut"><div class="donut-content"><strong>'+p.serviceCount+'</strong><span>services</span></div></div><div class="footprint-legend"><span><i class="legend-dot dot-safe"></i> '+p.lowRisk+' Low Risk</span><span><i class="legend-dot dot-warn"></i> '+p.review+' Need Review</span><span><i class="legend-dot dot-risk"></i> '+p.highRisk+' High Risk</span></div><div class="hub">'+icons.mail+'<span>'+esc(p.email)+'</span></div>'+serviceNodes(p)+'</div><div class="risk-section"><div class="risk-section-title">'+icons.alert+' <strong>Top Risks &amp; Recommendations</strong></div><div class="risk-highlight '+(state.fixed?'resolved':'')+'"><div class="risk-service-avatar">'+logo(r.service)+'</div><div class="risk-text"><strong>'+esc(r.service)+' <span class="status-pill '+(state.fixed?'safe':'danger')+'">'+(state.fixed?'Fixed':esc(r.status))+'</span></strong><p>'+(state.fixed?esc(r.service+' security settings updated for '+p.email+'.'):esc(p.email+': '+r.description))+'</p></div>'+(state.fixed?'<div class="fixed-badge">'+icons.check+' Fixed</div>':'<button class="small-button" onclick="state.modal=true;render()">Take Action</button>')+'<div class="risk-meta"><span>Source: '+esc(r.source)+'</span><span>Last seen: '+r.lastSeen+'</span></div></div>'+modal+'<details class="breakdown" open><summary class="breakdown-summary">Detailed Breakdown '+icons.arrow+'</summary><table><thead><tr><th>Service</th><th>Exposure Status</th><th>Last Seen</th><th>Details</th></tr></thead><tbody>'+p.services.map(s=>'<tr><td><div class="breakdown-service">'+logo(s.name)+esc(s.name)+'</div></td><td><span class="status-pill '+(s.tone==='risk'?'danger':s.tone)+'">'+esc(s.status)+'</span></td><td>'+s.lastSeen+'</td><td>'+esc(s.details)+'</td></tr>').join('')+'</tbody></table></details><div class="subpanel-heading" style="padding:12px 0 0">'+icons.info+'<div><h3>How was this found?</h3><p>We check known breach databases, public records and verified data leaks to find where your email might be exposed.</p></div></div></div></section></div>';
     }
+
     function render() {
-      document.getElementById('app').innerHTML = '<div class="app-shell"><aside class="sidebar"><div class="brand">'+icons.shield+'<div><div class="brand-name">CyberShield AI</div><div class="brand-tagline">Think. Detect. Stay Safe.</div></div></div><div class="nav-label">Workspace</div><nav class="nav">'+navItems.map(([label,icon])=>'<button class="nav-item '+(state.activeNav===label?'active':'')+'" onclick="selectNav(\''+label.replace(/'/g,"\\'")+'\')">'+icons[icon]+'<span>'+label+'</span></button>').join('')+'</nav><div class="sidebar-spacer"></div><div class="sidebar-promo">'+icons.shield+'<strong>Stronger<br>Passwords. Safer You.</strong><span>Protected by CyberShield AI</span></div></aside><main class="main"><header class="topbar"><div class="top-actions"><button class="icon-button" onclick="notice(\'No new alerts\',\'Your CyberShield workspace is up to date.\')">'+icons.bell+'</button><button class="avatar">N</button></div></header><div class="page"><div class="page-heading"><button class="icon-button">'+icons.arrow+'</button><div><h1>Security Analyzer</h1><p>'+(state.activeNav==='Security Analyzer'?'Check your password strength, detect risks and stay one step ahead.':state.activeNav+' is selected. Continue exploring the local security analyzer.')+'</p></div></div><div class="mode-switch"><button class="mode-button '+(state.mode==='password'?'active':'')+'" onclick="state.mode=\'password\';render()">'+icons.lock+' Password Security</button><button class="mode-button '+(state.mode==='email'?'active':'')+'" onclick="state.mode=\'email\';render()">'+icons.database+' Email Security Footprint</button></div>'+(state.mode==='password'?passwordView():emailView())+'</div></main>'+(state.notice?'<div class="notification '+state.notice.tone+'"><button class="icon-button" onclick="state.notice=null;render()">'+icons.close+'</button><strong>'+esc(state.notice.title)+'</strong><p>'+esc(state.notice.message)+'</p></div>':'')+'</div>';
+      document.getElementById('app').innerHTML = '<div class="app-shell"><aside class="sidebar"><div class="brand" onclick="selectNav(\'Dashboard\')">'+icons.shield+'<div><div class="brand-name">CyberShield AI</div><div class="brand-tagline">Think. Detect. Stay Safe.</div></div></div><div class="nav-label">Workspace</div><nav class="nav">'+navItems.map(([label,icon])=>'<button class="nav-item '+(state.activeNav===label?'active':'')+'" onclick="selectNav(\''+label.replace(/'/g,"\\'")+'\')">'+icons[icon]+'<span>'+label+'</span></button>').join('')+'</nav><div class="sidebar-spacer"></div><div class="sidebar-promo">'+icons.shield+'<strong>Stronger<br>Passwords. Safer You.</strong><span>Protected by CyberShield AI</span></div></aside><main class="main"><header class="topbar"><div class="top-actions"><button class="icon-button" onclick="notice(\'No new alerts\',\'Your CyberShield workspace is up to date.\')">'+icons.bell+'</button><button class="avatar" onclick="selectNav(\'Profile / Settings\')">NS</button></div></header><div class="page"><div class="page-heading"><button class="icon-button" onclick="selectNav(\'Dashboard\')">'+icons.arrow+'</button><div><h1>Security Analyzer</h1><p>'+(state.activeNav==='Security Analyzer'?'Check your password strength, detect risks and stay one step ahead.':state.activeNav+' is selected. Continue exploring the local security analyzer.')+'</p></div></div><div class="mode-switch"><button class="mode-button '+(state.mode==='password'?'active':'')+'" onclick="state.mode=\'password\';render()">'+icons.lock+' Password Security</button><button class="mode-button '+(state.mode==='email'?'active':'')+'" onclick="state.mode=\'email\';render()">'+icons.database+' Email Security Footprint</button></div>'+(state.mode==='password'?passwordView():emailView())+'</div></main>'+(state.notice?'<div class="notification '+state.notice.tone+'"><button class="icon-button" onclick="state.notice=null;render()">'+icons.close+'</button><strong>'+esc(state.notice.title)+'</strong><p>'+esc(state.notice.message)+'</p></div>':'')+'</div>';
     }
+
     function analyzePassword() {
       const value = state.password, lower = value.toLowerCase();
       const lengthScore = Math.min(value.length * 3, 48);
       const variety = [/[A-Z]/,/[a-z]/,/[0-9]/,/[^A-Za-z0-9]/].filter(r=>r.test(value)).length * 10;
-      const penalty = (lower.includes('neerja')?16:0)+(lower.includes('2007')?15:0)+(/123|password|qwerty/i.test(value)?18:0);
-      state.score = Math.max(8,Math.min(98,lengthScore+variety-penalty)); render();
+      const penalty = (lower.includes('neerja') || lower.includes('neeraja')?16:0)+(lower.includes('2007')?15:0)+(/123|password|qwerty/i.test(value)?18:0);
+      state.score = Math.max(8,Math.min(98,lengthScore+variety-penalty)); 
+      
+      if (window.CyberShieldState) {
+        const tone = state.score >= 70 ? 'Strong' : state.score >= 45 ? 'Fair' : 'Weak';
+        window.CyberShieldState.recordPasswordScan({
+          scoreNum: state.score,
+          label: tone,
+          crackTime: (state.score>=70?'Several years':state.score>=45?'About 3 days':'Less than 1 hour')
+        });
+      }
+
+      render();
       notice(state.score>=70?'Password analysis complete':'Risk pattern detected',state.score>=70?'This password has a healthy mix of length and character variety.':'CyberShield found predictable patterns. Review the quick fixes below.',state.score>=70?'success':'error');
     }
+
     function scanEmail() {
       if (!state.email.trim() || !state.email.includes('@')) { notice('Email needed','Enter a valid email address before scanning.','error'); return; }
       state.profile = profileFor(state.email); state.scanned = true; state.fixed = false; render();
       notice('Footprint scan complete',state.profile.serviceCount+' services and '+state.profile.highRisk+' high-risk result'+(state.profile.highRisk===1?'':'s')+' mapped for '+state.email,'success');
     }
+
     function generatePassword() {
       const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
       state.generated = Array.from({length:20},(_,i)=>chars[(i*17+Date.now()+i*13)%chars.length]).join('');
       render(); notice('New password generated','Your password was created locally and was not sent anywhere.','success');
     }
+
     function copyValue(value) { navigator.clipboard?.writeText(value).then(()=>notice('Copied','Copied to your clipboard for this demo session.','success')).catch(()=>notice('Copy unavailable','Select the text manually.','error')); }
-    function selectNav(label) { state.activeNav=label; render(); if(label!=='Security Analyzer') notice(label+' selected','This prototype keeps the analyzer visible so you can continue your local review.'); }
+
+    function markRiskFixed() {
+      state.fixed = true;
+      state.modal = false;
+      if (window.CyberShieldState) {
+        window.CyberShieldState.resolveIssue('weakpass');
+        window.CyberShieldState.resolveIssue('outlook');
+      }
+      render();
+      notice('Risk fixed', 'Risk status marked as fixed and synced with CyberShield AI report.', 'success');
+    }
+
+    function selectNav(label) {
+      const pageMap = {
+        'Dashboard': 'dashboard.html',
+        'Digital Identity': 'digital-identity.html',
+        'Security Analyzer': 'security-analyzer.html',
+        'Phishing Detection': 'phishing-detection.html',
+        'Cyberbullying Detection': 'cyberbullying-detection.html',
+        'AI Security Report': 'security-report.html',
+        'Profile / Settings': 'settings.html'
+      };
+
+      if (pageMap[label] && label !== 'Security Analyzer') {
+        window.location.href = pageMap[label];
+      } else {
+        state.activeNav = label;
+        render();
+        if (label !== 'Security Analyzer') {
+          notice(label + ' selected', 'Navigating to ' + label);
+        }
+      }
+    }
+
     render();
   </script>
 </body>

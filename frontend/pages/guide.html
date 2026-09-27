@@ -3,392 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberShield AI — Cybersecurity Guidance & Interactive Features</title>
+    <title>CyberShield AI — Welcome & Security Guidance Hub</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/responsive.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --bg: #050912;
-            --bg-secondary: #080f1d;
-            --card: #101a2a;
-            --card-light: #142238;
-            --border: #1e3554;
-            --royal-blue: #4169e1;
-            --royal-blue-dark: #3154c6;
-            --blue-light: #6d8cff;
-            --blue-glow: rgba(65, 105, 225, 0.35);
-            --white: #f5f8ff;
-            --text: #d9e3f5;
-            --muted: #8293ad;
-            --success: #42d392;
-            --warning: #fbbf24;
-            --danger: #f87171;
+        .welcome-hero {
+            background: radial-gradient(circle at top, rgba(65, 105, 225, 0.2), transparent 70%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 40px 30px;
+            text-align: center;
+            margin-bottom: 30px;
         }
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: var(--bg);
-            color: var(--white);
-            line-height: 1.6;
-            min-height: 100vh;
-            padding-bottom: 90px;
+        .welcome-hero h1 {
+            font-size: 34px;
+            font-weight: 800;
+            margin-bottom: 12px;
         }
 
-        nav {
-            height: 70px;
-            width: 100%;
-            background: rgba(5, 9, 18, 0.95);
-            border-bottom: 1px solid var(--border);
+        .welcome-hero p {
+            color: var(--muted);
+            font-size: 15px;
+            max-width: 750px;
+            margin: 0 auto 24px;
+        }
+
+        .modules-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .module-summary-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 22px;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: space-between;
-            padding: 0 4%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(12px);
         }
 
-        .brand {
+        .module-summary-card h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 18px;
-            font-weight: 700;
-            text-decoration: none;
-            color: white;
-        }
-
-        .brand-icon {
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            background: linear-gradient(135deg, var(--royal-blue), #2747a9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 18px var(--blue-glow);
-        }
-
-        .brand-icon::before { content: "🛡️"; font-size: 18px; }
-        .brand span:last-child { color: var(--blue-light); }
-
-        .nav-links { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-        .nav-links a {
-            text-decoration: none;
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.2s;
-            padding: 6px 12px;
-            border-radius: 6px;
-        }
-        .nav-links a:hover, .nav-links a.active {
-            color: white;
-            background: rgba(65, 105, 225, 0.2);
-        }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-
-        .hero {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 16px;
-            background: rgba(65, 105, 225, 0.15);
-            border: 1px solid var(--royal-blue);
-            border-radius: 30px;
-            color: var(--blue-light);
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 16px;
-        }
-
-        .hero h1 { font-size: 34px; font-weight: 800; margin-bottom: 12px; }
-        .hero h1 span { color: var(--blue-light); }
-        .hero p { color: var(--muted); font-size: 15px; max-width: 750px; margin: 0 auto; }
-
-        .search-box {
-            position: relative;
-            max-width: 650px;
-            margin: 30px auto 40px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 16px 20px 16px 50px;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: white;
-            font-size: 15px;
-            outline: none;
-            transition: all 0.3s;
-        }
-        .search-box input:focus {
-            border-color: var(--royal-blue);
-            box-shadow: 0 0 20px var(--blue-glow);
-        }
-        .search-icon {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--muted);
-            font-size: 18px;
-        }
-
-        .progress-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 24px;
-            margin-bottom: 40px;
-        }
-        .progress-info { display: flex; justify-content: space-between; margin-bottom: 12px; }
-        .progress-bar-bg { width: 100%; height: 10px; background: var(--bg-secondary); border-radius: 10px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--royal-blue), var(--blue-light)); transition: width 0.4s ease; }
-
-        .category-tabs { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
-        .tab-btn {
-            padding: 10px 20px;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .tab-btn.active, .tab-btn:hover { background: var(--royal-blue); color: white; border-color: var(--royal-blue); }
-
-        .interactive-tool-panel {
-            background: var(--card-light);
-            border: 2px solid var(--royal-blue);
-            border-radius: 16px;
-            padding: 28px;
-            margin-bottom: 40px;
-            display: none;
-            box-shadow: 0 0 30px var(--blue-glow);
         }
 
         .guides-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-            gap: 24px;
-            margin-bottom: 50px;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
         }
 
-        .guide-card {
-            background: var(--card);
+        .progress-card {
+            background: var(--bg-elevated);
             border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 26px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.3s;
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin-bottom: 30px;
         }
-        .guide-card:hover { border-color: var(--royal-blue); transform: translateY(-3px); }
 
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
-        .card-icon { font-size: 28px; }
-        .card-badge { font-size: 11px; padding: 4px 10px; background: rgba(65, 105, 225, 0.2); color: var(--blue-light); border-radius: 20px; font-weight: 700; }
-        .card-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
-        .card-desc { color: var(--muted); font-size: 13px; margin-bottom: 20px; flex-grow: 1; }
-
-        .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 16px; margin-top: auto; }
-
-        .btn-action {
-            padding: 8px 16px;
-            background: var(--royal-blue);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
         }
-        .btn-action:hover { background: var(--royal-blue-dark); }
 
-        .checkbox-container { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); cursor: pointer; }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--royal-blue), var(--cyber-cyan));
+            transition: width 0.4s ease;
+        }
 
         .ai-assistant-card {
-            background: radial-gradient(circle at top right, rgba(65, 105, 225, 0.2), var(--card));
+            background: radial-gradient(circle at top right, rgba(65, 105, 225, 0.2), var(--bg-elevated));
             border: 1px solid var(--royal-blue);
-            border-radius: 16px;
+            border-radius: var(--radius-lg);
             padding: 28px;
-            margin-bottom: 50px;
-        }
-
-        .ai-prompt-box { display: flex; gap: 12px; margin-top: 18px; }
-        .ai-prompt-box input { flex: 1; padding: 13px 18px; background: #060b16; border: 1px solid var(--border); border-radius: 10px; color: white; font-size: 14px; }
-        .ai-response { margin-top: 18px; padding: 18px; background: rgba(5, 9, 18, 0.85); border: 1px solid var(--border); border-radius: 10px; display: none; }
-
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: var(--bg-secondary); border: 1px solid var(--royal-blue); border-radius: 16px; width: min(850px, 95%); max-height: 85vh; overflow-y: auto; padding: 32px; position: relative; }
-        .modal-close { position: absolute; right: 20px; top: 20px; background: none; border: none; color: var(--muted); font-size: 24px; cursor: pointer; }
-
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: var(--bg-secondary); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 10000; }
-        .bottom-nav a { color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; height: 100%; }
-        .bottom-nav a.active { color: var(--blue-light); }
-
-        @media (max-width: 768px) {
-            .nav-links { display: none; }
-            .guides-grid { grid-template-columns: 1fr; }
+            margin-bottom: 40px;
         }
     </style>
 </head>
-<body>
+<body data-page-id="guide">
 
-    <!-- NAVBAR -->
-    <nav>
-        <a href="../index.html" class="brand">
-            <div class="brand-icon"></div>
-            <span>CyberShield <span>AI</span></span>
-        </a>
+    <div class="app-shell">
+        <div id="cs-sidebar-container"></div>
 
-        <div class="nav-links">
-            <a href="../index.html">🏠 Home</a>
-            <a href="dashboard.html">📊 Dashboard</a>
-            <a href="guide.html" class="active">🛡️ Guidance</a>
-            <a href="phishing-detection.html">📧 Phishing</a>
-            <a href="cyberbullying-detection.html">💬 Cyberbullying</a>
-            <a href="digital-identity.html">🔑 Identity Vault</a>
-            <a href="security-analyzer.html">🔍 Security Analyzer</a>
-            <a href="security-report.html">📈 Audit Report</a>
-            <a href="settings.html">⚙️ Settings</a>
-        </div>
-    </nav>
+        <main class="main-content">
+            <div id="cs-header-container"></div>
 
-    <div class="container">
+            <div class="page-container">
+                
+                <!-- WELCOME HERO SECTION -->
+                <section class="welcome-hero">
+                    <div class="page-eyebrow">WELCOME TO CYBERSHIELD AI</div>
+                    <h1>Empowering Your Digital Safety & <span>Threat Awareness</span></h1>
+                    <p>CyberShield AI is an intelligent cybersecurity suite designed to protect your identity, scan incoming phishing attempts, evaluate cyberbullying toxicity, and provide real-time diagnostic reports.</p>
+                    
+                    <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+                        <a href="dashboard.html" class="btn btn-primary" style="padding: 12px 28px; font-size: 15px;">📊 Go to Dashboard →</a>
+                        <a href="phishing-detection.html" class="btn btn-secondary" style="padding: 12px 28px; font-size: 15px;">📧 Open Phishing Scanner</a>
+                    </div>
+                </section>
 
-        <!-- HERO HEADER -->
-        <div class="hero">
-            <div class="eyebrow">CYBERSHIELD AI PLATFORM</div>
-            <h1>Cybersecurity <span>Guidance & Interactive Features</span></h1>
-            <p>Click on Phishing or Cyberbullying tabs below to execute live detection tools and interactive step guides directly on this page!</p>
-        </div>
-
-        <!-- SEARCH BAR -->
-        <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" placeholder="Search guides, tools, FAQs (e.g. Phishing, Passwords, Ransomware)..." oninput="handleSearch()">
-        </div>
-
-        <!-- PROGRESS TRACKER -->
-        <div class="progress-card">
-            <div class="progress-info">
-                <h4>Security Mastery Progress</h4>
-                <p id="progressText">0 of 6 Modules Completed (0%)</p>
-            </div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progressBar"></div>
-            </div>
-        </div>
-
-        <!-- CATEGORY TABS -->
-        <div class="category-tabs">
-            <button class="tab-btn active" onclick="selectFeature('all', this)">🌐 All Modules</button>
-            <button class="tab-btn" onclick="selectFeature('phishing', this)">📧 Phishing Detection</button>
-            <button class="tab-btn" onclick="selectFeature('cyberbullying', this)">💬 Cyberbullying Protection</button>
-            <button class="tab-btn" onclick="selectFeature('passwords', this)">🔑 Password Health</button>
-            <button class="tab-btn" onclick="selectFeature('2fa', this)">🔐 2FA / WebAuthn</button>
-            <button class="tab-btn" onclick="selectFeature('ransomware', this)">☣️ Ransomware Defense</button>
-            <button class="tab-btn" onclick="selectFeature('dns', this)">🌐 DNS Security</button>
-        </div>
-
-        <!-- INTERACTIVE PHISHING SCANNER PANEL -->
-        <div class="interactive-tool-panel" id="phishingToolPanel">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-                <span style="font-size: 28px;">📧</span>
-                <div>
-                    <h3 style="font-size: 20px;">Live Phishing & Email Header Scanner</h3>
-                    <p style="color: var(--muted); font-size: 13px;">Test any suspicious email text, header, or URL for spoofing indicators</p>
+                <!-- MODULES SUMMARY SECTION -->
+                <div class="cs-card-header" style="margin-bottom: 14px;">
+                    <h2 style="font-size: 20px; font-weight: 800;">CyberShield AI Core Modules Overview</h2>
+                    <span style="color: var(--muted); font-size: 13px;">Select any module to navigate directly</span>
                 </div>
-            </div>
-            <textarea id="guidePhishInput" rows="3" style="width:100%; padding:14px; background:#060b16; border:1px solid var(--border); border-radius:10px; color:white; font-size:14px; margin-bottom:14px;" placeholder="Paste suspicious email text, raw header, or URL (e.g., 'Your bank account is locked! Click http://paypa1-verify.com')"></textarea>
-            <div style="display: flex; gap: 12px;">
-                <button class="btn-action" style="padding: 10px 24px; font-size: 14px;" onclick="runGuidePhishingScan()">🔍 Analyze Phishing Threat</button>
-                <button class="btn-action" style="background: var(--card-light); border: 1px solid var(--border);" onclick="document.getElementById('guidePhishInput').value='Urgent: Account Suspended! Verify immediately at http://pay-pal-security-update.xyz/login'">Load Phishing Sample</button>
-            </div>
-            <div id="guidePhishResult" style="margin-top: 16px; padding: 16px; background: rgba(5,9,18,0.9); border-radius: 10px; display: none;"></div>
-        </div>
 
-        <!-- INTERACTIVE CYBERBULLYING PANEL -->
-        <div class="interactive-tool-panel" id="bullyingToolPanel">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-                <span style="font-size: 28px;">💬</span>
-                <div>
-                    <h3 style="font-size: 20px;">Live Cyberbullying & Toxicity Analyzer</h3>
-                    <p style="color: var(--muted); font-size: 13px;">Analyze messages or social posts for harassment, hate speech, and threat keywords</p>
+                <div class="modules-overview-grid">
+                    <div class="module-summary-card">
+                        <div>
+                            <h3><span>📊</span> Command Dashboard</h3>
+                            <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">Centralized security score, active threat gauges, password health summary, and recent incident logs.</p>
+                        </div>
+                        <a href="dashboard.html" class="btn btn-secondary btn-sm" style="width: fit-content;">Open Dashboard →</a>
+                    </div>
+
+                    <div class="module-summary-card">
+                        <div>
+                            <h3><span>🔑</span> Digital Identity Vault</h3>
+                            <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">Manage zero-trust identity status, credential masking, QR verification, and privacy toggles.</p>
+                        </div>
+                        <a href="digital-identity.html" class="btn btn-secondary btn-sm" style="width: fit-content;">Manage Identity →</a>
+                    </div>
+
+                    <div class="module-summary-card">
+                        <div>
+                            <h3><span>🔍</span> Security Analyzer</h3>
+                            <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">Diagnostic password security evaluation, email footprint scanner, and domain vulnerability heuristics.</p>
+                        </div>
+                        <a href="security-analyzer.html" class="btn btn-secondary btn-sm" style="width: fit-content;">Run Security Diagnostics →</a>
+                    </div>
+
+                    <div class="module-summary-card">
+                        <div>
+                            <h3><span>📧</span> Phishing Detection</h3>
+                            <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">Standalone live phishing scanner analyzing email subject, body text, raw headers, and deceptive URLs.</p>
+                        </div>
+                        <a href="phishing-detection.html" class="btn btn-secondary btn-sm" style="width: fit-content;">Launch Phishing Tool →</a>
+                    </div>
+
+                    <div class="module-summary-card">
+                        <div>
+                            <h3><span>💬</span> Cyberbullying Detection</h3>
+                            <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">NLP text analyzer evaluating online messages for harassment, hate speech, threats, and profanity.</p>
+                        </div>
+                        <a href="cyberbullying-detection.html" class="btn btn-secondary btn-sm" style="width: fit-content;">Launch Toxicity Tool →</a>
+                    </div>
+
+                    <div class="module-summary-card">
+                        <div>
+                            <h3><span>📈</span> AI Security Report</h3>
+                            <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">Formal audit reports with Take Action and Mark as Fixed workflows that dynamically recalculate security scores.</p>
+                        </div>
+                        <a href="security-report.html" class="btn btn-secondary btn-sm" style="width: fit-content;">View Audit Report →</a>
+                    </div>
                 </div>
-            </div>
-            <textarea id="guideBullyInput" rows="3" style="width:100%; padding:14px; background:#060b16; border:1px solid var(--border); border-radius:10px; color:white; font-size:14px; margin-bottom:14px;" placeholder="Paste text or message to evaluate toxicity (e.g., 'Nobody likes you, get off the internet')"></textarea>
-            <div style="display: flex; gap: 12px;">
-                <button class="btn-action" style="padding: 10px 24px; font-size: 14px;" onclick="runGuideBullyingScan()">💬 Check Toxicity Score</button>
-                <button class="btn-action" style="background: var(--card-light); border: 1px solid var(--border);" onclick="document.getElementById('guideBullyInput').value='You are useless and nobody wants you here, quit already'">Load Sample Message</button>
-            </div>
-            <div id="guideBullyResult" style="margin-top: 16px; padding: 16px; background: rgba(5,9,18,0.9); border-radius: 10px; display: none;"></div>
-        </div>
 
-        <!-- GUIDES GRID -->
-        <div class="guides-grid" id="guidesGrid"></div>
-
-        <!-- AI ASSISTANT CARD -->
-        <div class="ai-assistant-card">
-            <div style="display: flex; align-items: center; gap: 14px;">
-                <span style="font-size: 32px;">🤖</span>
-                <div>
-                    <h2>Interactive AI Security Assistant</h2>
-                    <p style="color: var(--muted); font-size: 13px;">Ask any cybersecurity question for instant threat advice.</p>
+                <!-- PROGRESS TRACKER -->
+                <div class="progress-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="font-size: 16px; font-weight: 700;">Educational Mastery Progress</h4>
+                        <span style="color: var(--blue-light); font-weight: 700; font-size: 13px;" id="progressText">0 of 6 Modules Completed (0%)</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progressBar"></div>
+                    </div>
                 </div>
+
+                <!-- EDUCATIONAL GUIDES GRID -->
+                <div class="cs-card-header" style="margin-bottom: 14px;">
+                    <h2 style="font-size: 20px; font-weight: 800;">Interactive Security Guidance & Best Practices</h2>
+                </div>
+
+                <div class="guides-grid" id="guidesGrid"></div>
+
+                <!-- AI ASSISTANT -->
+                <div class="ai-assistant-card">
+                    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
+                        <span style="font-size: 32px;">🤖</span>
+                        <div>
+                            <h2 style="font-size: 20px; font-weight: 800;">Interactive AI Security Assistant</h2>
+                            <p style="color: var(--muted); font-size: 13px;">Ask any cybersecurity question for immediate threat guidance.</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 12px;">
+                        <input type="text" id="aiInput" class="input-control" placeholder="Ask CyberShield AI (e.g. 'How do I detect email spoofing?')" onkeypress="if(event.key==='Enter') askAI()">
+                        <button class="btn btn-primary" onclick="askAI()">Ask AI</button>
+                    </div>
+
+                    <div id="aiResponse" style="margin-top: 16px; padding: 16px; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 10px; display: none; font-size: 13.5px;"></div>
+                </div>
+
+                <div style="text-align: center; margin: 40px 0;">
+                    <a href="dashboard.html" class="btn btn-primary" style="padding: 14px 36px; font-size: 16px;">Continue to CyberShield Dashboard →</a>
+                </div>
+
             </div>
-
-            <div class="ai-prompt-box">
-                <input type="text" id="aiInput" placeholder="Ask CyberShield-AI (e.g., 'How do I detect phishing email spoofing?')" onkeypress="if(event.key==='Enter') askAIAssistant()">
-                <button class="btn-action" style="padding: 0 25px; font-size: 14px;" onclick="askAIAssistant()">Ask AI</button>
-            </div>
-
-            <div class="ai-response" id="aiResponse"></div>
-        </div>
-
+        </main>
     </div>
 
-    <!-- DETAIL MODAL -->
+    <!-- GUIDE DETAIL MODAL -->
     <div class="modal-overlay" id="guideModal">
-        <div class="modal-content">
+        <div class="modal-container">
             <button class="modal-close" onclick="closeModal()">✕</button>
             <div id="modalBody"></div>
         </div>
     </div>
 
-    <!-- BOTTOM NAV FOR MOBILE -->
-    <div class="bottom-nav">
-        <a href="../index.html">🏠<br>Home</a>
-        <a href="guide.html" class="active">🛡️<br>Guide</a>
-        <a href="dashboard.html">📊<br>Dashboard</a>
-        <a href="phishing-detection.html">📧<br>Phishing</a>
-        <a href="settings.html">⚙️<br>Settings</a>
-    </div>
-
+    <script src="../js/state.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/navigation.js"></script>
+    <script src="../js/app.js"></script>
     <script>
         const GUIDES_DATA = [
             {
                 id: "phishing-defense",
                 title: "Spotting & Defeating Phishing Campaigns",
-                category: "phishing",
                 badge: "Critical Skill",
-                readTime: "5 min",
-                summary: "Learn how spear-phishing attacks bypass spam filters, inspect raw email headers, and detect domain spoofing.",
                 icon: "📧",
+                summary: "Learn how spear-phishing attacks bypass spam filters, inspect raw email headers, and detect domain spoofing.",
                 steps: [
                     { num: "01", title: "Verify Sender Domain Integrity", desc: "Check for subtle homograph attacks (e.g., paypa1.com vs paypal.com). Inspect the Return-Path header." },
                     { num: "02", title: "Inspect Link Destinations", desc: "Hover over hyperlinks without clicking. Beware of masked shorteners." },
@@ -398,11 +248,9 @@
             {
                 id: "cyberbullying-defense",
                 title: "Cyberbullying Prevention & Safety Protocols",
-                category: "cyberbullying",
                 badge: "Digital Wellbeing",
-                readTime: "4 min",
-                summary: "Proactive strategies to identify online harassment, document digital evidence, and enforce boundary controls.",
                 icon: "💬",
+                summary: "Proactive strategies to identify online harassment, document digital evidence, and enforce boundary controls.",
                 steps: [
                     { num: "01", title: "Document Digital Evidence", desc: "Take full timestamps, screenshots, and export chat transcripts before blocking." },
                     { num: "02", title: "Enforce Platform Controls", desc: "Mute, block, and file abuse tickets directly with service moderators." },
@@ -412,11 +260,9 @@
             {
                 id: "password-vault",
                 title: "Password Security & Zero-Trust Vaults",
-                category: "passwords",
                 badge: "Essential Practice",
-                readTime: "6 min",
-                summary: "Master length-based passphrases, AES-256 encrypted vaults, and memory-hard hashing algorithms.",
                 icon: "🔑",
+                summary: "Master length-based passphrases, AES-256 encrypted vaults, and memory-hard hashing algorithms.",
                 steps: [
                     { num: "01", title: "Adopt High-Entropy Passphrases", desc: "Use 16+ character random passphrases combining words, numbers, and symbols." },
                     { num: "02", title: "Eliminate Password Reuse", desc: "Store credentials in an offline or zero-knowledge encrypted vault." }
@@ -425,11 +271,9 @@
             {
                 id: "hardware-2fa",
                 title: "FIDO2 & Hardware-Based 2FA",
-                category: "2fa",
                 badge: "High Security",
-                readTime: "4 min",
-                summary: "Upgrade from SMS OTPs to phishing-resistant FIDO2 / WebAuthn hardware security keys.",
                 icon: "🔐",
+                summary: "Upgrade from SMS OTPs to phishing-resistant FIDO2 / WebAuthn hardware security keys.",
                 steps: [
                     { num: "01", title: "Disable SMS OTP Fallbacks", desc: "SIM swapping attacks intercept SMS codes. Switch to TOTP authenticators or FIDO2 keys." },
                     { num: "02", title: "Register Hardware Backup Keys", desc: "Keep a secondary security key in a secure physical location." }
@@ -438,11 +282,9 @@
             {
                 id: "ransomware-isolation",
                 title: "Ransomware Response & Data Backup",
-                category: "ransomware",
                 badge: "Incident Response",
-                readTime: "7 min",
-                summary: "Contain zero-day ransomware outbreaks, isolate infected network segments, and configure 3-2-1 backup systems.",
                 icon: "☣️",
+                summary: "Contain zero-day ransomware outbreaks, isolate infected network segments, and configure 3-2-1 backup systems.",
                 steps: [
                     { num: "01", title: "Immediate Network Isolation", desc: "Disconnect Ethernet and disable Wi-Fi immediately to block lateral movement." },
                     { num: "02", title: "Verify Immutable Backups", desc: "Restore system images from read-only air-gapped backups." }
@@ -451,73 +293,40 @@
             {
                 id: "dns-doh-hardening",
                 title: "Encrypted DNS (DoH/DoT) Hardening",
-                category: "dns",
                 badge: "Network Privacy",
-                readTime: "3 min",
-                summary: "Prevent DNS spoofing and ISP tracking by routing hostname queries through DNS-over-HTTPS resolvers.",
                 icon: "🌐",
+                summary: "Prevent DNS spoofing and ISP tracking by routing hostname queries through DNS-over-HTTPS resolvers.",
                 steps: [
                     { num: "01", title: "Enforce Encrypted DNS (DoH)", desc: "Route hostname queries through Quad9 or Cloudflare encrypted resolvers." }
                 ]
             }
         ];
 
-        let currentCategory = "all";
-        let userProgress = JSON.parse(localStorage.getItem("cs_progress") || "{}");
+        let userProgress = JSON.parse(localStorage.getItem("cs_guide_progress") || "{}");
 
         document.addEventListener("DOMContentLoaded", () => {
             renderGuides();
             updateProgressBar();
         });
 
-        function selectFeature(cat, btn) {
-            currentCategory = cat;
-            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-            if (btn) btn.classList.add("active");
-
-            const pTool = document.getElementById("phishingToolPanel");
-            const bTool = document.getElementById("bullyingToolPanel");
-
-            if (cat === "phishing") {
-                pTool.style.display = "block";
-                bTool.style.display = "none";
-            } else if (cat === "cyberbullying") {
-                pTool.style.display = "none";
-                bTool.style.display = "block";
-            } else {
-                pTool.style.display = "none";
-                bTool.style.display = "none";
-            }
-
-            renderGuides();
-        }
-
         function renderGuides() {
             const grid = document.getElementById("guidesGrid");
-            const q = document.getElementById("searchInput").value.toLowerCase();
-
-            const filtered = GUIDES_DATA.filter(g => {
-                const matchCat = (currentCategory === "all" || g.category === currentCategory);
-                const matchSearch = g.title.toLowerCase().includes(q) || g.summary.toLowerCase().includes(q);
-                return matchCat && matchSearch;
-            });
-
-            grid.innerHTML = filtered.map(g => `
-                <div class="guide-card">
+            grid.innerHTML = GUIDES_DATA.map(g => `
+                <div class="cs-card" style="display: flex; flex-direction: column; justify-content: space-between;">
                     <div>
-                        <div class="card-header">
-                            <span class="card-icon">${g.icon}</span>
-                            <span class="card-badge">${g.badge}</span>
+                        <div class="cs-card-header">
+                            <span style="font-size: 28px;">${g.icon}</span>
+                            <span class="badge badge-info">${g.badge}</span>
                         </div>
-                        <div class="card-title">${g.title}</div>
-                        <div class="card-desc">${g.summary}</div>
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">${g.title}</h3>
+                        <p style="color: var(--muted); font-size: 13px; margin-bottom: 18px;">${g.summary}</p>
                     </div>
-                    <div class="card-footer">
-                        <label class="checkbox-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-soft); padding-top: 14px;">
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); cursor: pointer;">
                             <input type="checkbox" ${userProgress[g.id] ? "checked" : ""} onchange="toggleProgress('${g.id}', this.checked)">
-                            <span>Mark Complete</span>
+                            Mark Complete
                         </label>
-                        <button class="btn-action" onclick="openGuideModal('${g.id}')">Read Steps →</button>
+                        <button class="btn btn-secondary btn-sm" onclick="openGuideModal('${g.id}')">Read Steps →</button>
                     </div>
                 </div>
             `).join("");
@@ -525,7 +334,7 @@
 
         function toggleProgress(id, checked) {
             userProgress[id] = checked;
-            localStorage.setItem("cs_progress", JSON.stringify(userProgress));
+            localStorage.setItem("cs_guide_progress", JSON.stringify(userProgress));
             updateProgressBar();
         }
 
@@ -538,78 +347,35 @@
             document.getElementById("progressBar").style.width = `${pct}%`;
         }
 
-        function handleSearch() {
-            renderGuides();
+        function openGuideModal(id) {
+            const g = GUIDES_DATA.find(item => item.id === id);
+            if (!g) return;
+            const modal = document.getElementById("guideModal");
+            const body = document.getElementById("modalBody");
+            body.innerHTML = `
+                <div style="margin-bottom: 16px;">
+                    <span class="badge badge-info">${g.badge}</span>
+                    <h2 style="font-size: 20px; font-weight: 800; margin: 8px 0 4px;">${g.icon} ${g.title}</h2>
+                    <p style="color: var(--muted); font-size: 13px;">${g.summary}</p>
+                </div>
+                <hr style="border-color: var(--border-soft); margin-bottom: 18px;">
+                <h4 style="margin-bottom: 10px; font-size: 14px;">Step-by-Step Security Instructions:</h4>
+                ${g.steps.map(s => `
+                    <div style="background: var(--bg-primary); border: 1px solid var(--border-soft); border-radius: 10px; padding: 14px; margin-bottom: 10px;">
+                        <div style="color: var(--blue-light); font-weight: bold; font-size: 11px;">STEP ${s.num}</div>
+                        <h5 style="font-size: 14px; margin: 2px 0 4px; color: var(--white);">${s.title}</h5>
+                        <p style="font-size: 12.5px; color: var(--muted);">${s.desc}</p>
+                    </div>
+                `).join('')}
+            `;
+            modal.classList.add("active");
         }
 
-        async function runGuidePhishingScan() {
-            const input = document.getElementById("guidePhishInput").value;
-            const resBox = document.getElementById("guidePhishResult");
-            if (!input.trim()) return;
-
-            resBox.style.display = "block";
-            resBox.innerHTML = "<p style='color: var(--muted);'>⏳ Scanning text with CyberShield-AI Phishing Engine...</p>";
-
-            try {
-                const res = await fetch("/api/detect/phishing", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ input_text: input })
-                });
-                const data = await res.json();
-                resBox.innerHTML = `
-                    <div style="color: ${data.is_phishing ? 'var(--danger)' : 'var(--success)'}; font-weight: bold; font-size: 16px;">
-                        ${data.is_phishing ? '🚨 PHISHING ATTACK SUSPECTED' : '✅ LEGITIMATE CONTENT / LOW RISK'}
-                    </div>
-                    <p style="font-size: 13px; margin-top: 4px;">Risk Score: <strong>${data.risk_score}/100</strong> (${data.risk_level})</p>
-                    <p style="font-size: 13px; color: var(--muted); margin-top: 6px;">Flagged Indicators: ${data.indicators.join(', ') || 'None'}</p>
-                `;
-            } catch (err) {
-                // Fallback simulation
-                const isSusp = input.toLowerCase().includes("urgent") || input.toLowerCase().includes("payp") || input.toLowerCase().includes("verify");
-                resBox.innerHTML = `
-                    <div style="color: ${isSusp ? 'var(--danger)' : 'var(--success)'}; font-weight: bold;">
-                        ${isSusp ? '🚨 PHISHING ATTACK DETECTED (Client Engine)' : '✅ SAFE / LOW RISK'}
-                    </div>
-                    <p style="font-size:13px; color:var(--muted); margin-top:4px;">Evaluated email headers and link domain integrity.</p>
-                `;
-            }
+        function closeModal() {
+            document.getElementById("guideModal").classList.remove("active");
         }
 
-        async function runGuideBullyingScan() {
-            const input = document.getElementById("guideBullyInput").value;
-            const resBox = document.getElementById("guideBullyResult");
-            if (!input.trim()) return;
-
-            resBox.style.display = "block";
-            resBox.innerHTML = "<p style='color: var(--muted);'>⏳ Evaluating toxicity & harassment score...</p>";
-
-            try {
-                const res = await fetch("/api/detect/cyberbullying", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ text: input })
-                });
-                const data = await res.json();
-                resBox.innerHTML = `
-                    <div style="color: ${data.toxicity_score >= 35 ? 'var(--danger)' : 'var(--success)'}; font-weight: bold; font-size: 16px;">
-                        ${data.toxicity_level}
-                    </div>
-                    <p style="font-size: 13px; margin-top: 4px;">Toxicity Score: <strong>${data.toxicity_score}/100</strong></p>
-                    <p style="font-size: 13px; color: var(--muted); margin-top: 6px;">Flagged Words: ${data.flagged_words.join(', ') || 'None'}</p>
-                `;
-            } catch (err) {
-                const isToxic = input.toLowerCase().includes("hate") || input.toLowerCase().includes("die") || input.toLowerCase().includes("useless");
-                resBox.innerHTML = `
-                    <div style="color: ${isToxic ? 'var(--danger)' : 'var(--success)'}; font-weight: bold;">
-                        ${isToxic ? '🚨 HIGH TOXICITY / HARASSMENT DETECTED' : '✅ SAFE / NON-TOXIC'}
-                    </div>
-                    <p style="font-size:13px; color:var(--muted); margin-top:4px;">Text evaluated against cyberbullying keywords.</p>
-                `;
-            }
-        }
-
-        function askAIAssistant() {
+        function askAI() {
             const input = document.getElementById("aiInput");
             const respBox = document.getElementById("aiResponse");
             const q = input.value.trim().toLowerCase();
@@ -617,39 +383,13 @@
 
             respBox.style.display = "block";
             if (q.includes("phish")) {
-                respBox.innerHTML = "📧 <strong>Phishing Defense Advice</strong>:<br>1. Inspect raw headers for SPF/DKIM failures.<br>2. Run our live Phishing Scanner tool above!<br>3. Verify sender out-of-band.";
+                respBox.innerHTML = "📧 <strong>Phishing Defense Advice</strong>:<br>1. Inspect email header domains for homograph mismatches.<br>2. Use our standalone <a href='phishing-detection.html' style='color:var(--blue-light);font-weight:bold;'>Phishing Scanner Tool</a> to test suspicious text.<br>3. Report unverified sender domains immediately.";
             } else if (q.includes("bully") || q.includes("hate")) {
-                respBox.innerHTML = "💬 <strong>Cyberbullying Protection Advice</strong>:<br>1. Save screenshot evidence.<br>2. Use our live Cyberbullying Analyzer tool above!<br>3. Block user and report to moderators.";
+                respBox.innerHTML = "💬 <strong>Cyberbullying Protection Advice</strong>:<br>1. Document full chat logs and timestamp screenshots.<br>2. Evaluate message toxicity in our <a href='cyberbullying-detection.html' style='color:var(--blue-light);font-weight:bold;'>Cyberbullying Analyzer Tool</a>.<br>3. Enforce mute/block controls and file moderator tickets.";
             } else {
-                respBox.innerHTML = `🛡️ <strong>CyberShield AI Advisor Response</strong>:<br>Regarding <em>"${input.value}"</em>:<br>1. Practice least privilege.<br>2. Keep systems updated.<br>3. Follow security guidelines.`;
+                respBox.innerHTML = `🛡️ <strong>CyberShield AI Advisor Response</strong>:<br>Regarding <em>"${input.value}"</em>:<br>1. Enforce zero-trust credential principles.<br>2. Keep browser and OS security patches updated.<br>3. Monitor active score telemetry on your Dashboard.`;
             }
         }
-
-        function openGuideModal(id) {
-            const g = GUIDES_DATA.find(item => item.id === id);
-            if (!g) return;
-            const modal = document.getElementById("guideModal");
-            const body = document.getElementById("modalBody");
-            body.innerHTML = `
-                <div style="margin-bottom: 18px;">
-                    <span class="card-badge">${g.badge}</span>
-                    <h2 style="font-size: 24px; margin: 10px 0 6px;">${g.icon} ${g.title}</h2>
-                    <p style="color: var(--muted);">${g.summary}</p>
-                </div>
-                <hr style="border-color: var(--border); margin-bottom: 20px;">
-                <h3 style="margin-bottom: 12px;">Step-by-Step Security Instructions</h3>
-                ${g.steps.map(s => `
-                    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 12px;">
-                        <div style="color: var(--blue-light); font-weight: bold; font-size: 11px;">STEP ${s.num}</div>
-                        <h4 style="font-size: 15px; margin: 4px 0 6px;">${s.title}</h4>
-                        <p style="font-size: 13px; color: var(--muted);">${s.desc}</p>
-                    </div>
-                `).join('')}
-            `;
-            modal.style.display = "flex";
-        }
-
-        function closeModal() { document.getElementById("guideModal").style.display = "none"; }
     </script>
 </body>
 </html>

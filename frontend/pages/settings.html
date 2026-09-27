@@ -3,293 +3,428 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberShield AI — Settings & Preferences</title>
+    <title>CyberShield AI — Profile & Settings</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/responsive.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --bg: #050912;
-            --bg-secondary: #080f1d;
-            --card: #101a2a;
-            --card-light: #142238;
-            --border: #1e3554;
-            --royal-blue: #4169e1;
-            --royal-blue-dark: #3154c6;
-            --blue-light: #6d8cff;
-            --blue-glow: rgba(65, 105, 225, 0.35);
-            --white: #f5f8ff;
-            --text: #d9e3f5;
-            --muted: #8293ad;
-            --success: #42d392;
-            --warning: #fbbf24;
-            --danger: #f87171;
-        }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: var(--bg);
-            color: var(--white);
-            line-height: 1.6;
-            min-height: 100vh;
-            padding-bottom: 90px;
-        }
-
-        nav {
-            height: 70px;
-            width: 100%;
-            background: rgba(5, 9, 18, 0.95);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 4%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(12px);
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 18px;
-            font-weight: 700;
-            text-decoration: none;
-            color: white;
-        }
-
-        .brand-icon {
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            background: linear-gradient(135deg, var(--royal-blue), #2747a9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 18px var(--blue-glow);
-        }
-
-        .brand-icon::before { content: "🛡️"; font-size: 18px; }
-        .brand span:last-child { color: var(--blue-light); }
-
-        .nav-links { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-        .nav-links a {
-            text-decoration: none;
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.2s;
-            padding: 6px 12px;
-            border-radius: 6px;
-        }
-        .nav-links a:hover, .nav-links a.active {
-            color: white;
-            background: rgba(65, 105, 225, 0.2);
-        }
-
-        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
-
-        .hero { margin-bottom: 30px; text-align: center; }
-        .hero h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
-        .hero h1 span { color: var(--blue-light); }
-        .hero p { color: var(--muted); font-size: 15px; }
-
         .settings-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
         }
 
-        .setting-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 26px;
+        .profile-card-top {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(111,129,201,.18);
+            margin-bottom: 20px;
         }
 
-        .setting-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .big-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg,#604bff,#8068fb);
+            border: 2px solid rgba(255,255,255,.3);
+            display: grid;
+            place-items: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 8px 24px rgba(96,75,255,.35);
+            flex-shrink: 0;
+        }
 
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+        .profile-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 10px;
+        }
 
-        .input-control, select {
-            width: 100%;
-            padding: 12px 16px;
-            background: #060b16;
-            border: 1px solid var(--border);
+        .stat-badge {
+            background: rgba(4,16,39,.6);
+            border: 1px solid rgba(99,120,199,.3);
             border-radius: 8px;
-            color: white;
-            font-size: 14px;
-            outline: none;
+            padding: 6px 12px;
+            font-size: 10px;
         }
 
-        .toggle-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-        .toggle-row label { font-size: 13px; color: var(--text); }
+        .stat-badge strong {
+            display: block;
+            font-size: 13px;
+            color: #edf0ff;
+        }
 
-        .btn-action {
-            padding: 12px 24px;
-            background: var(--royal-blue);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 700;
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed rgba(111,129,201,.18);
+            font-size: 11px;
+            color: #d0d6eb;
+        }
+
+        .toggle-row:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-info strong {
+            display: block;
+            font-size: 11px;
+            color: #edf0ff;
+        }
+
+        .toggle-info span {
+            font-size: 9px;
+            color: #8494be;
+        }
+
+        /* Custom Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
             cursor: pointer;
-            transition: all 0.2s;
+            inset: 0;
+            background-color: rgba(4,16,39,.8);
+            border: 1px solid rgba(99,120,199,.44);
+            border-radius: 24px;
+            transition: .3s;
         }
-        .btn-action:hover { background: var(--royal-blue-dark); }
-        .btn-danger { background: rgba(248, 113, 113, 0.2); color: var(--danger); border: 1px solid var(--danger); }
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: var(--bg-secondary); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 10000; }
-        .bottom-nav a { color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; height: 100%; }
-        .bottom-nav a.active { color: var(--blue-light); }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #8494be;
+            border-radius: 50%;
+            transition: .3s;
+        }
 
-        @media (max-width: 768px) { .nav-links { display: none; } }
+        input:checked + .slider {
+            background: linear-gradient(110deg,#5b4cf1,#7760fb);
+            border-color: #7569ff;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+            background-color: #fff;
+        }
     </style>
 </head>
-<body>
+<body data-page-id="settings">
 
-    <!-- NAVBAR -->
-    <nav>
-        <a href="../index.html" class="brand">
-            <div class="brand-icon"></div>
-            <span>CyberShield <span>AI</span></span>
-        </a>
+    <div class="app-shell">
+        <div id="cs-sidebar-container"></div>
 
-        <div class="nav-links">
-            <a href="../index.html">🏠 Home</a>
-            <a href="dashboard.html">📊 Dashboard</a>
-            <a href="guide.html">🛡️ Guidance</a>
-            <a href="phishing-detection.html">📧 Phishing</a>
-            <a href="cyberbullying-detection.html">💬 Cyberbullying</a>
-            <a href="digital-identity.html">🔑 Identity Vault</a>
-            <a href="security-analyzer.html">🔍 Security Analyzer</a>
-            <a href="security-report.html">📈 Audit Report</a>
-            <a href="settings.html" class="active">⚙️ Settings</a>
-        </div>
-    </nav>
+        <main class="main">
+            <div id="cs-header-container"></div>
 
-    <div class="container">
+            <div class="page">
 
-        <!-- HERO HEADER -->
-        <div class="hero">
-            <h1>Settings & <span>Security Preferences</span></h1>
-            <p>Manage profile credentials, threat sensitivity thresholds, AI assistant models, and zero-trust vault preferences.</p>
-        </div>
-
-        <div class="settings-grid">
-
-            <!-- PROFILE SETTINGS -->
-            <div class="setting-card">
-                <h3><span>👤</span> User Profile & Security Role</h3>
-                <div class="form-group">
-                    <label>Administrator Name</label>
-                    <input type="text" id="profName" class="input-control" value="CyberShield Lead Admin">
+                <!-- PAGE HEADING -->
+                <div class="page-heading">
+                    <button class="icon-button" onclick="window.location.href='dashboard.html'" title="Back to Dashboard">
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </button>
+                    <div>
+                        <h1>Profile & Settings</h1>
+                        <p>Manage user profile credentials, threat sensitivity thresholds, AI model preferences, and zero-trust privacy controls.</p>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Security Email Contact</label>
-                    <input type="email" id="profEmail" class="input-control" value="admin@cybershield.ai">
+
+                <!-- USER PROFILE OVERVIEW HEADER -->
+                <section class="panel">
+                    <div class="profile-card-top">
+                        <div class="big-avatar" id="avatarDisplay">NS</div>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <h2 style="font-size: 16px; margin: 0;" id="displayName">Neeraja Shinde</h2>
+                                <span class="badge badge-success">● Lead Administrator</span>
+                                <span class="ai-badge">✦ Zero-Trust Active</span>
+                            </div>
+                            <p style="margin: 4px 0 0; font-size: 10px; color: #8494be;" id="displayEmail">neeraja.shinde@cybershield.ai</p>
+                            <div class="profile-stats">
+                                <div class="stat-badge">
+                                    <span style="color: #8494be;">Security Score</span>
+                                    <strong style="color: #31d5ae;" id="statScore">90/100</strong>
+                                </div>
+                                <div class="stat-badge">
+                                    <span style="color: #8494be;">Monitored Accounts</span>
+                                    <strong>6 Accounts</strong>
+                                </div>
+                                <div class="stat-badge">
+                                    <span style="color: #8494be;">Breach Exposures</span>
+                                    <strong style="color: #31d5ae;">0 Active</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="settings-grid">
+
+                    <!-- USER PROFILE CREDENTIALS -->
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <div class="title-icon">👤</div>
+                                <div>
+                                    <h2>Account Credentials</h2>
+                                    <p class="panel-subtitle">Update administrator identity and contact details</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Full Administrator Name</label>
+                            <input type="text" id="settingName" class="text-field" value="Neeraja Shinde" oninput="updateAvatarPreview()">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Security Contact Email</label>
+                            <input type="email" id="settingEmail" class="text-field" value="neeraja.shinde@cybershield.ai">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Administrative Role</label>
+                            <input type="text" class="text-field" value="Lead Security Administrator (Full Permissions)" readonly style="opacity: 0.7; cursor: not-allowed;">
+                        </div>
+                    </section>
+
+                    <!-- THREAT SENSITIVITY ENGINE -->
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <div class="title-icon">🛡️</div>
+                                <div>
+                                    <h2>Threat Sensitivity Engine</h2>
+                                    <p class="panel-subtitle">Configure automated heuristic threshold algorithms</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Threat Detection Threshold</label>
+                            <select id="settingSensitivity" class="text-field">
+                                <option value="high" selected>High (Recommended for Active Defense)</option>
+                                <option value="paranoid">Paranoid (Maximum Heuristics & Aggressive Quarantine)</option>
+                                <option value="medium">Balanced / Medium</option>
+                            </select>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <strong>Automated Link Isolation</strong>
+                                <span>Quarantine suspicious spoofed URLs instantly</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="settingAutoIso" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <strong>Deep Domain Heuristics</strong>
+                                <span>Analyze typosquatting and WHOIS registration entropy</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="settingDeepScan" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </section>
+
+                    <!-- AI SECURITY MODEL SETTINGS -->
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <div class="title-icon">🤖</div>
+                                <div>
+                                    <h2>AI Security Model Settings</h2>
+                                    <p class="panel-subtitle">Select neural evaluation engine and feedback loop</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Active AI Evaluation Model</label>
+                            <select id="settingAiModel" class="text-field">
+                                <option value="CyberShield-DeepSense-v2" selected>CyberShield-DeepSense-v2 (Real-Time Neural)</option>
+                                <option value="CyberShield-Heuristic-v1">CyberShield-Heuristic-v1 (Offline Client Engine)</option>
+                            </select>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <strong>Interactive Resolution Walkthroughs</strong>
+                                <span>Suggest step-by-step fix guides for detected threats</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="settingAutoSuggest" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </section>
+
+                    <!-- ZERO-TRUST PRIVACY VAULT -->
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <div class="title-icon">🔒</div>
+                                <div>
+                                    <h2>Zero-Trust Privacy & Storage</h2>
+                                    <p class="panel-subtitle">Client-side data isolation and analytics controls</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <strong>Anonymize Telemetry IP Records</strong>
+                                <span>Strip network addresses before logging scan events</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="settingAnonIp" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <strong>Client Telemetry Analytics</strong>
+                                <span>Send anonymous error logs to improve AI detection</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="settingTelemetryOpt">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </section>
+
                 </div>
+
+                <!-- BOTTOM ACTION BAR -->
+                <div style="display: flex; gap: 12px; justify-content: flex-end; align-items: center; margin-top: 10px;">
+                    <button class="btn btn-secondary" onclick="resetDefaultSettings()">Reset Defaults</button>
+                    <button class="primary-button" onclick="saveSystemSettings()"><span>✓ Save Settings Configuration</span></button>
+                </div>
+
             </div>
-
-            <!-- THREAT DETECTOR CONFIGURATION -->
-            <div class="setting-card">
-                <h3><span>🛡️</span> Real-Time Threat Shield</h3>
-                <div class="form-group">
-                    <label>Threat Sensitivity Threshold</label>
-                    <select id="sensitivitySelect">
-                        <option value="high" selected>High (Recommended for Active Defense)</option>
-                        <option value="paranoid">Paranoid (Maximum Heuristics & Aggressive Quarantine)</option>
-                        <option value="medium">Balanced / Medium</option>
-                    </select>
-                </div>
-                <div class="toggle-row">
-                    <label>Automated Isolation of Suspicious Emails</label>
-                    <input type="checkbox" id="autoIso" checked>
-                </div>
-                <div class="toggle-row">
-                    <label>Deep Domain Heuristics Scanning</label>
-                    <input type="checkbox" id="deepScan" checked>
-                </div>
-            </div>
-
-            <!-- AI ASSISTANT MODEL CONFIGURATION -->
-            <div class="setting-card">
-                <h3><span>🤖</span> AI Security Engine Settings</h3>
-                <div class="form-group">
-                    <label>Primary AI Model</label>
-                    <select id="aiModelSelect">
-                        <option value="CyberShield-DeepSense-v2" selected>CyberShield-DeepSense-v2 (Real-Time)</option>
-                        <option value="CyberShield-Heuristic-v1">CyberShield-Heuristic-v1 (Offline)</option>
-                    </select>
-                </div>
-                <div class="toggle-row">
-                    <label>Auto-Suggest Interactive Security Walkthroughs</label>
-                    <input type="checkbox" id="autoSuggest" checked>
-                </div>
-            </div>
-
-            <!-- PRIVACY & VAULT CONFIGURATION -->
-            <div class="setting-card">
-                <h3><span>🔒</span> Zero-Trust Privacy Vault</h3>
-                <div class="toggle-row">
-                    <label>Client Telemetry Analytics (Opt-Out)</label>
-                    <input type="checkbox" id="telemetryOpt">
-                </div>
-                <div class="toggle-row">
-                    <label>Anonymize Source IP Addresses in Local DB</label>
-                    <input type="checkbox" id="anonIp" checked>
-                </div>
-            </div>
-
-        </div>
-
-        <div style="display: flex; gap: 14px; justify-content: flex-end;">
-            <button class="btn-action btn-danger" onclick="resetSettings()">Reset Default Settings</button>
-            <button class="btn-action" onclick="saveSettings()">Save Configuration</button>
-        </div>
-
-        <div id="saveToast" style="margin-top: 16px; padding: 14px; background: rgba(66,211,146,0.15); border: 1px solid var(--success); color: var(--success); border-radius: 8px; text-align: center; display: none;">
-            ✅ Settings saved and updated in SQLite Database!
-        </div>
-
+        </main>
     </div>
 
-    <!-- MOBILE BOTTOM NAVIGATION -->
-    <div class="bottom-nav">
-        <a href="../index.html">🏠<br>Home</a>
-        <a href="guide.html">🛡️<br>Guide</a>
-        <a href="dashboard.html">📊<br>Dashboard</a>
-        <a href="phishing-detection.html">📧<br>Phishing</a>
-        <a href="settings.html" class="active">⚙️<br>Settings</a>
-    </div>
-
+    <script src="../js/state.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/navigation.js"></script>
+    <script src="../js/app.js"></script>
     <script>
-        async function saveSettings() {
-            const payload = {
-                profile: { name: document.getElementById("profName").value, email: document.getElementById("profEmail").value },
-                security: { threat_sensitivity: document.getElementById("sensitivitySelect").value, deep_heuristics: document.getElementById("deepScan").checked }
-            };
+        document.addEventListener("DOMContentLoaded", () => {
+            CyberShieldNav.init("settings");
+            loadSettings();
+        });
 
-            try {
-                await fetch("/api/settings", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-            } catch (err) {}
+        function loadSettings() {
+            if (!window.CyberShieldState) return;
+            const state = CyberShieldState.getState();
+            const user = state.user || {};
+            const settings = state.settings || {};
 
-            const toast = document.getElementById("saveToast");
-            toast.style.display = "block";
-            setTimeout(() => { toast.style.display = "none"; }, 2500);
+            if (user.name) {
+                document.getElementById("settingName").value = user.name;
+                document.getElementById("displayName").textContent = user.name;
+            }
+            if (user.email) {
+                document.getElementById("settingEmail").value = user.email;
+                document.getElementById("displayEmail").textContent = user.email;
+            }
+            if (user.avatarInitials) {
+                document.getElementById("avatarDisplay").textContent = user.avatarInitials;
+            } else if (user.name) {
+                const parts = user.name.split(" ");
+                const initials = (parts[0][0] + (parts[1] ? parts[1][0] : "")).toUpperCase();
+                document.getElementById("avatarDisplay").textContent = initials;
+            }
+
+            if (state.securityReport) {
+                document.getElementById("statScore").textContent = state.securityReport.score + "/100";
+            }
+
+            if (settings.sensitivity) document.getElementById("settingSensitivity").value = settings.sensitivity;
+            if (settings.aiModel) document.getElementById("settingAiModel").value = settings.aiModel;
         }
 
-        async function resetSettings() {
-            try {
-                await fetch("/api/settings/reset", { method: "POST" });
-            } catch (err) {}
-            alert("Settings reset to factory defaults.");
+        function updateAvatarPreview() {
+            const name = document.getElementById("settingName").value.trim();
+            if (!name) return;
+            document.getElementById("displayName").textContent = name;
+            const parts = name.split(" ");
+            const initials = (parts[0][0] + (parts[1] ? parts[1][0] : "")).toUpperCase();
+            document.getElementById("avatarDisplay").textContent = initials;
+        }
+
+        function saveSystemSettings() {
+            const name = document.getElementById("settingName").value.trim();
+            const email = document.getElementById("settingEmail").value.trim();
+            const sensitivity = document.getElementById("settingSensitivity").value;
+            const aiModel = document.getElementById("settingAiModel").value;
+
+            if (!name || !email) {
+                if (window.CyberShieldUtils) CyberShieldUtils.showToast("Please provide valid name and email", "error");
+                else alert("Please provide valid name and email");
+                return;
+            }
+
+            if (window.CyberShieldState) {
+                CyberShieldState.updateUser({ name, email });
+                CyberShieldState.updateSettings({ sensitivity, aiModel });
+            }
+
+            if (window.CyberShieldUtils) {
+                CyberShieldUtils.showToast("System settings and user profile saved successfully!", "success");
+            } else {
+                alert("Settings saved successfully!");
+            }
+
+            loadSettings();
+        }
+
+        function resetDefaultSettings() {
+            document.getElementById("settingSensitivity").value = "high";
+            document.getElementById("settingAiModel").value = "CyberShield-DeepSense-v2";
+            document.getElementById("settingAutoIso").checked = true;
+            document.getElementById("settingDeepScan").checked = true;
+            document.getElementById("settingAutoSuggest").checked = true;
+            document.getElementById("settingAnonIp").checked = true;
+            document.getElementById("settingTelemetryOpt").checked = false;
+
+            if (window.CyberShieldUtils) {
+                CyberShieldUtils.showToast("Settings reset to default configuration.", "warning");
+            } else {
+                alert("Settings reset to default configuration.");
+            }
         }
     </script>
 </body>
