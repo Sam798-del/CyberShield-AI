@@ -1,6 +1,6 @@
 """
 CyberShield AI Desktop Module - Settings Page
-Developed by Shreya
+
 """
 
 import webbrowser
