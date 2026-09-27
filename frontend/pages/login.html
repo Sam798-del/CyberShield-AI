@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI — Sign In & Account Registration</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #050912;
+            --bg-secondary: #080f1d;
+            --card: #101a2a;
+            --card-light: #142238;
+            --border: #1e3554;
+            --royal-blue: #4169e1;
+            --royal-blue-dark: #3154c6;
+            --blue-light: #6d8cff;
+            --blue-glow: rgba(65, 105, 225, 0.35);
+            --cyber-cyan: #00f2fe;
+            --white: #f5f8ff;
+            --text: #d9e3f5;
+            --muted: #8293ad;
+            --success: #42d392;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        nav {
+            height: 70px;
+            width: 100%;
+            background: rgba(5, 9, 18, 0.95);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--royal-blue), #2747a9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 18px var(--blue-glow);
+        }
+
+        .brand-icon::before { content: "🛡️"; font-size: 18px; }
+        .brand span:last-child { color: var(--blue-light); }
+
+        .nav-links { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: white;
+            background: rgba(65, 105, 225, 0.2);
+        }
+
+        .login-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            min-height: calc(100vh - 200px);
+        }
+
+        .login-left {
+            flex: 1;
+            padding: 30px;
+            background: radial-gradient(circle at top left, rgba(65, 105, 225, 0.15), transparent 70%);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .tagline { color: var(--blue-light); font-size: 14px; font-weight: 700; margin-bottom: 16px; letter-spacing: 1px; }
+        .hero-text h1 { font-size: 42px; font-weight: 800; line-height: 1.15; margin-bottom: 16px; }
+        .hero-text h1 span { color: var(--blue-light); }
+        .hero-text p { color: var(--muted); font-size: 15px; margin-bottom: 30px; max-width: 480px; }
+
+        .shield-graphic {
+            width: 180px;
+            height: 210px;
+            margin: 20px auto;
+            border: 4px solid var(--royal-blue);
+            border-radius: 45% 45% 50% 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px var(--blue-glow), inset 0 0 30px rgba(65, 105, 225, 0.2);
+            font-size: 64px;
+        }
+
+        .features-row { display: flex; justify-content: space-around; margin-top: 30px; text-align: center; }
+        .feature-item { color: var(--muted); font-size: 12px; }
+        .feature-icon { font-size: 22px; color: var(--blue-light); margin-bottom: 4px; }
+
+        .login-right { flex: 1; display: flex; justify-content: center; }
+
+        .login-card {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+        .tab { flex: 1; text-align: center; padding: 12px; color: var(--muted); cursor: pointer; font-size: 16px; font-weight: 700; transition: all 0.2s; }
+        .tab.active { color: white; border-bottom: 3px solid var(--royal-blue); }
+
+        .login-card h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+        .login-card p.subtitle { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+
+        .input-group { position: relative; margin-bottom: 16px; }
+        .input-group input {
+            width: 100%;
+            padding: 14px 44px 14px 46px;
+            background: #060b16;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .input-group input:focus { border-color: var(--royal-blue); box-shadow: 0 0 15px var(--blue-glow); }
+        .input-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--muted); }
+        .password-toggle { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 16px; }
+
+        .password-rules {
+            display: none;
+            margin: -6px 0 16px;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+        .password-rules .ok { color: var(--success); }
+        .password-rules .bad { color: var(--danger); }
+
+        .login-options { display: flex; justify-content: space-between; margin: 14px 0 22px; font-size: 12px; color: var(--muted); }
+        .login-options a { color: var(--blue-light); text-decoration: none; font-weight: 600; }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--royal-blue), var(--royal-blue-dark));
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px var(--blue-glow);
+        }
+        .login-btn:hover { background: var(--royal-blue-dark); transform: translateY(-1px); }
+
+        .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--muted); font-size: 12px; }
+        .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+        .google-btn {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            color: #222;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .auth-error { display: none; padding: 12px; border-radius: 8px; background: rgba(248, 113, 113, 0.15); border: 1px solid var(--danger); color: var(--danger); font-size: 12px; margin-bottom: 16px; }
+        .auth-success { display: none; padding: 12px; border-radius: 8px; background: rgba(66, 211, 146, 0.15); border: 1px solid var(--success); color: var(--success); font-size: 12px; margin-bottom: 16px; }
+
+        .otp-box { display: none; margin-bottom: 18px; }
+        .otp-box input { width: 100%; padding: 14px; background: #060b16; border: 1px solid var(--royal-blue); border-radius: 10px; color: white; text-align: center; letter-spacing: 6px; font-size: 20px; font-weight: 800; outline: none; }
+
+        .security-note { margin: 12px 0 18px; padding: 10px 14px; border-radius: 8px; background: rgba(65, 105, 225, 0.1); border: 1px solid var(--border); color: var(--muted); font-size: 11px; }
+
+        .signup-bottom { text-align: center; margin-top: 20px; color: var(--muted); font-size: 13px; }
+        .signup-bottom span { color: var(--blue-light); font-weight: 700; cursor: pointer; }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: var(--bg-secondary); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 10000; }
+        .bottom-nav a { color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; height: 100%; }
+        .bottom-nav a.active { color: var(--blue-light); }
+
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .login-container { flex-direction: column; }
+            .login-left { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="../index.html" class="brand">
+            <div class="brand-icon"></div>
+            <span>CyberShield <span>AI</span></span>
+        </a>
+
+        <div class="nav-links">
+            <a href="../index.html">🏠 Home</a>
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="guide.html">🛡️ Guidance</a>
+            <a href="phishing-detection.html">📧 Phishing</a>
+            <a href="cyberbullying-detection.html">💬 Cyberbullying</a>
+            <a href="digital-identity.html">🔑 Identity Vault</a>
+            <a href="security-analyzer.html">🔍 Security Analyzer</a>
+            <a href="security-report.html">📈 Audit Report</a>
+            <a href="settings.html">⚙️ Settings</a>
+            <a href="login.html" class="active">🔐 Sign In</a>
+        </div>
+    </nav>
+
+    <div class="login-container">
+
+        <!-- LEFT HERO SECTION -->
+        <div class="login-left">
+            <div class="tagline">CYBERSHIELD DIGITAL SAFETY</div>
+            <div class="hero-text">
+                <h1>Stronger <span>Identities</span>.<br>Safer Tomorrows.</h1>
+                <p>CyberShield helps you protect your digital identity, evaluate online threats in real time, and stay safe across the web.</p>
+                <div class="shield-graphic">🔒</div>
+            </div>
+
+            <div class="features-row">
+                <div class="feature-item"><div class="feature-icon">🛡️</div>Protect Identity</div>
+                <div class="feature-item"><div class="feature-icon">◉</div>Detect Threats</div>
+                <div class="feature-item"><div class="feature-icon">♟️</div>Stay Aware</div>
+            </div>
+        </div>
+
+        <!-- RIGHT LOGIN / SIGNUP CARD -->
+        <div class="login-right">
+            <div class="login-card">
+                <div class="tabs">
+                    <div class="tab active" onclick="showLogin()">Login</div>
+                    <div class="tab" onclick="showSignup()">Sign Up</div>
+                </div>
+
+                <h2 id="formTitle">Welcome Back</h2>
+                <p class="subtitle" id="formSubtitle">Log in to your CyberShield account</p>
+
+                <div id="authError" class="auth-error"></div>
+                <div id="authSuccess" class="auth-success"></div>
+
+                <div class="security-note" id="securityNote">🔐 Protected sign-in: authenticated accounts gain access to the Digital Identity Vault.</div>
+
+                <form id="authForm" onsubmit="handleAuth(event)">
+                    <div id="nameGroup" class="input-group" style="display:none">
+                        <span class="input-icon">👤</span>
+                        <input id="fullName" type="text" placeholder="Full name" autocomplete="name">
+                    </div>
+
+                    <div id="phoneGroup" class="input-group" style="display:none">
+                        <span class="input-icon">📱</span>
+                        <input id="phone" type="tel" placeholder="Phone number" autocomplete="tel">
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-icon">✉️</span>
+                        <input id="email" type="email" placeholder="Email address" autocomplete="email" required>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input id="password" type="password" placeholder="Password" autocomplete="current-password" required>
+                        <span class="password-toggle" onclick="togglePassword()">👁️</span>
+                    </div>
+
+                    <div id="passwordRules" class="password-rules">
+                        <span id="rLength">○ At least 8 characters</span><br>
+                        <span id="rUpper">○ One uppercase letter</span><br>
+                        <span id="rLower">○ One lowercase letter</span><br>
+                        <span id="rNumber">○ One number</span><br>
+                        <span id="rSpecial">○ One special character</span>
+                    </div>
+
+                    <div id="otpBox" class="otp-box">
+                        <div id="otpInbox" class="security-note" style="margin-bottom:12px;"></div>
+                        <input id="otp" inputmode="numeric" maxlength="6" placeholder="Enter 6-digit code">
+                    </div>
+
+                    <div class="login-options" id="loginOptions">
+                        <label><input id="rememberMe" type="checkbox"> Remember me</label>
+                        <a href="#" onclick="forgotPassword(event)">Forgot Password?</a>
+                    </div>
+
+                    <button class="login-btn" id="authButton">Log In →</button>
+                </form>
+
+                <div class="divider" id="googleDivider">OR</div>
+                <button class="google-btn" id="googleButton" onclick="googleDemo()">🌈 &nbsp; Continue with Google</button>
+
+                <div class="signup-bottom" id="signupBottom">
+                    Don't have an account? <span onclick="showSignup()">Sign Up</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <div class="bottom-nav">
+        <a href="../index.html">🏠<br>Home</a>
+        <a href="guide.html">🛡️<br>Guide</a>
+        <a href="dashboard.html">📊<br>Dashboard</a>
+        <a href="digital-identity.html">🔑<br>Identity</a>
+        <a href="login.html" class="active">🔐<br>Sign In</a>
+    </div>
+
+    <script>
+        const DB_KEY = "cybershield_users_v3";
+        const SESSION_KEY = "cybershield_session_v3";
+        const FAIL_KEY = "cybershield_failures_v3";
+
+        let authMode = "login";
+        let otpPending = false;
+        let pendingEmail = null;
+        let pendingOtpHash = null;
+        let pendingOtpExpires = 0;
+        let pendingOtpTries = 0;
+
+        function bufToHex(buf) { return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join(""); }
+        function randomHex(bytes) { const a = new Uint8Array(bytes); crypto.getRandomValues(a); return bufToHex(a); }
+        async function sha256Hex(str) { return bufToHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str))); }
+        async function pbkdf2Hex(password, saltHex) {
+            const enc = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveBits"]);
+            const salt = new Uint8Array(saltHex.match(/.{2}/g).map(h => parseInt(h, 16)));
+            const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations: 150000, hash: "SHA-256" }, keyMaterial, 256);
+            return bufToHex(bits);
+        }
+        function randomOtp() { return String(crypto.getRandomValues(new Uint32Array(1))[0] % 900000 + 100000); }
+        function randomDigitalId() { return "CS-" + randomHex(3).toUpperCase() + "-" + randomHex(3).toUpperCase(); }
+
+        function users() { try { return JSON.parse(localStorage.getItem(DB_KEY) || "{}"); } catch (e) { return {}; } }
+        function saveUsers(u) { localStorage.setItem(DB_KEY, JSON.stringify(u)); }
+
+        function showMsg(type, msg) {
+            const el = document.getElementById(type === "error" ? "authError" : "authSuccess");
+            el.textContent = msg; el.style.display = "block";
+            const other = document.getElementById(type === "error" ? "authSuccess" : "authError");
+            other.style.display = "none";
+        }
+        function clearMsg() {
+            document.getElementById("authError").style.display = "none";
+            document.getElementById("authSuccess").style.display = "none";
+        }
+
+        function showLogin() {
+            authMode = "login"; otpPending = false; clearMsg();
+            document.getElementById("formTitle").innerText = "Welcome Back";
+            document.getElementById("formSubtitle").innerText = "Log in to your CyberShield account";
+            document.getElementById("authButton").innerText = "Log In →";
+            document.getElementById("password").autocomplete = "current-password";
+            document.getElementById("nameGroup").style.display = "none";
+            document.getElementById("phoneGroup").style.display = "none";
+            document.getElementById("passwordRules").style.display = "none";
+            document.getElementById("otpBox").style.display = "none";
+            document.getElementById("securityNote").innerText = "🔐 Protected sign-in: authenticated accounts gain access to the Digital Identity Vault.";
+            document.getElementById("loginOptions").style.display = "flex";
+            document.getElementById("googleDivider").style.display = "flex";
+            document.getElementById("googleButton").style.display = "block";
+            document.getElementById("signupBottom").innerHTML = 'Don\'t have an account? <span onclick="showSignup()">Sign Up</span>';
+            document.querySelectorAll(".tab")[0].classList.add("active");
+            document.querySelectorAll(".tab")[1].classList.remove("active");
+        }
+
+        function showSignup() {
+            authMode = "signup"; otpPending = false; clearMsg();
+            document.getElementById("formTitle").innerText = "Create Account";
+            document.getElementById("formSubtitle").innerText = "Create your secure CyberShield account";
+            document.getElementById("authButton").innerText = "Create Account →";
+            document.getElementById("password").autocomplete = "new-password";
+            document.getElementById("nameGroup").style.display = "block";
+            document.getElementById("phoneGroup").style.display = "block";
+            document.getElementById("passwordRules").style.display = "block";
+            document.getElementById("otpBox").style.display = "none";
+            document.getElementById("securityNote").innerText = "🛡️ New accounts require a strong password and email verification code before access is granted.";
+            document.getElementById("loginOptions").style.display = "none";
+            document.getElementById("googleDivider").style.display = "none";
+            document.getElementById("googleButton").style.display = "none";
+            document.getElementById("signupBottom").innerHTML = 'Already have an account? <span onclick="showLogin()">Log In</span>';
+            document.querySelectorAll(".tab")[1].classList.add("active");
+            document.querySelectorAll(".tab")[0].classList.remove("active");
+        }
+
+        function togglePassword() {
+            const p = document.getElementById("password");
+            p.type = p.type === "password" ? "text" : "password";
+        }
+
+        function passwordChecks(p) {
+            return { length: p.length >= 8, upper: /[A-Z]/.test(p), lower: /[a-z]/.test(p), number: /\d/.test(p), special: /[^A-Za-z0-9]/.test(p) };
+        }
+        function validPassword(p) { const c = passwordChecks(p); return Object.values(c).every(Boolean); }
+
+        function updatePasswordRules() {
+            const c = passwordChecks(document.getElementById("password").value);
+            [["rLength", c.length], ["rUpper", c.upper], ["rLower", c.lower], ["rNumber", c.number], ["rSpecial", c.special]]
+                .forEach(([id, ok]) => {
+                    const e = document.getElementById(id);
+                    e.className = ok ? "ok" : "bad";
+                    e.textContent = (ok ? "✓ " : "○ ") + e.textContent.replace(/^[✓○]\s/, "");
+                });
+        }
+        document.getElementById("password").addEventListener("input", updatePasswordRules);
+
+        function getFailures() { try { return JSON.parse(localStorage.getItem(FAIL_KEY) || "{}"); } catch (e) { return {}; } }
+        function isLocked(email) { const f = getFailures()[email]; return f && f.lockUntil && Date.now() < f.lockUntil; }
+        function recordFailure(email) {
+            const f = getFailures(); const cur = f[email] || { count: 0, lockUntil: 0 };
+            cur.count++;
+            if (cur.count >= 5) { cur.lockUntil = Date.now() + 5 * 60 * 1000; cur.count = 0; }
+            f[email] = cur; localStorage.setItem(FAIL_KEY, JSON.stringify(f));
+        }
+        function clearFailures(email) { const f = getFailures(); delete f[email]; localStorage.setItem(FAIL_KEY, JSON.stringify(f)); }
+
+        async function createOtp(email) {
+            const code = randomOtp();
+            pendingEmail = email;
+            pendingOtpHash = await sha256Hex(email + ":" + code);
+            pendingOtpExpires = Date.now() + 5 * 60 * 1000;
+            pendingOtpTries = 0;
+            document.getElementById("otpBox").style.display = "block";
+            document.getElementById("otp").value = "";
+            document.getElementById("otp").focus();
+            document.getElementById("authButton").innerText = "Verify & Continue →";
+            document.getElementById("otpInbox").innerHTML = "📥 <b>Verification Inbox for " + email + ":</b> Your code is <b>" + code + "</b> (expires in 5 min).";
+            showMsg("success", "A one-time verification code was generated for this account.");
+        }
+
+        async function handleAuth(e) {
+            e.preventDefault(); clearMsg();
+            const email = document.getElementById("email").value.trim().toLowerCase();
+            const pass = document.getElementById("password").value;
+            if (!email || !pass) return;
+
+            if (otpPending) {
+                if (Date.now() > pendingOtpExpires) { showMsg("error", "Code expired. Request a new one."); otpPending = false; return; }
+                if (pendingOtpTries >= 5) { showMsg("error", "Too many failed attempts."); otpPending = false; return; }
+                const code = document.getElementById("otp").value.trim();
+                const tryHash = await sha256Hex(pendingEmail + ":" + code);
+                if (tryHash !== pendingOtpHash) { pendingOtpTries++; showMsg("error", "Incorrect verification code."); return; }
+                const u = users(); u[pendingEmail].verified = true; saveUsers(u);
+                createSession(pendingEmail); return;
+            }
+
+            if (authMode === "signup") {
+                const name = document.getElementById("fullName").value.trim();
+                const phone = document.getElementById("phone").value.trim();
+                if (!name) { showMsg("error", "Please enter your full name."); return; }
+                if (!validPassword(pass)) { showMsg("error", "Password does not meet security requirements."); return; }
+                const u = users();
+                if (u[email]) { showMsg("error", "Account with this email already exists. Log in instead."); return; }
+                const saltHex = randomHex(16);
+                const hashHex = await pbkdf2Hex(pass, saltHex);
+                u[email] = { email, name, phone, saltHex, hashHex, verified: false, identityVerified: false, digitalId: randomDigitalId(), createdAt: new Date().toISOString() };
+                saveUsers(u);
+                await createOtp(email); otpPending = true;
+                showMsg("success", "Account created! Complete verification below.");
+                return;
+            }
+
+            if (isLocked(email)) { showMsg("error", "Account locked after failed attempts. Try again in 5 minutes."); return; }
+            const u = users();
+            if (!u[email]) { recordFailure(email); showMsg("error", "Email not registered with CyberShield."); return; }
+            const checkHash = await pbkdf2Hex(pass, u[email].saltHex);
+            if (checkHash !== u[email].hashHex) { recordFailure(email); showMsg("error", "Invalid email or password."); return; }
+            if (!u[email].verified) { await createOtp(email); otpPending = true; showMsg("success", "Email verification required."); return; }
+            clearFailures(email);
+            createSession(email);
+        }
+
+        function createSession(email) {
+            const sessionToken = randomHex(24);
+            localStorage.setItem(SESSION_KEY, JSON.stringify({ email, token: sessionToken, createdAt: Date.now(), expiresAt: Date.now() + 30 * 60 * 1000 }));
+            showMsg("success", "Authentication successful! Redirecting to Digital Identity Vault...");
+            setTimeout(() => { window.location.href = "digital-identity.html"; }, 1000);
+        }
+
+        function forgotPassword(e) {
+            e.preventDefault();
+            showMsg("success", "Password reset instructions simulated for server flow.");
+        }
+
+        function googleDemo() {
+            showMsg("error", "Google Single Sign-On requires OAuth 2.0 provider integration.");
+        }
+    </script>
+</body>
+</html>

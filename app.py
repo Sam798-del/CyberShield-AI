@@ -32,6 +32,14 @@ def legacy_guide():
 def legacy_settings():
     return send_from_directory(PAGES_DIR, "settings.html")
 
+@app.route("/login.html")
+def legacy_login():
+    return send_from_directory(PAGES_DIR, "login.html")
+
+@app.route("/digital-identity.html")
+def legacy_identity():
+    return send_from_directory(PAGES_DIR, "digital-identity.html")
+
 # Default Settings Configuration
 DEFAULT_SETTINGS = {
     "profile": {
