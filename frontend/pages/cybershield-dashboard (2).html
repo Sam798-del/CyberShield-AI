@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CyberShield AI Security Analyzer</title>
+  <style>
+    :root {
+      --bg: #071027;
+      --panel: #0b2145;
+      --panel-2: #071a3a;
+      --line: rgba(93,118,205,.35);
+      --text: #edf0ff;
+      --muted: #8494be;
+      --purple: #6350f4;
+      --safe: #31d5ae;
+      --warn: #f2c14d;
+      --risk: #f05a8b;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-width: 320px; min-height: 100%; background: var(--bg); color: var(--text); }
+    body {
+      background:
+        radial-gradient(circle at 72% -12%, rgba(87,75,255,.16), transparent 32rem),
+        radial-gradient(circle at 6% 70%, rgba(21,202,210,.05), transparent 24rem),
+        var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .app-shell { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 226px; flex: 0 0 226px; padding: 21px 13px 17px; display: flex; flex-direction: column;
+      border-right: 1px solid rgba(111,129,201,.18);
+      background: linear-gradient(180deg, rgba(10,20,48,.97), rgba(6,15,35,.98));
+    }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 0 9px 22px; }
+    .brand svg { width: 28px; height: 33px; color: #7b70ff; filter: drop-shadow(0 4px 12px rgba(94,90,255,.28)); }
+    .brand-name { font-size: 14px; font-weight: 800; letter-spacing: -.03em; }
+    .brand-tagline { font-size: 7px; color: #7d8bb8; margin-top: 2px; }
+    .nav-label { padding: 13px 10px 8px; color: #526188; font-size: 9px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    .nav { display: grid; gap: 4px; }
+    .nav-item {
+      border: 0; background: transparent; color: #8492b9; width: 100%; padding: 10px; border-radius: 8px;
+      display: flex; align-items: center; gap: 11px; font-size: 11px; text-align: left;
+    }
+    .nav-item:hover { color: #fff; background: rgba(91,95,210,.13); }
+    .nav-item.active { color: #fff; background: linear-gradient(100deg,#4841da,#634ceb); box-shadow: 0 9px 19px rgba(71,63,226,.22); }
+    .sidebar-spacer { flex: 1; }
+    .sidebar-promo {
+      margin: 10px 1px 0; min-height: 137px; border: 1px solid rgba(100,105,236,.25); border-radius: 12px;
+      padding: 17px 11px 11px; background: radial-gradient(circle at 50% 22%,rgba(95,82,255,.2),transparent 50%),rgba(14,28,63,.75);
+      text-align: center;
+    }
+    .sidebar-promo > svg { color: #6662ff; width: 31px; height: 38px; margin-bottom: 4px; }
+    .sidebar-promo strong { display: block; font-size: 11px; line-height: 1.35; }
+    .sidebar-promo span { display: block; color: #7181ad; font-size: 8px; margin-top: 4px; }
+    .main { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 54px; padding: 0 29px; display: flex; align-items: center; justify-content: flex-end; border-bottom: 1px solid rgba(111,129,201,.18); }
+    .top-actions { display: flex; align-items: center; gap: 17px; }
+    .icon-button { border: 0; color: #bdc6e5; background: transparent; padding: 6px; display: grid; place-items: center; border-radius: 7px; }
+    .icon-button:hover { color: #fff; background: rgba(116,124,215,.15); }
+    .avatar { width: 25px; height: 25px; border: 1px solid rgba(255,255,255,.25); border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg,#604bff,#8068fb); color: #fff; font-size: 10px; font-weight: 800; }
+    .page { width: 100%; max-width: 934px; margin: 0 auto; padding: 23px 28px 46px; }
+    .page-heading { display: flex; align-items: flex-start; gap: 13px; margin-bottom: 17px; }
+    .page-heading h1 { margin: 0; font-size: 17px; letter-spacing: -.03em; }
+    .page-heading p { margin: 3px 0 0; color: #8090bb; font-size: 10px; }
+    .mode-switch { display: grid; grid-template-columns: 1fr 1fr; background: rgba(10,26,57,.8); border: 1px solid rgba(97,110,195,.35); border-radius: 8px; padding: 3px; margin-bottom: 15px; }
+    .mode-button { border: 0; color: #9caad3; background: transparent; border-radius: 6px; min-height: 31px; display: flex; align-items: center; justify-content: center; gap: 9px; font-size: 10px; font-weight: 700; }
+    .mode-button.active { color: #fff; background: linear-gradient(100deg,#4e48e8,#6150f4); box-shadow: 0 5px 13px rgba(68,61,221,.2); }
+    .panel { border: 1px solid var(--line); border-radius: 9px; background: linear-gradient(135deg,rgba(11,31,65,.95),rgba(7,23,51,.92)); box-shadow: 0 18px 40px rgba(0,0,0,.2); }
+    .panel-header { padding: 13px 14px 11px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .panel-title { display: flex; align-items: flex-start; gap: 10px; }
+    .title-icon { width: 20px; height: 20px; display: grid; place-items: center; color: #7f72ff; }
+    .panel h2 { margin: 0; font-size: 13px; }
+    .panel-subtitle { margin: 3px 0 0; font-size: 9px; color: #8695bd; }
+    .ai-badge { display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(117,104,255,.6); color: #b9b2ff; background: rgba(79,71,200,.16); border-radius: 12px; padding: 4px 7px; font-size: 8px; font-weight: 700; }
+    .input-row { display: flex; gap: 8px; padding: 0 14px 13px; }
+    .field-wrap { min-width: 0; flex: 1; position: relative; }
+    .text-field { width: 100%; color: #edf0ff; background: rgba(4,16,39,.8); border: 1px solid rgba(99,120,199,.44); border-radius: 7px; outline: none; padding: 10px 36px 10px 12px; font-size: 10px; }
+    .text-field:focus { border-color: #7569ff; box-shadow: 0 0 0 3px rgba(103,93,255,.14); }
+    .field-action { position: absolute; right: 5px; top: 5px; height: 26px; width: 26px; }
+    .primary-button { border: 0; color: #fff; background: linear-gradient(110deg,#5b4cf1,#7760fb); border-radius: 7px; padding: 0 15px; min-width: 83px; font-size: 10px; font-weight: 800; box-shadow: 0 7px 17px rgba(83,69,230,.24); }
+    .primary-button:hover { filter: brightness(1.12); transform: translateY(-1px); }
+    .primary-button span { display: inline-flex; gap: 6px; align-items: center; }
+    .password-analysis { display: grid; grid-template-columns: 1.12fr .88fr; gap: 7px; padding: 0 14px 10px; }
+    .score-card, .crack-card { border: 1px solid rgba(79,112,193,.31); border-radius: 8px; background: rgba(7,22,51,.62); min-height: 101px; }
+    .score-card { display: flex; align-items: center; padding: 12px; gap: 13px; }
+    .score-ring { width: 67px; height: 67px; flex: 0 0 auto; border-radius: 50%; display: grid; place-items: center; position: relative; }
+    .score-ring::before { content: ""; position: absolute; inset: 7px; background: #0d234d; border-radius: 50%; }
+    .score-value { position: relative; z-index: 1; display: flex; align-items: baseline; gap: 2px; }
+    .score-value strong { font-size: 21px; line-height: 1; }
+    .score-value small { font-size: 7px; color: #8d9ac3; }
+    .score-detail h3 { margin: 0; color: #ff638d; font-size: 13px; }
+    .score-detail p { margin: 4px 0 7px; color: #a3acd0; font-size: 8px; }
+    .meter { width: 82px; height: 5px; border-radius: 9px; background: #213661; overflow: hidden; }
+    .meter span { display: block; height: 100%; border-radius: inherit; }
+    .crack-card { padding: 12px; }
+    .crack-label { display: flex; align-items: center; gap: 5px; font-size: 8px; color: #9da9ce; }
+    .crack-time { font-size: 11px; font-weight: 800; margin: 10px 0 5px; }
+    .crack-note { color: #9ba7c9; font-size: 8px; line-height: 1.4; }
+    .risk-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 7px; padding: 0 14px 13px; }
+    .risk-card { border: 1px solid rgba(79,112,193,.31); border-radius: 8px; background: rgba(7,22,51,.62); padding: 11px; }
+    .risk-card h3 { display: flex; justify-content: space-between; margin: 0 0 9px; font-size: 10px; }
+    .risk-card h3 span { border: 1px solid rgba(224,83,131,.6); padding: 3px 5px; border-radius: 5px; color: #f16b92; font-size: 7px; }
+    .risk-list { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+    .risk-list li { display: flex; gap: 7px; align-items: flex-start; color: #c0c8e1; font-size: 8px; line-height: 1.35; }
+    .risk-list svg { width: 12px; height: 12px; flex: 0 0 auto; color: #f45985; }
+    .fix-list svg { color: #2bd6a8; }
+    .subpanel-heading { display: flex; align-items: center; gap: 10px; padding: 13px 14px 9px; }
+    .subpanel-heading > svg { color: #8a7dff; }
+    .subpanel-heading h3 { margin: 0; font-size: 12px; }
+    .subpanel-heading p { margin: 2px 0 0; color: #7f8eb7; font-size: 8px; }
+    .reuses-panel, .generate-panel { margin-top: 7px; overflow: hidden; }
+    .table-wrap { padding: 0 10px 10px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 455px; font-size: 9px; }
+    th { text-align: left; color: #8492bb; background: rgba(42,65,116,.32); padding: 7px 9px; font-weight: 500; }
+    td { color: #d0d6eb; border-top: 1px solid rgba(74,99,172,.19); padding: 7px 9px; }
+    .account, .breakdown-service { display: flex; align-items: center; gap: 8px; }
+    .service-logo { width: 16px; height: 16px; border-radius: 4px; display: inline-grid; place-items: center; flex: 0 0 auto; color: #fff; font-size: 8px; font-weight: 800; }
+    .service-logo-gmail { background: #d94b57; }.service-logo-instagram { background: linear-gradient(135deg,#f5bd43,#e34a79 52%,#7749bb); }.service-logo-linkedin { background: #2479b5; }.service-logo-facebook { background: #2766bf; }.service-logo-spotify { background: #179b62; }.service-logo-youtube { background: #db3841; }.service-logo-amazon { background: #d88925; }
+    .status-pill { display: inline-flex; border: 1px solid; border-radius: 5px; padding: 3px 6px; font-size: 7px; }
+    .status-pill.danger { color: #f46c91; border-color: #a33f63; background: rgba(186,47,93,.14); }.status-pill.safe { color: #32d4ad; border-color: #177e6d; background: rgba(28,173,132,.13); }.status-pill.warn { color: #f4c457; border-color: #9e7730; background: rgba(204,150,33,.13); }.status-pill.unknown { color: #a2b1d1; border-color: #3e547f; background: rgba(66,92,137,.13); }
+    .table-action { border: 0; background: transparent; color: #a9b5d7; padding: 2px; }
+    .generate-row { display: flex; gap: 8px; padding: 2px 14px 10px; }
+    .generate-input { flex: 1; min-width: 0; border: 1px solid rgba(99,120,199,.44); background: rgba(4,16,39,.8); border-radius: 7px; display: flex; align-items: center; justify-content: space-between; padding-left: 11px; color: #dce2fa; font-family: ui-monospace, monospace; font-size: 9px; }
+    .copy-button { border: 0; background: transparent; color: #aa9fff; padding: 8px; }
+    .feature-list { display: flex; flex-wrap: wrap; gap: 15px; padding: 0 14px 12px; color: #91a0c6; font-size: 8px; }
+    .email-view { display: grid; gap: 7px; }
+    .footprint-card { padding-bottom: 13px; }
+    .footprint-stage { min-height: 240px; position: relative; border-top: 1px solid rgba(69,101,181,.18); border-bottom: 1px solid rgba(69,101,181,.18); overflow: hidden; background: radial-gradient(circle at 50% 49%,rgba(74,74,217,.16),transparent 23%),radial-gradient(circle at 50% 48%,transparent 0 16%,rgba(76,101,197,.07) 16.2% 16.4%,transparent 16.6% 28%,rgba(76,101,197,.05) 28.2% 28.4%,transparent 28.6%); }
+    .footprint-stage::before, .footprint-stage::after { content: ""; position: absolute; width: 205px; height: 1px; top: 50%; left: calc(50% - 102px); background: repeating-linear-gradient(90deg,rgba(99,130,225,.62) 0 2px,transparent 2px 5px); transform: rotate(24deg); }
+    .footprint-stage::after { background: repeating-linear-gradient(90deg,rgba(215,76,143,.62) 0 2px,transparent 2px 5px); transform: rotate(-26deg); }
+    .footprint-summary { position: absolute; left: 13px; top: 13px; display: flex; align-items: center; gap: 7px; z-index: 4; }
+    .summary-icon { width: 23px; height: 23px; border: 1px solid rgba(126,95,255,.6); border-radius: 7px; display: grid; place-items: center; color: #a68dff; background: rgba(94,67,230,.17); }
+    .footprint-summary strong, .footprint-summary span { display: block; }.footprint-summary strong { font-size: 10px; }.footprint-summary span { color: #8494be; font-size: 7px; margin-top: 2px; }
+    .footprint-donut { position: absolute; right: 164px; top: 13px; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--safe) 0 43%,var(--warn) 43% 71%,var(--risk) 71%); z-index: 4; }
+    .footprint-donut::before { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: #0c2350; }
+    .donut-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 1px; }.footprint-donut strong { font-size: 14px; line-height: 1; }.footprint-donut span { color: #aab6d3; font-size: 6px; }
+    .footprint-legend { position: absolute; right: 12px; top: 12px; display: grid; gap: 5px; font-size: 8px; color: #afbad7; z-index: 4; }.footprint-legend span { display: flex; align-items: center; gap: 5px; }.legend-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }.dot-safe { background: var(--safe); }.dot-warn { background: var(--warn); }.dot-risk { background: var(--risk); }
+    .hub { position: absolute; left: 50%; top: 50%; width: 66px; height: 66px; transform: translate(-50%,-50%); border: 2px solid #685cf4; background: rgba(24,29,103,.86); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 8px 4px; z-index: 2; box-shadow: 0 0 0 8px rgba(90,81,220,.06); text-align: center; }.hub svg { color: #a494ff; }.hub span { max-width: 58px; color: #e0e5ff; font-size: 5.5px; line-height: 1.15; overflow-wrap: anywhere; }
+    .service-node { position: absolute; z-index: 3; min-width: 78px; padding: 6px 9px 5px; border: 1px solid; border-radius: 17px; display: flex; align-items: center; justify-content: center; gap: 6px; background: rgba(6,23,54,.94); font-size: 8px; }.service-node strong,.service-node small { display: block; }.service-node strong { font-size: 9px; }.service-node small { font-size: 7px; margin-top: 1px; }.service-node .service-logo { width: 17px; height: 17px; border-radius: 50%; }.service-node.safe { border-color: #16cfa7; color: #27e1b4; }.service-node.warn { border-color: #f0b83f; color: #ffc84d; }.service-node.risk { border-color: #ed4c84; color: #ff6e99; }
+    .node-gmail { left: 5%; top: 27%; }.node-instagram { right: 4%; top: 27%; }.node-linkedin { left: 4%; top: 51%; }.node-facebook { right: 3%; top: 51%; }.node-spotify { left: 9%; bottom: 17%; }.node-youtube { right: 7%; bottom: 17%; }.node-amazon { left: 39%; bottom: 5%; }
+    .risk-section { padding: 12px 13px 13px; }.risk-section-title { display: flex; align-items: center; gap: 7px; font-size: 10px; color: #dfd9ff; margin-bottom: 9px; }.risk-highlight { border: 1px solid rgba(197,72,139,.58); border-radius: 7px; padding: 9px; display: grid; grid-template-columns: auto 1fr auto; gap: 9px; align-items: center; background: rgba(115,30,91,.13); }.risk-highlight.resolved { border-color: rgba(49,207,169,.5); background: rgba(22,133,111,.12); }.risk-service-avatar { width: 25px; height: 25px; border-radius: 6px; display: grid; place-items: center; overflow: hidden; }.risk-service-avatar .service-logo { width: 100%; height: 100%; border-radius: 6px; }.risk-text { min-width: 0; }.risk-text strong { display: block; font-size: 10px; }.risk-text p { margin: 3px 0 0; color: #8796bd; font-size: 8px; line-height: 1.4; }.small-button { border: 0; color: #fff; background: #6355ee; border-radius: 5px; font-size: 8px; font-weight: 800; padding: 8px 10px; }.fixed-badge { display: inline-flex; align-items: center; gap: 4px; color: #43e0bb; font-size: 8px; font-weight: 800; }.risk-meta { grid-column: 2 / span 2; color: #7181ad; font-size: 7px; margin-top: -2px; }.risk-meta span { color: #91a0c6; margin-right: 12px; }
+    .breakdown { margin-top: 8px; border: 1px solid rgba(76,109,189,.27); border-radius: 7px; overflow: hidden; }.breakdown-summary { padding: 9px 10px; display: flex; justify-content: space-between; color: #bcc6e3; font-size: 9px; cursor: pointer; }.breakdown table { min-width: 0; font-size: 7px; }.breakdown th,.breakdown td { padding: 6px 9px; }.breakdown-service { gap: 5px; }.breakdown-service .service-logo { width: 14px; height: 14px; }
+    .scan-status { margin: 0 14px 10px; padding: 8px 10px; border-radius: 6px; color: #9cebd6; background: rgba(25,177,145,.1); border: 1px solid rgba(35,191,160,.25); font-size: 8px; }
+    .fix-modal-backdrop { position: fixed; inset: 0; z-index: 25; display: grid; place-items: center; padding: 20px; background: rgba(2,8,24,.72); backdrop-filter: blur(4px); }.fix-modal { width: min(430px,100%); max-height: calc(100vh - 40px); overflow: auto; border: 1px solid rgba(116,103,245,.65); border-radius: 12px; padding: 16px; background: linear-gradient(145deg,#112b5b,#0a1d43); box-shadow: 0 24px 70px rgba(0,0,0,.5); }.fix-modal-heading { display: flex; justify-content: space-between; gap: 12px; }.fix-modal-heading > div { display: flex; gap: 9px; }.fix-modal-heading > div > svg { color: #ff79a0; flex: 0 0 auto; }.fix-modal-heading strong { display: block; font-size: 13px; }.fix-modal-heading p { margin: 4px 0 0; color: #9daacf; font-size: 9px; }.fix-steps { display: grid; gap: 8px; list-style: none; padding: 0; margin: 14px 0 12px; }.fix-step { display: flex; gap: 9px; padding: 9px; border: 1px solid rgba(85,116,195,.35); border-radius: 8px; background: rgba(5,18,48,.55); }.fix-step-number { width: 19px; height: 19px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 50%; color: #fff; background: #6554ef; font-size: 9px; font-weight: 800; }.fix-step strong { display: block; font-size: 9px; }.fix-step p { margin: 3px 0 0; color: #aeb9da; font-size: 8px; line-height: 1.5; }.fix-modal-note { display: flex; gap: 7px; margin: 0 0 13px; color: #92a4ce; font-size: 8px; line-height: 1.45; }.fix-button { border: 0; border-radius: 5px; padding: 8px 10px; color: #061b29; background: #31d5ae; font-size: 8px; font-weight: 800; }
+    .notification { position: fixed; right: 24px; bottom: 21px; z-index: 30; width: min(320px,calc(100vw - 32px)); padding: 12px 36px 12px 13px; border: 1px solid rgba(111,126,221,.48); border-radius: 8px; background: #101e46; box-shadow: 0 15px 35px rgba(0,0,0,.33); font-size: 10px; }.notification strong { display: block; font-size: 10px; margin-bottom: 3px; }.notification p { margin: 0; color: #a8b4db; line-height: 1.4; }.notification .icon-button { position: absolute; right: 7px; top: 7px; }
+    @media (max-width: 760px) { .app-shell { display: block; }.sidebar { width: 100%; min-height: 0; padding: 13px 13px 10px; border-right: 0; border-bottom: 1px solid rgba(111,129,201,.18); }.brand { padding: 0 5px 12px; }.nav-label,.sidebar-spacer,.sidebar-promo { display: none; }.nav { display: flex; gap: 4px; overflow-x: auto; }.nav-item { width: auto; flex: 0 0 auto; padding: 8px 10px; font-size: 9px; }.topbar { height: 45px; padding: 0 16px; }.page { padding: 18px 13px 35px; }.password-analysis,.risk-grid { grid-template-columns: 1fr; }.footprint-stage { min-height: 286px; }.service-node { transform: scale(.9); }.footprint-donut { right: 12px; }.footprint-legend { top: auto; right: 10px; bottom: 10px; } }
+    @media (max-width: 420px) { .nav-item { padding: 8px; }.nav-item span { display: none; }.nav-item.active span { display: inline; }.input-row { flex-direction: column; }.primary-button { min-height: 35px; }.risk-highlight { grid-template-columns: auto 1fr; }.risk-highlight .small-button { grid-column: 2; justify-self: start; }.risk-meta { grid-column: 2; }.generate-row { flex-wrap: wrap; }.generate-action { flex: 1; } }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    const icons = {
+      shield: '<svg viewBox="0 0 24 24"><path d="M12 3 20 6v5c0 5-3.3 8.7-8 10-4.7-1.3-8-5-8-10V6l8-3Z"/></svg>',
+      bell: '<svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>',
+      lock: '<svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',
+      mail: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+      search: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>',
+      sparkle: '<svg viewBox="0 0 24 24"><path d="m12 3 1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3ZM19 16l.7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7L19 16Z"/></svg>',
+      eye: '<svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg>',
+      eyeOff: '<svg viewBox="0 0 24 24"><path d="m3 3 18 18M10.6 6.2A10.8 10.8 0 0 1 12 6c6.5 0 10 6 10 6a17.7 17.7 0 0 1-3.2 3.8M6.2 6.8C3.5 8.6 2 12 2 12s3.5 6 10 6c1.5 0 2.8-.3 4-.8"/></svg>',
+      check: '<svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>',
+      alert: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>',
+      clock: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+      link: '<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.3l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1M14 11a5 5 0 0 0-7.5-.3l-2 2a5 5 0 0 0 7.1 7.1l1.1-1.1"/></svg>',
+      copy: '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+      refresh: '<svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14-5L4 8M4 4v4h4M4 13a8 8 0 0 0 14 5l2-2m0 4v-4h-4"/></svg>',
+      arrow: '<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+      close: '<svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg>',
+      database: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v7c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12v7c0 1.7 3.6 3 8 3s8-1.3 8-3v-7"/></svg>',
+      user: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>',
+      grid: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg>',
+      fingerprint: '<svg viewBox="0 0 24 24"><path d="M12 11a2 2 0 0 1 2 2c0 4-1 6-2 8M8 13c0-2.2 1.8-4 4-4s4 1.8 4 4c0 3.1-.6 5.4-1.3 7M4 13a8 8 0 0 1 16 0c0 3.2-.6 5.7-1.4 8M12 5a8 8 0 0 0-8 8"/></svg>',
+      triangle: '<svg viewBox="0 0 24 24"><path d="m12 3 10 18H2L12 3Z"/><path d="M12 9v4M12 17h.01"/></svg>',
+      info: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>'
+    };
+    const navItems = [
+      ['Dashboard','grid'], ['Digital Identity','fingerprint'], ['Security Analyzer','shield'],
+      ['Phishing Detection','triangle'], ['Cyberbullying Detection','shield'], ['AI Security Report','database'], ['Profile / Settings','user']
+    ];
+    const serviceNames = ['Gmail','Instagram','LinkedIn','Facebook','Spotify','YouTube','Amazon'];
+    const nodeClasses = ['node-gmail','node-instagram','node-linkedin','node-facebook','node-spotify','node-youtube','node-amazon'];
+    const risks = [
+      { service:'Instagram', status:'High Risk', description:'This email appeared in an Instagram-related breach. Exposed information: Email, Username.', source:'Known Breach Database', lastSeen:'2023', details:'Email, Username', steps:['Open Instagram → profile picture → menu (☰) → Accounts Center → Password and security.','Choose Change password and create a unique password with 12+ characters.','Open Two-factor authentication → Instagram and finish setup.','Open Where you’re logged in and sign out unknown devices.'] },
+      { service:'Amazon', status:'High Risk', description:'This email appeared in an Amazon-related exposure. Exposed information: Email, Phone.', source:'Known Breach Database', lastSeen:'2022', details:'Email, Phone', steps:['Open Amazon → Account & Lists → Account → Login & security.','Select Edit beside Password and create a unique 12+ character password.','Open 2-step verification and follow the setup prompts.','Review Login & security and remove devices you do not recognize.'] },
+      { service:'LinkedIn', status:'High Risk', description:'This email appeared in a LinkedIn-related exposure. Exposed information: Email, Profile data.', source:'Known Breach Database', lastSeen:'2021', details:'Email, Profile data', steps:['Open LinkedIn → Me → Settings & Privacy → Sign in & security.','Choose Change password and save a new unique password.','Open Two-step verification and connect an authenticator app or phone.','Review Where you’re signed in and sign out unfamiliar sessions.'] },
+      { service:'Gmail', status:'High Risk', description:'This email has a Google account exposure. Review your password and recent account activity.', source:'Google Security Checkup', lastSeen:'2024', details:'Email, Recovery data', steps:['Open myaccount.google.com → Security → How you sign in to Google.','Choose Password and create a unique password with 12+ characters.','Open 2-Step Verification and complete the setup.','Check Your devices and remove any device you do not recognize.'] }
+    ];
+    const state = { mode:'password', activeNav:'Security Analyzer', password:'Neeraja@2007', showPassword:false, score:42, email:'neeraja@gmail.com', profile:null, scanned:false, fixed:false, modal:false, generated:'k7!Q9#fZq4sLm8@vT2#', notice:null };
+    function esc(value) { return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function logo(name) { return '<span class="service-logo service-logo-' + name.toLowerCase() + '">' + ({Gmail:'G',Instagram:'◎',LinkedIn:'in',Facebook:'f',Spotify:'●',YouTube:'▶',Amazon:'a'}[name] || '?') + '</span>'; }
+    function profileFor(address) {
+      const normalized = address.trim().toLowerCase();
+      if (normalized === 'neeraja@gmail.com') {
+        const services = [
+          ['Gmail','Verified','safe','2024','No exposure'],['Instagram','At Risk','risk','2023','Email, Username'],['LinkedIn','Need Review','warn','2021','Email'],
+          ['Facebook','Verified','safe','2024','No exposure'],['Spotify','Verified','safe','2024','No exposure'],['YouTube','Need Review','warn','2022','Email'],['Amazon','High Risk','risk','2020','Email, Phone']
+        ].map(([name,status,tone,lastSeen,details]) => ({name,status,tone,lastSeen,details}));
+        return { email:address, serviceCount:7, lowRisk:3, review:2, highRisk:2, services, topRisk:risks[0] };
+      }
+      const seed = [...normalized].reduce((sum,c) => sum + c.charCodeAt(0), 0);
+      const topRisk = risks[seed % risks.length];
+      const riskIndex = serviceNames.indexOf(topRisk.service);
+      const highRiskCount = seed % 3 === 0 ? 2 : 1;
+      const reviewCount = seed % 2 === 0 ? 2 : 1;
+      const reviewIndex = (riskIndex + 2 + seed % 3) % serviceNames.length;
+      const services = serviceNames.map((name,index) => {
+        const tone = index === riskIndex || (highRiskCount === 2 && index === (riskIndex + 4) % serviceNames.length) ? 'risk' : index === reviewIndex || (reviewCount === 2 && index === (reviewIndex + 3) % serviceNames.length) ? 'warn' : 'safe';
+        const match = name === topRisk.service ? topRisk : null;
+        return { name, tone, status:tone === 'risk' ? 'At Risk' : tone === 'warn' ? 'Need Review' : 'Verified', lastSeen:match?.lastSeen || (tone === 'warn' ? '2022' : '2024'), details:match?.details || (tone === 'warn' ? 'Email' : 'No exposure') };
+      });
+      return { email:address, serviceCount:7, lowRisk:services.filter(s=>s.tone==='safe').length, review:services.filter(s=>s.tone==='warn').length, highRisk:services.filter(s=>s.tone==='risk').length, services, topRisk };
+    }
+    state.profile = profileFor(state.email);
+    function notice(title,message,tone='') { state.notice = {title,message,tone}; render(); clearTimeout(notice.timer); notice.timer = setTimeout(() => { state.notice = null; render(); }, 4200); }
+    function serviceNodes(profile) { return profile.services.map((service,index) => '<div class="service-node '+service.tone+' '+nodeClasses[index]+'">'+logo(service.name)+'<div><strong>'+esc(service.name)+'</strong><small>'+esc(service.status)+'</small></div></div>').join(''); }
+    function passwordView() {
+      const tone = state.score >= 70 ? 'Strong' : state.score >= 45 ? 'Fair' : 'Weak';
+      const color = state.score >= 70 ? '#2bd6a8' : state.score >= 45 ? '#f2c14d' : '#ee4e81';
+      const reasons = state.score < 70 ? ['Contains your name (Neeraja)','Uses a common year (2007)','Simple structure (Name + Symbol + Year)','Common password pattern detected'] : ['Strong length and character variety detected'];
+      return '<div class="password-view"><section class="panel"><div class="panel-header"><div class="panel-title"><div class="title-icon">'+icons.lock+'</div><div><h2>Password Security</h2><p class="panel-subtitle">Analyze your password, detect risks, and get personalized suggestions.</p></div></div><span class="ai-badge">'+icons.sparkle+' AI Powered</span></div><form class="input-row" onsubmit="event.preventDefault(); analyzePassword()"><div class="field-wrap"><input id="password-input" class="text-field" type="'+(state.showPassword?'text':'password')+'" value="'+esc(state.password)+'" oninput="state.password=this.value"></div><button type="button" class="icon-button field-action" onclick="state.showPassword=!state.showPassword;render()">'+(state.showPassword?icons.eyeOff:icons.eye)+'</button></div><button class="primary-button" type="submit"><span>'+icons.sparkle+' Analyze</span></button></form><div class="password-analysis"><div class="score-card"><div class="score-ring" style="background:conic-gradient('+color+' 0 '+state.score+'%,#273e73 '+state.score+'% 100%)"><div class="score-value"><strong>'+state.score+'</strong><small>/100</small></div></div><div class="score-detail"><h3 style="color:'+color+'">'+tone+'</h3><p>'+(state.score>=70?'Your password is harder to guess.':'Your password is easy to guess.')+'</p><div class="meter"><span style="width:'+state.score+'%;background:'+color+'"></span></div></div></div><div class="crack-card"><div class="crack-label">'+icons.clock+' Estimated Crack Time</div><div class="crack-time">'+(state.score>=70?'Several years':state.score>=45?'About 3 days':'Less than 1 hour')+'</div><div class="crack-note">'+(state.score>=70?'Strong combinations resist common cracking tools.':'This password can be cracked quickly with common tools.')+'</div></div></div><div class="risk-grid"><div class="risk-card"><h3>Why is it '+tone.toLowerCase()+'? <span>'+(state.score<70?'Pattern Detected':'Good Practice')+'</span></h3><ul class="risk-list">'+reasons.map(item=>'<li>'+icons.alert+' '+item+'</li>').join('')+'</ul></div><div class="risk-card"><h3>Quick Fix Suggestions</h3><ul class="risk-list fix-list"><li>'+icons.check+' Use 12+ characters</li><li>'+icons.check+' Avoid personal info</li><li>'+icons.check+' Add random words</li><li>'+icons.check+' Use a mix of characters</li></ul></div></div></section><section class="panel reuses-panel"><div class="subpanel-heading">'+icons.link+'<div><h3>Password Reuse Check</h3><p>Check if your password is used across multiple accounts.</p></div></div><div class="table-wrap"><table><thead><tr><th>Account</th><th>Status</th><th>Risk</th><th></th></tr></thead><tbody><tr><td><div class="account">'+logo('Gmail')+' Gmail</div></td><td><span class="status-pill danger">Reused</span></td><td style="color:#f06991">High Risk</td><td>'+icons.arrow+'</td></tr><tr><td><div class="account">'+logo('Instagram')+' Instagram</div></td><td><span class="status-pill danger">Reused</span></td><td style="color:#f06991">High Risk</td><td>'+icons.arrow+'</td></tr><tr><td><div class="account">'+logo('LinkedIn')+' College Portal</div></td><td><span class="status-pill safe">Unique</span></td><td style="color:#31d5ae">Safe</td><td>'+icons.arrow+'</td></tr><tr><td><div class="account">'+logo('LinkedIn')+' LinkedIn</div></td><td><span class="status-pill unknown">Unknown</span></td><td style="color:#8e9dbd">Not verified</td><td>'+icons.arrow+'</td></tr></tbody></table></div></section><section class="panel generate-panel"><div class="subpanel-heading">'+icons.sparkle+'<div><h3>Generate a Strong Password</h3><p>Create a secure password with one click.</p></div></div><div class="generate-row"><div class="generate-input">'+esc(state.generated)+'<button class="copy-button" onclick="copyValue(state.generated)">'+icons.copy+'</button></div><button class="primary-button generate-action" onclick="generatePassword()"><span>'+icons.refresh+' Generate New</span></button></div><div class="feature-list"><span>'+icons.check+' 20 characters</span><span>'+icons.check+' Uppercase + lowercase</span><span>'+icons.check+' Numbers + symbols</span></div></section></div>';
+    }
+    function emailView() {
+      const p = state.profile, r = p.topRisk;
+      const modal = state.modal ? '<div class="fix-modal-backdrop" onclick="state.modal=false;render()"><section class="fix-modal" onclick="event.stopPropagation()"><div class="fix-modal-heading"><div>'+icons.alert+'<div><strong>Fix your '+esc(r.service)+' risk</strong><p>Follow these steps from the '+esc(r.service)+' app or website.</p></div></div><button class="icon-button" onclick="state.modal=false;render()">'+icons.close+'</button></div><ol class="fix-steps">'+r.steps.map((step,i)=>'<li class="fix-step"><span class="fix-step-number">'+(i+1)+'</span><div><strong>'+(['Open '+r.service+' security','Change your password','Turn on two-factor authentication','Sign out unknown devices'][i])+'</strong><p>'+esc(step)+'</p></div></li>').join('')+'</ol><div class="fix-modal-note">'+icons.check+'<span>After completing the steps, click the button below to mark this local demo risk as fixed.</span></div><button class="fix-button" onclick="state.fixed=true;state.modal=false;render()">'+icons.check+' Fix '+esc(r.service)+' Risk</button></section></div>' : '';
+      return '<div class="email-view"><section class="panel footprint-card"><div class="panel-header"><div class="panel-title"><div class="title-icon">'+icons.mail+'</div><div><h2>Email Security Footprint</h2><p class="panel-subtitle">Enter your email to check where it’s been used, exposed or linked.</p></div></div></div><form class="input-row" onsubmit="event.preventDefault();scanEmail()"><div class="field-wrap"><input id="email-input" class="text-field" type="email" value="'+esc(state.email)+'" oninput="state.email=this.value"></div><button class="primary-button" type="submit"><span>'+icons.search+' Scan Footprint</span></button></form>'+(state.scanned?'<div class="scan-status">'+icons.check+' Local scan refreshed for '+esc(state.email)+'</div>':'')+'<div class="footprint-stage"><div class="footprint-summary"><div class="summary-icon">'+icons.mail+'</div><div><strong>Your Digital Footprint</strong><span>'+p.serviceCount+' services detected for '+esc(p.email)+'</span></div></div><div class="footprint-donut"><div class="donut-content"><strong>'+p.serviceCount+'</strong><span>services</span></div></div><div class="footprint-legend"><span><i class="legend-dot dot-safe"></i> '+p.lowRisk+' Low Risk</span><span><i class="legend-dot dot-warn"></i> '+p.review+' Need Review</span><span><i class="legend-dot dot-risk"></i> '+p.highRisk+' High Risk</span></div><div class="hub">'+icons.mail+'<span>'+esc(p.email)+'</span></div>'+serviceNodes(p)+'</div><div class="risk-section"><div class="risk-section-title">'+icons.alert+' <strong>Top Risks &amp; Recommendations</strong></div><div class="risk-highlight '+(state.fixed?'resolved':'')+'"><div class="risk-service-avatar">'+logo(r.service)+'</div><div class="risk-text"><strong>'+esc(r.service)+' <span class="status-pill '+(state.fixed?'safe':'danger')+'">'+(state.fixed?'Fixed':esc(r.status))+'</span></strong><p>'+(state.fixed?esc(r.service+' security settings updated for '+p.email+'.'):esc(p.email+': '+r.description))+'</p></div>'+(state.fixed?'<div class="fixed-badge">'+icons.check+' Fixed</div>':'<button class="small-button" onclick="state.modal=true;render()">Take Action</button>')+'<div class="risk-meta"><span>Source: '+esc(r.source)+'</span><span>Last seen: '+r.lastSeen+'</span></div></div>'+modal+'<details class="breakdown" open><summary class="breakdown-summary">Detailed Breakdown '+icons.arrow+'</summary><table><thead><tr><th>Service</th><th>Exposure Status</th><th>Last Seen</th><th>Details</th></tr></thead><tbody>'+p.services.map(s=>'<tr><td><div class="breakdown-service">'+logo(s.name)+esc(s.name)+'</div></td><td><span class="status-pill '+(s.tone==='risk'?'danger':s.tone)+'">'+esc(s.status)+'</span></td><td>'+s.lastSeen+'</td><td>'+esc(s.details)+'</td></tr>').join('')+'</tbody></table></details><div class="subpanel-heading" style="padding:12px 0 0">'+icons.info+'<div><h3>How was this found?</h3><p>We check known breach databases, public records and verified data leaks to find where your email might be exposed.</p></div></div></div></section></div>';
+    }
+    function render() {
+      document.getElementById('app').innerHTML = '<div class="app-shell"><aside class="sidebar"><div class="brand">'+icons.shield+'<div><div class="brand-name">CyberShield AI</div><div class="brand-tagline">Think. Detect. Stay Safe.</div></div></div><div class="nav-label">Workspace</div><nav class="nav">'+navItems.map(([label,icon])=>'<button class="nav-item '+(state.activeNav===label?'active':'')+'" onclick="selectNav(\''+label.replace(/'/g,"\\'")+'\')">'+icons[icon]+'<span>'+label+'</span></button>').join('')+'</nav><div class="sidebar-spacer"></div><div class="sidebar-promo">'+icons.shield+'<strong>Stronger<br>Passwords. Safer You.</strong><span>Protected by CyberShield AI</span></div></aside><main class="main"><header class="topbar"><div class="top-actions"><button class="icon-button" onclick="notice(\'No new alerts\',\'Your CyberShield workspace is up to date.\')">'+icons.bell+'</button><button class="avatar">N</button></div></header><div class="page"><div class="page-heading"><button class="icon-button">'+icons.arrow+'</button><div><h1>Security Analyzer</h1><p>'+(state.activeNav==='Security Analyzer'?'Check your password strength, detect risks and stay one step ahead.':state.activeNav+' is selected. Continue exploring the local security analyzer.')+'</p></div></div><div class="mode-switch"><button class="mode-button '+(state.mode==='password'?'active':'')+'" onclick="state.mode=\'password\';render()">'+icons.lock+' Password Security</button><button class="mode-button '+(state.mode==='email'?'active':'')+'" onclick="state.mode=\'email\';render()">'+icons.database+' Email Security Footprint</button></div>'+(state.mode==='password'?passwordView():emailView())+'</div></main>'+(state.notice?'<div class="notification '+state.notice.tone+'"><button class="icon-button" onclick="state.notice=null;render()">'+icons.close+'</button><strong>'+esc(state.notice.title)+'</strong><p>'+esc(state.notice.message)+'</p></div>':'')+'</div>';
+    }
+    function analyzePassword() {
+      const value = state.password, lower = value.toLowerCase();
+      const lengthScore = Math.min(value.length * 3, 48);
+      const variety = [/[A-Z]/,/[a-z]/,/[0-9]/,/[^A-Za-z0-9]/].filter(r=>r.test(value)).length * 10;
+      const penalty = (lower.includes('neerja')?16:0)+(lower.includes('2007')?15:0)+(/123|password|qwerty/i.test(value)?18:0);
+      state.score = Math.max(8,Math.min(98,lengthScore+variety-penalty)); render();
+      notice(state.score>=70?'Password analysis complete':'Risk pattern detected',state.score>=70?'This password has a healthy mix of length and character variety.':'CyberShield found predictable patterns. Review the quick fixes below.',state.score>=70?'success':'error');
+    }
+    function scanEmail() {
+      if (!state.email.trim() || !state.email.includes('@')) { notice('Email needed','Enter a valid email address before scanning.','error'); return; }
+      state.profile = profileFor(state.email); state.scanned = true; state.fixed = false; render();
+      notice('Footprint scan complete',state.profile.serviceCount+' services and '+state.profile.highRisk+' high-risk result'+(state.profile.highRisk===1?'':'s')+' mapped for '+state.email,'success');
+    }
+    function generatePassword() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
+      state.generated = Array.from({length:20},(_,i)=>chars[(i*17+Date.now()+i*13)%chars.length]).join('');
+      render(); notice('New password generated','Your password was created locally and was not sent anywhere.','success');
+    }
+    function copyValue(value) { navigator.clipboard?.writeText(value).then(()=>notice('Copied','Copied to your clipboard for this demo session.','success')).catch(()=>notice('Copy unavailable','Select the text manually.','error')); }
+    function selectNav(label) { state.activeNav=label; render(); if(label!=='Security Analyzer') notice(label+' selected','This prototype keeps the analyzer visible so you can continue your local review.'); }
+    render();
+  </script>
+</body>
+</html>
