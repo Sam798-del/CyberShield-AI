@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI — Cybersecurity & Threat Protection Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #050912;
+            --bg-secondary: #080f1d;
+            --card: #101a2a;
+            --card-light: #142238;
+            --border: #1e3554;
+            --royal-blue: #4169e1;
+            --royal-blue-dark: #3154c6;
+            --blue-light: #6d8cff;
+            --blue-glow: rgba(65, 105, 225, 0.35);
+            --cyber-cyan: #00f2fe;
+            --white: #f5f8ff;
+            --text: #d9e3f5;
+            --muted: #8293ad;
+            --success: #42d392;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        nav {
+            height: 70px;
+            width: 100%;
+            background: rgba(5, 9, 18, 0.95);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--royal-blue), #2747a9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 18px var(--blue-glow);
+        }
+
+        .brand-icon::before { content: "🛡️"; font-size: 18px; }
+        .brand span:last-child { color: var(--blue-light); }
+
+        .nav-links { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: white;
+            background: rgba(65, 105, 225, 0.2);
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+            background: radial-gradient(circle at top, rgba(65, 105, 225, 0.15), transparent 70%);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: rgba(65, 105, 225, 0.15);
+            border: 1px solid var(--royal-blue);
+            border-radius: 30px;
+            color: var(--blue-light);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 { font-size: 38px; font-weight: 800; margin-bottom: 16px; line-height: 1.2; }
+        .hero h1 span { color: var(--blue-light); }
+        .hero p { color: var(--muted); font-size: 16px; max-width: 750px; margin: 0 auto 28px; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+            text-align: center;
+        }
+        .stat-number { font-size: 32px; font-weight: 800; color: var(--blue-light); margin-bottom: 4px; }
+        .stat-label { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .grid-header { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+        .grid-header h2 { font-size: 24px; font-weight: 800; }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .module-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--royal-blue);
+            box-shadow: 0 10px 30px var(--blue-glow);
+        }
+
+        .module-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(65, 105, 225, 0.2);
+            border: 1px solid var(--royal-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 18px;
+        }
+
+        .module-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: white; }
+        .module-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; flex-grow: 1; }
+        .module-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(65, 105, 225, 0.15);
+            color: var(--blue-light);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            width: fit-content;
+        }
+
+        .module-link-text {
+            color: var(--blue-light);
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 15px;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .bottom-nav a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 10px;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 20%;
+            height: 100%;
+        }
+        .bottom-nav a.active { color: var(--blue-light); }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero h1 { font-size: 28px; }
+            .modules-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="index.html" class="brand">
+            <div class="brand-icon"></div>
+            <span>CyberShield <span>AI</span></span>
+        </a>
+
+        <div class="nav-links">
+            <a href="index.html" class="active">🏠 Home</a>
+            <a href="pages/dashboard.html">📊 Dashboard</a>
+            <a href="pages/guide.html">🛡️ Guidance</a>
+            <a href="pages/phishing-detection.html">📧 Phishing</a>
+            <a href="pages/cyberbullying-detection.html">💬 Cyberbullying</a>
+            <a href="pages/digital-identity.html">🔑 Identity Vault</a>
+            <a href="pages/security-analyzer.html">🔍 Security Analyzer</a>
+            <a href="pages/security-report.html">📈 Audit Report</a>
+            <a href="pages/settings.html">⚙️ Settings</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <div class="eyebrow">CYBERSHIELD AI PLATFORM</div>
+            <h1>AI-Driven Cybersecurity & <span>Threat Protection Suite</span></h1>
+            <p>Empowering users with real-time phishing detection, cyberbullying & toxicity analysis, digital identity protection, domain security diagnostics, and interactive threat guidance.</p>
+
+            <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+                <a href="pages/guide.html" style="padding: 12px 26px; background: var(--royal-blue); color: white; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 14px; box-shadow: 0 0 20px var(--blue-glow);">🛡️ Open Guidance Hub</a>
+                <a href="pages/dashboard.html" style="padding: 12px 26px; background: var(--card-light); color: var(--white); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 14px;">📊 Launch Security Dashboard</a>
+            </div>
+        </section>
+
+        <!-- STATS GRID -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">8</div>
+                <div class="stat-label">Active Modules</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Zero-Trust Privacy</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">&lt; 1.4ms</div>
+                <div class="stat-label">Analysis Latency</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">Real-Time</div>
+                <div class="stat-label">Threat Telemetry</div>
+            </div>
+        </div>
+
+        <!-- MODULES GRID -->
+        <div class="grid-header">
+            <h2>CyberShield-AI Core Modules</h2>
+            <span style="color: var(--muted); font-size: 13px;">Select any feature to launch full tool</span>
+        </div>
+
+        <div class="modules-grid">
+
+            <!-- 1. GUIDANCE -->
+            <a href="pages/guide.html" class="module-card">
+                <div>
+                    <div class="module-icon">🛡️</div>
+                    <span class="module-badge">EDUCATION & INTERACTIVE</span>
+                    <div class="module-title">Cybersecurity Guidance Hub</div>
+                    <div class="module-desc">Step-by-step security walkthroughs, interactive threat tools, AI security assistant, and progress tracking.</div>
+                </div>
+                <div class="module-link-text">Launch Guidance Hub →</div>
+            </a>
+
+            <!-- 2. DASHBOARD -->
+            <a href="pages/dashboard.html" class="module-card">
+                <div>
+                    <div class="module-icon">📊</div>
+                    <span class="module-badge">COMMAND CENTER</span>
+                    <div class="module-title">Security Command Dashboard</div>
+                    <div class="module-desc">Centralized threat score, active protection status, threat metrics, and quick security controls.</div>
+                </div>
+                <div class="module-link-text">Open Dashboard →</div>
+            </a>
+
+            <!-- 3. DIGITAL IDENTITY -->
+            <a href="pages/digital-identity.html" class="module-card">
+                <div>
+                    <div class="module-icon">🔑</div>
+                    <span class="module-badge">IDENTITY PROTECTION</span>
+                    <div class="module-title">Digital Identity & Vault</div>
+                    <div class="module-desc">Credential leak checker, password health scanner, hardware 2FA management, and privacy risk assessment.</div>
+                </div>
+                <div class="module-link-text">Manage Identity →</div>
+            </a>
+
+            <!-- 4. SECURITY ANALYZER -->
+            <a href="pages/security-analyzer.html" class="module-card">
+                <div>
+                    <div class="module-icon">🔍</div>
+                    <span class="module-badge">DIAGNOSTIC SCANNER</span>
+                    <div class="module-title">System & Security Analyzer</div>
+                    <div class="module-desc">URL & Domain security inspection, SSL/TLS header check, port scanner, and vulnerability heuristics.</div>
+                </div>
+                <div class="module-link-text">Run Security Scan →</div>
+            </a>
+
+            <!-- 5. PHISHING DETECTION -->
+            <a href="pages/phishing-detection.html" class="module-card">
+                <div>
+                    <div class="module-icon">📧</div>
+                    <span class="module-badge">LIVE AI SCANNER</span>
+                    <div class="module-title">Phishing Detection Scanner</div>
+                    <div class="module-desc">Analyze emails, header records, and URLs to detect spoofing, malware links, and deceptive sender domains.</div>
+                </div>
+                <div class="module-link-text">Scan Email / URL →</div>
+            </a>
+
+            <!-- 6. CYBERBULLYING DETECTION -->
+            <a href="pages/cyberbullying-detection.html" class="module-card">
+                <div>
+                    <div class="module-icon">💬</div>
+                    <span class="module-badge">TEXT AI ANALYZER</span>
+                    <div class="module-title">Cyberbullying & Toxicity Analyzer</div>
+                    <div class="module-desc">Detect harassment, online hate, profanity, and threats in social messages with instant safety recommendations.</div>
+                </div>
+                <div class="module-link-text">Analyze Toxicity →</div>
+            </a>
+
+            <!-- 7. SECURITY REPORT -->
+            <a href="pages/security-report.html" class="module-card">
+                <div>
+                    <div class="module-icon">📈</div>
+                    <span class="module-badge">AUDIT & TELEMETRY</span>
+                    <div class="module-title">Security Audit Report</div>
+                    <div class="module-desc">Export formal PDF/JSON security audit logs, compliance reports, and historical threat analysis.</div>
+                </div>
+                <div class="module-link-text">Generate Audit Report →</div>
+            </a>
+
+            <!-- 8. SETTINGS -->
+            <a href="pages/settings.html" class="module-card">
+                <div>
+                    <div class="module-icon">⚙️</div>
+                    <span class="module-badge">CONFIGURATIONS</span>
+                    <div class="module-title">Settings & User Preferences</div>
+                    <div class="module-desc">Configure threat sensitivity, AI model settings, zero-trust vault, and system appearance.</div>
+                </div>
+                <div class="module-link-text">Configure Settings →</div>
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <div class="bottom-nav">
+        <a href="index.html" class="active">🏠<br>Home</a>
+        <a href="pages/guide.html">🛡️<br>Guide</a>
+        <a href="pages/dashboard.html">📊<br>Dashboard</a>
+        <a href="pages/phishing-detection.html">📧<br>Phishing</a>
+        <a href="pages/settings.html">⚙️<br>Settings</a>
+    </div>
+
+</body>
+</html>

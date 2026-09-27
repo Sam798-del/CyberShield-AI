@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI — Cyberbullying & Toxicity Analyzer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #050912;
+            --bg-secondary: #080f1d;
+            --card: #101a2a;
+            --card-light: #142238;
+            --border: #1e3554;
+            --royal-blue: #4169e1;
+            --royal-blue-dark: #3154c6;
+            --blue-light: #6d8cff;
+            --blue-glow: rgba(65, 105, 225, 0.35);
+            --white: #f5f8ff;
+            --text: #d9e3f5;
+            --muted: #8293ad;
+            --success: #42d392;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        nav {
+            height: 70px;
+            width: 100%;
+            background: rgba(5, 9, 18, 0.95);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--royal-blue), #2747a9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 18px var(--blue-glow);
+        }
+
+        .brand-icon::before { content: "🛡️"; font-size: 18px; }
+        .brand span:last-child { color: var(--blue-light); }
+
+        .nav-links { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: white;
+            background: rgba(65, 105, 225, 0.2);
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+
+        .hero { margin-bottom: 30px; text-align: center; }
+        .hero h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
+        .hero h1 span { color: var(--blue-light); }
+        .hero p { color: var(--muted); font-size: 15px; }
+
+        .analyzer-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 140px;
+            padding: 16px;
+            background: #060b16;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            resize: vertical;
+            margin-bottom: 16px;
+        }
+
+        .btn-group { display: flex; gap: 12px; flex-wrap: wrap; }
+
+        .btn-action {
+            padding: 12px 26px;
+            background: var(--royal-blue);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-action:hover { background: var(--royal-blue-dark); }
+        .btn-secondary { background: var(--card-light); border: 1px solid var(--border); }
+
+        .results-panel { display: none; margin-top: 30px; padding: 24px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: var(--bg-secondary); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 10000; }
+        .bottom-nav a { color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; height: 100%; }
+        .bottom-nav a.active { color: var(--blue-light); }
+
+        @media (max-width: 768px) { .nav-links { display: none; } }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="../index.html" class="brand">
+            <div class="brand-icon"></div>
+            <span>CyberShield <span>AI</span></span>
+        </a>
+
+        <div class="nav-links">
+            <a href="../index.html">🏠 Home</a>
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="guide.html">🛡️ Guidance</a>
+            <a href="phishing-detection.html">📧 Phishing</a>
+            <a href="cyberbullying-detection.html" class="active">💬 Cyberbullying</a>
+            <a href="digital-identity.html">🔑 Identity Vault</a>
+            <a href="security-analyzer.html">🔍 Security Analyzer</a>
+            <a href="security-report.html">📈 Audit Report</a>
+            <a href="settings.html">⚙️ Settings</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- HERO HEADER -->
+        <div class="hero">
+            <h1>Cyberbullying & Toxicity <span>Analyzer</span></h1>
+            <p>Evaluate messages, social posts, and comments for harassment, hate speech, threats, and profanity.</p>
+        </div>
+
+        <!-- ANALYZER CARD -->
+        <div class="analyzer-card">
+            <h3 style="font-size: 20px; margin-bottom: 12px;">💬 Paste Text / Message to Evaluate</h3>
+
+            <textarea id="bullyText" placeholder="Paste chat message, email text, or social post here... (e.g. 'You are ugly and nobody likes you, get off the platform')"></textarea>
+
+            <div class="btn-group">
+                <button class="btn-action" onclick="analyzeBullying()">Evaluate Toxicity</button>
+                <button class="btn-action btn-secondary" onclick="loadBullySample()">Load Toxic Sample</button>
+            </div>
+
+            <div class="results-panel" id="bullyResult"></div>
+        </div>
+
+    </div>
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <div class="bottom-nav">
+        <a href="../index.html">🏠<br>Home</a>
+        <a href="guide.html">🛡️<br>Guide</a>
+        <a href="dashboard.html">📊<br>Dashboard</a>
+        <a href="phishing-detection.html">📧<br>Phishing</a>
+        <a href="settings.html">⚙️<br>Settings</a>
+    </div>
+
+    <script>
+        function loadBullySample() {
+            document.getElementById("bullyText").value = "Nobody likes you here. You should just delete your account and stop posting forever, you loser.";
+        }
+
+        async function analyzeBullying() {
+            const input = document.getElementById("bullyText").value.trim();
+            const resBox = document.getElementById("bullyResult");
+            if (!input) return;
+
+            resBox.style.display = "block";
+            resBox.innerHTML = "<p style='color: var(--muted);'>⏳ Analyzing toxicity score with CyberShield-AI Natural Language Engine...</p>";
+
+            try {
+                const res = await fetch("/api/detect/cyberbullying", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text: input })
+                });
+                const data = await res.json();
+
+                resBox.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h4 style="color: ${data.toxicity_score >= 35 ? 'var(--danger)' : 'var(--success)'}; font-size: 20px;">
+                            ${data.toxicity_level}
+                        </h4>
+                        <span style="font-size: 22px; font-weight: 800; color: ${data.toxicity_score >= 35 ? 'var(--danger)' : 'var(--success)'}">
+                            Toxicity Score: ${data.toxicity_score}/100
+                        </span>
+                    </div>
+                    <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Flagged Keywords: <strong>${data.flagged_words.join(', ') || 'None'}</strong></p>
+                    <div style="background: var(--card); padding: 14px; border-radius: 8px;">
+                        <strong>Safety Recommendations:</strong>
+                        <ul style="padding-left: 20px; font-size: 13px; margin-top: 6px; color: var(--text);">
+                            ${data.safety_actions.map(a => `<li>${a}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            } catch (err) {
+                const isToxic = input.toLowerCase().includes("loser") || input.toLowerCase().includes("delete") || input.toLowerCase().includes("hate");
+                resBox.innerHTML = `
+                    <h4 style="color: ${isToxic ? 'var(--danger)' : 'var(--success)'}; font-size: 18px;">
+                        ${isToxic ? '🚨 TOXICITY DETECTED (Client Engine)' : '✅ SAFE CONTENT'}
+                    </h4>
+                    <p style="font-size: 13px; color: var(--muted); margin-top: 6px;">Evaluated against harassment & insult dictionary.</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

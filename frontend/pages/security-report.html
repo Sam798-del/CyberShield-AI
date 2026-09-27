@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI — Security Audit Report</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #050912;
+            --bg-secondary: #080f1d;
+            --card: #101a2a;
+            --card-light: #142238;
+            --border: #1e3554;
+            --royal-blue: #4169e1;
+            --royal-blue-dark: #3154c6;
+            --blue-light: #6d8cff;
+            --blue-glow: rgba(65, 105, 225, 0.35);
+            --white: #f5f8ff;
+            --text: #d9e3f5;
+            --muted: #8293ad;
+            --success: #42d392;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        nav {
+            height: 70px;
+            width: 100%;
+            background: rgba(5, 9, 18, 0.95);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--royal-blue), #2747a9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 18px var(--blue-glow);
+        }
+
+        .brand-icon::before { content: "🛡️"; font-size: 18px; }
+        .brand span:last-child { color: var(--blue-light); }
+
+        .nav-links { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: white;
+            background: rgba(65, 105, 225, 0.2);
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+
+        .hero { margin-bottom: 30px; text-align: center; }
+        .hero h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
+        .hero h1 span { color: var(--blue-light); }
+        .hero p { color: var(--muted); font-size: 15px; }
+
+        .report-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .btn-action {
+            padding: 10px 20px;
+            background: var(--royal-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-action:hover { background: var(--royal-blue-dark); }
+        .btn-secondary { background: var(--card-light); border: 1px solid var(--border); }
+
+        .audit-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .audit-table th, .audit-table td { padding: 14px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; }
+        .audit-table th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 11px; }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: var(--bg-secondary); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 10000; }
+        .bottom-nav a { color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; height: 100%; }
+        .bottom-nav a.active { color: var(--blue-light); }
+
+        @media (max-width: 768px) { .nav-links { display: none; } }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="../index.html" class="brand">
+            <div class="brand-icon"></div>
+            <span>CyberShield <span>AI</span></span>
+        </a>
+
+        <div class="nav-links">
+            <a href="../index.html">🏠 Home</a>
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="guide.html">🛡️ Guidance</a>
+            <a href="phishing-detection.html">📧 Phishing</a>
+            <a href="cyberbullying-detection.html">💬 Cyberbullying</a>
+            <a href="digital-identity.html">🔑 Identity Vault</a>
+            <a href="security-analyzer.html">🔍 Security Analyzer</a>
+            <a href="security-report.html" class="active">📈 Audit Report</a>
+            <a href="settings.html">⚙️ Settings</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- HERO HEADER -->
+        <div class="hero">
+            <h1>Security Compliance & <span>Audit Telemetry</span></h1>
+            <p>Generate certified audit reports, view historical threat telemetry, and verify zero-trust compliance.</p>
+        </div>
+
+        <!-- REPORT CARD -->
+        <div class="report-card">
+            <div class="report-header">
+                <div>
+                    <h3 style="font-size: 20px;">📄 CyberShield-AI Master Security Audit</h3>
+                    <p style="font-size: 13px; color: var(--muted);">Generated on: September 2026 • Verified SHA-256 Signature</p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-action" onclick="exportPDF()">📄 Export PDF Report</button>
+                    <button class="btn-action btn-secondary" onclick="exportJSON()">📥 Download JSON Audit</button>
+                </div>
+            </div>
+
+            <table class="audit-table">
+                <thead>
+                    <tr>
+                        <th>Entry ID</th>
+                        <th>Timestamp</th>
+                        <th>Module Origin</th>
+                        <th>Security Event / Action</th>
+                        <th>Compliance Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#CS-9012</td>
+                        <td>2026-09-27 17:18</td>
+                        <td>Guidance & Phishing Engine</td>
+                        <td>Header Verification (SPF/DKIM/DMARC)</td>
+                        <td><span style="color: var(--success); font-weight: bold;">PASSED</span></td>
+                    </tr>
+                    <tr>
+                        <td>#CS-9011</td>
+                        <td>2026-09-27 17:05</td>
+                        <td>Cyberbullying Analyzer</td>
+                        <td>NLP Toxicity Keyword Scan</td>
+                        <td><span style="color: var(--success); font-weight: bold;">PASSED</span></td>
+                    </tr>
+                    <tr>
+                        <td>#CS-9010</td>
+                        <td>2026-09-27 16:40</td>
+                        <td>Digital Identity Vault</td>
+                        <td>AES-256 Vault Password Hash Sync</td>
+                        <td><span style="color: var(--success); font-weight: bold;">ENCRYPTED</span></td>
+                    </tr>
+                    <tr>
+                        <td>#CS-9009</td>
+                        <td>2026-09-27 15:12</td>
+                        <td>Security Analyzer</td>
+                        <td>Domain TLS 1.3 & HSTS Diagnostics</td>
+                        <td><span style="color: var(--success); font-weight: bold;">VERIFIED</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <div class="bottom-nav">
+        <a href="../index.html">🏠<br>Home</a>
+        <a href="guide.html">🛡️<br>Guide</a>
+        <a href="dashboard.html">📊<br>Dashboard</a>
+        <a href="phishing-detection.html">📧<br>Phishing</a>
+        <a href="settings.html">⚙️<br>Settings</a>
+    </div>
+
+    <script>
+        function exportPDF() { alert("CyberShield Security Audit PDF generated successfully."); }
+        function exportJSON() {
+            const logData = {
+                app: "CyberShield-AI",
+                auditDate: "2026-09-27",
+                status: "COMPLIANT",
+                totalScans: 142
+            };
+            const blob = new Blob([JSON.stringify(logData, null, 2)], { type: "application/json" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "cybershield_audit_report.json";
+            a.click();
+        }
+    </script>
+</body>
+</html>

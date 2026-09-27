@@ -443,40 +443,7 @@
             display: none;
         }
 
-        /* RESEARCH PAPERS SECTION */
-        .section-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
 
-        .section-header h2 { font-size: 26px; font-weight: 800; }
-        .section-header p { color: var(--muted); font-size: 14px; margin-top: 6px; }
-
-        .papers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-            gap: 24px;
-            margin-bottom: 50px;
-        }
-
-        .paper-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 26px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .paper-tag {
-            font-size: 11px;
-            color: var(--blue-light);
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
 
         /* MODAL */
         .modal-overlay {
@@ -560,7 +527,6 @@
             .category-tabs::-webkit-scrollbar { display: none; }
             .tab-btn { flex-shrink: 0; font-size: 12px; padding: 8px 14px; }
             .guides-grid { grid-template-columns: 1fr; gap: 16px; }
-            .papers-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -589,7 +555,7 @@
         <!-- SEARCH BAR -->
         <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" placeholder="Search guides, tools, FAQs, or research papers (e.g. Phishing, Passwords, Ransomware)..." oninput="handleSearch()">
+            <input type="text" id="searchInput" placeholder="Search guides, tools, FAQs (e.g. Phishing, Passwords, Ransomware)..." oninput="handleSearch()">
         </div>
 
         <!-- PROGRESS TRACKER -->
@@ -690,13 +656,7 @@
             <div class="ai-response" id="aiResponse"></div>
         </div>
 
-        <!-- RESEARCH PAPERS SECTION -->
-        <div class="section-header" id="researchSection">
-            <h2>CyberShield Research Papers</h2>
-            <p>Peer-reviewed cybersecurity frameworks integrated into CyberShield-AI</p>
-        </div>
 
-        <div class="papers-grid" id="papersGrid"></div>
 
     </div>
 
@@ -822,7 +782,6 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             renderGuides();
-            loadResearchPapers();
             updateProgressBar();
         });
 
@@ -977,36 +936,8 @@
             } else if (q.includes("bully") || q.includes("hate")) {
                 respBox.innerHTML = "💬 <strong>Cyberbullying Protection Advice</strong>:<br>1. Save screenshot evidence.<br>2. Use our live Cyberbullying Analyzer tool above!<br>3. Block user and report to moderators.";
             } else {
-                respBox.innerHTML = `🛡️ <strong>CyberShield AI Advisor Response</strong>:<br>Regarding <em>"${input.value}"</em>:<br>1. Practice least privilege.<br>2. Keep systems updated.<br>3. Review the research papers below.`;
+                respBox.innerHTML = `🛡️ <strong>CyberShield AI Advisor Response</strong>:<br>Regarding <em>"${input.value}"</em>:<br>1. Practice least privilege.<br>2. Keep systems updated.<br>3. Follow security guidelines.`;
             }
-        }
-
-        async function loadResearchPapers() {
-            const grid = document.getElementById("papersGrid");
-            grid.innerHTML = `
-                <div class="paper-card">
-                    <div>
-                        <div class="paper-tag">CYBERSHIELD RESEARCH PAPER</div>
-                        <h3>Dynamic AI-Driven Cybersecurity Guidance and Adaptive Threat Education Frameworks</h3>
-                        <p>Presents an adaptive AI framework delivering micro-learning modules and threat contextualization, achieving a 74.2% reduction in phishing vulnerability.</p>
-                    </div>
-                    <div>
-                        <div style="font-size: 12px; color: var(--muted); margin-bottom: 14px;">✍️ Shreya et al. • 📅 September 2026</div>
-                        <button class="btn-action" style="width: 100%;" onclick="openPaperModal(1)">📄 Read Full Research Paper →</button>
-                    </div>
-                </div>
-                <div class="paper-card">
-                    <div>
-                        <div class="paper-tag">CYBERSHIELD RESEARCH PAPER</div>
-                        <h3>Zero-Trust Security Configurations, Privacy-Preserving Telemetry, and User Preference Management</h3>
-                        <p>Explores zero-trust configuration storage, encrypted API key vaults, and Differential Privacy (Laplace mechanism) for telemetry collection with sub-1.4ms access latency.</p>
-                    </div>
-                    <div>
-                        <div style="font-size: 12px; color: var(--muted); margin-bottom: 14px;">✍️ Shreya et al. • 📅 September 2026</div>
-                        <button class="btn-action" style="width: 100%;" onclick="openPaperModal(2)">📄 Read Full Research Paper →</button>
-                    </div>
-                </div>
-            `;
         }
 
         function openGuideModal(id) {
@@ -1030,17 +961,6 @@
                     </div>
                 `).join('')}
             `;
-            modal.style.display = "flex";
-        }
-
-        function openPaperModal(num) {
-            const modal = document.getElementById("guideModal");
-            const body = document.getElementById("modalBody");
-            if (num === 1) {
-                body.innerHTML = `<h1>Dynamic AI-Driven Cybersecurity Guidance Frameworks</h1><p><strong>Author:</strong> Shreya et al. (September 2026)</p><hr style="border-color: var(--border); margin: 15px 0;"><p>As cyber threats rapidly evolve, traditional static security training fails to protect users. CyberShield-AI Guidance introduces context-aware micro-learning and automated threat mitigation.</p>`;
-            } else {
-                body.innerHTML = `<h1>Zero-Trust Security Configurations and Privacy Telemetry</h1><p><strong>Author:</strong> Shreya et al. (September 2026)</p><hr style="border-color: var(--border); margin: 15px 0;"><p>Explores zero-trust configuration storage, encrypted key vaults, and differential privacy telemetry aggregation with sub-1.4ms access latency.</p>`;
-            }
             modal.style.display = "flex";
         }
 

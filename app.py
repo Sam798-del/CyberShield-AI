@@ -12,12 +12,25 @@ from flask_cors import CORS
 
 # Initialize Flask App
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-WEB_DIR = os.path.join(BASE_DIR, "Web")
+FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
+PAGES_DIR = os.path.join(FRONTEND_DIR, "pages")
 RESEARCH_DIR = os.path.join(BASE_DIR, "Research_Papers")
 DB_PATH = os.path.join(BASE_DIR, "cybershield.db")
 
-app = Flask(__name__, static_folder=WEB_DIR, static_url_path="")
+app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path="")
 CORS(app)
+
+@app.route("/")
+def serve_index():
+    return send_from_directory(FRONTEND_DIR, "index.html")
+
+@app.route("/guide.html")
+def legacy_guide():
+    return send_from_directory(PAGES_DIR, "guide.html")
+
+@app.route("/settings.html")
+def legacy_settings():
+    return send_from_directory(PAGES_DIR, "settings.html")
 
 # Default Settings Configuration
 DEFAULT_SETTINGS = {
@@ -670,10 +683,10 @@ if __name__ == "__main__":
     print("=" * 65)
     print("      CyberShield-AI Server (Mobile & Desktop Enabled)")
     print("=" * 65)
-    print(f"  [Mobile Phone Access] Guidance: http://{local_ip}:5000/guide.html")
-    print(f"  [Mobile Phone Access] Settings: http://{local_ip}:5000/settings.html")
-    print(f"  [Local PC Access]     Guidance: http://127.0.0.1:5000/guide.html")
-    print(f"  [Local PC Access]     Settings: http://127.0.0.1:5000/settings.html")
+    print(f"  [Portal Home]         http://{local_ip}:5000/index.html")
+    print(f"  [Guidance Hub]        http://{local_ip}:5000/pages/guide.html")
+    print(f"  [Security Dashboard]  http://{local_ip}:5000/pages/dashboard.html")
+    print(f"  [Settings Page]       http://{local_ip}:5000/pages/settings.html")
     print("=" * 65 + "\n")
     app.run(host="0.0.0.0", port=5000, debug=True)
 

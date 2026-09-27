@@ -332,8 +332,6 @@
         .ai-response { margin-top: 18px; padding: 18px; background: rgba(5, 9, 18, 0.85); border: 1px solid var(--border); border-radius: 10px; display: none; }
 
         .section-header { text-align: center; margin-bottom: 30px; }
-        .papers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 24px; margin-bottom: 50px; }
-        .paper-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 26px; display: flex; flex-direction: column; justify-content: space-between; }
 
         .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; }
         .modal-content { background: var(--bg-secondary); border: 1px solid var(--royal-blue); border-radius: 16px; width: min(850px, 95%); max-height: 85vh; overflow-y: auto; padding: 32px; position: relative; }
@@ -349,7 +347,7 @@
             .category-tabs { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 8px; }
             .category-tabs::-webkit-scrollbar { display: none; }
             .tab-btn { flex-shrink: 0; font-size: 12px; }
-            .guides-grid, .papers-grid { grid-template-columns: 1fr; }
+            .guides-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -377,7 +375,7 @@
         <!-- SEARCH BAR -->
         <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" placeholder="Search guides, tools, FAQs, or research papers..." oninput="handleSearch()">
+            <input type="text" id="searchInput" placeholder="Search guides, tools, FAQs..." oninput="handleSearch()">
         </div>
 
         <!-- PROGRESS TRACKER -->
@@ -477,13 +475,7 @@
             <div class="ai-response" id="aiResponse"></div>
         </div>
 
-        <!-- RESEARCH PAPERS SECTION -->
-        <div class="section-header">
-            <h2>CyberShield Research Papers</h2>
-            <p>Peer-reviewed cybersecurity frameworks integrated into CyberShield-AI</p>
-        </div>
 
-        <div class="papers-grid" id="papersGrid"></div>
 
     </div>
 
@@ -591,7 +583,6 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             renderGuides();
-            loadResearchPapers();
             updateProgressBar();
         });
 
@@ -701,36 +692,8 @@
             } else if (q.includes("bully") || q.includes("hate")) {
                 respBox.innerHTML = "💬 <strong>Cyberbullying Protection Advice</strong>:<br>1. Save screenshot evidence.<br>2. Use our live Cyberbullying Analyzer tool above!<br>3. Block user and report to moderators.";
             } else {
-                respBox.innerHTML = `🛡️ <strong>CyberShield AI Advisor Response</strong>:<br>Regarding <em>"${input.value}"</em>:<br>1. Practice least privilege.<br>2. Keep systems updated.<br>3. Review research papers.`;
+                respBox.innerHTML = `🛡️ <strong>CyberShield AI Advisor Response</strong>:<br>Regarding <em>"${input.value}"</em>:<br>1. Practice least privilege.<br>2. Keep systems updated.<br>3. Follow security guidelines.`;
             }
-        }
-
-        function loadResearchPapers() {
-            const grid = document.getElementById("papersGrid");
-            grid.innerHTML = `
-                <div class="paper-card">
-                    <div>
-                        <div class="paper-tag">CYBERSHIELD RESEARCH PAPER</div>
-                        <h3>Dynamic AI-Driven Cybersecurity Guidance and Adaptive Threat Education Frameworks</h3>
-                        <p>Presents an adaptive AI framework delivering micro-learning modules and threat contextualization, achieving a 74.2% reduction in phishing vulnerability.</p>
-                    </div>
-                    <div>
-                        <div style="font-size: 12px; color: var(--muted); margin-bottom: 14px;">✍️ Shreya et al. • 📅 September 2026</div>
-                        <button class="btn-action" style="width: 100%;" onclick="openPaperModal(1)">📄 Read Full Research Paper →</button>
-                    </div>
-                </div>
-                <div class="paper-card">
-                    <div>
-                        <div class="paper-tag">CYBERSHIELD RESEARCH PAPER</div>
-                        <h3>Zero-Trust Security Configurations, Privacy-Preserving Telemetry, and User Preference Management</h3>
-                        <p>Explores zero-trust configuration storage, encrypted API key vaults, and Differential Privacy (Laplace mechanism) for telemetry collection with sub-1.4ms access latency.</p>
-                    </div>
-                    <div>
-                        <div style="font-size: 12px; color: var(--muted); margin-bottom: 14px;">✍️ Shreya et al. • 📅 September 2026</div>
-                        <button class="btn-action" style="width: 100%;" onclick="openPaperModal(2)">📄 Read Full Research Paper →</button>
-                    </div>
-                </div>
-            `;
         }
 
         function openGuideModal(id) {
@@ -754,17 +717,6 @@
                     </div>
                 `).join('')}
             `;
-            modal.style.display = "flex";
-        }
-
-        function openPaperModal(num) {
-            const modal = document.getElementById("guideModal");
-            const body = document.getElementById("modalBody");
-            if (num === 1) {
-                body.innerHTML = `<h1>Dynamic AI-Driven Cybersecurity Guidance Frameworks</h1><p><strong>Author:</strong> Shreya et al. (September 2026)</p><hr style="border-color: var(--border); margin: 15px 0;"><p>As cyber threats rapidly evolve, traditional static security training fails to protect users. CyberShield-AI Guidance introduces context-aware micro-learning and automated threat mitigation.</p>`;
-            } else {
-                body.innerHTML = `<h1>Zero-Trust Security Configurations and Privacy Telemetry</h1><p><strong>Author:</strong> Shreya et al. (September 2026)</p><hr style="border-color: var(--border); margin: 15px 0;"><p>Explores zero-trust configuration storage, encrypted key vaults, and differential privacy telemetry aggregation with sub-1.4ms access latency.</p>`;
-            }
             modal.style.display = "flex";
         }
 

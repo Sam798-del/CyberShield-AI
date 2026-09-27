@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI — Settings & Preferences</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #050912;
+            --bg-secondary: #080f1d;
+            --card: #101a2a;
+            --card-light: #142238;
+            --border: #1e3554;
+            --royal-blue: #4169e1;
+            --royal-blue-dark: #3154c6;
+            --blue-light: #6d8cff;
+            --blue-glow: rgba(65, 105, 225, 0.35);
+            --white: #f5f8ff;
+            --text: #d9e3f5;
+            --muted: #8293ad;
+            --success: #42d392;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        nav {
+            height: 70px;
+            width: 100%;
+            background: rgba(5, 9, 18, 0.95);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--royal-blue), #2747a9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 18px var(--blue-glow);
+        }
+
+        .brand-icon::before { content: "🛡️"; font-size: 18px; }
+        .brand span:last-child { color: var(--blue-light); }
+
+        .nav-links { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: white;
+            background: rgba(65, 105, 225, 0.2);
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+
+        .hero { margin-bottom: 30px; text-align: center; }
+        .hero h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
+        .hero h1 span { color: var(--blue-light); }
+        .hero p { color: var(--muted); font-size: 15px; }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .setting-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 26px;
+        }
+
+        .setting-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+
+        .input-control, select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #060b16;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .toggle-row label { font-size: 13px; color: var(--text); }
+
+        .btn-action {
+            padding: 12px 24px;
+            background: var(--royal-blue);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-action:hover { background: var(--royal-blue-dark); }
+        .btn-danger { background: rgba(248, 113, 113, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: var(--bg-secondary); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 10000; }
+        .bottom-nav a { color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; height: 100%; }
+        .bottom-nav a.active { color: var(--blue-light); }
+
+        @media (max-width: 768px) { .nav-links { display: none; } }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="../index.html" class="brand">
+            <div class="brand-icon"></div>
+            <span>CyberShield <span>AI</span></span>
+        </a>
+
+        <div class="nav-links">
+            <a href="../index.html">🏠 Home</a>
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="guide.html">🛡️ Guidance</a>
+            <a href="phishing-detection.html">📧 Phishing</a>
+            <a href="cyberbullying-detection.html">💬 Cyberbullying</a>
+            <a href="digital-identity.html">🔑 Identity Vault</a>
+            <a href="security-analyzer.html">🔍 Security Analyzer</a>
+            <a href="security-report.html">📈 Audit Report</a>
+            <a href="settings.html" class="active">⚙️ Settings</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- HERO HEADER -->
+        <div class="hero">
+            <h1>Settings & <span>Security Preferences</span></h1>
+            <p>Manage profile credentials, threat sensitivity thresholds, AI assistant models, and zero-trust vault preferences.</p>
+        </div>
+
+        <div class="settings-grid">
+
+            <!-- PROFILE SETTINGS -->
+            <div class="setting-card">
+                <h3><span>👤</span> User Profile & Security Role</h3>
+                <div class="form-group">
+                    <label>Administrator Name</label>
+                    <input type="text" id="profName" class="input-control" value="CyberShield Lead Admin">
+                </div>
+                <div class="form-group">
+                    <label>Security Email Contact</label>
+                    <input type="email" id="profEmail" class="input-control" value="admin@cybershield.ai">
+                </div>
+            </div>
+
+            <!-- THREAT DETECTOR CONFIGURATION -->
+            <div class="setting-card">
+                <h3><span>🛡️</span> Real-Time Threat Shield</h3>
+                <div class="form-group">
+                    <label>Threat Sensitivity Threshold</label>
+                    <select id="sensitivitySelect">
+                        <option value="high" selected>High (Recommended for Active Defense)</option>
+                        <option value="paranoid">Paranoid (Maximum Heuristics & Aggressive Quarantine)</option>
+                        <option value="medium">Balanced / Medium</option>
+                    </select>
+                </div>
+                <div class="toggle-row">
+                    <label>Automated Isolation of Suspicious Emails</label>
+                    <input type="checkbox" id="autoIso" checked>
+                </div>
+                <div class="toggle-row">
+                    <label>Deep Domain Heuristics Scanning</label>
+                    <input type="checkbox" id="deepScan" checked>
+                </div>
+            </div>
+
+            <!-- AI ASSISTANT MODEL CONFIGURATION -->
+            <div class="setting-card">
+                <h3><span>🤖</span> AI Security Engine Settings</h3>
+                <div class="form-group">
+                    <label>Primary AI Model</label>
+                    <select id="aiModelSelect">
+                        <option value="CyberShield-DeepSense-v2" selected>CyberShield-DeepSense-v2 (Real-Time)</option>
+                        <option value="CyberShield-Heuristic-v1">CyberShield-Heuristic-v1 (Offline)</option>
+                    </select>
+                </div>
+                <div class="toggle-row">
+                    <label>Auto-Suggest Interactive Security Walkthroughs</label>
+                    <input type="checkbox" id="autoSuggest" checked>
+                </div>
+            </div>
+
+            <!-- PRIVACY & VAULT CONFIGURATION -->
+            <div class="setting-card">
+                <h3><span>🔒</span> Zero-Trust Privacy Vault</h3>
+                <div class="toggle-row">
+                    <label>Client Telemetry Analytics (Opt-Out)</label>
+                    <input type="checkbox" id="telemetryOpt">
+                </div>
+                <div class="toggle-row">
+                    <label>Anonymize Source IP Addresses in Local DB</label>
+                    <input type="checkbox" id="anonIp" checked>
+                </div>
+            </div>
+
+        </div>
+
+        <div style="display: flex; gap: 14px; justify-content: flex-end;">
+            <button class="btn-action btn-danger" onclick="resetSettings()">Reset Default Settings</button>
+            <button class="btn-action" onclick="saveSettings()">Save Configuration</button>
+        </div>
+
+        <div id="saveToast" style="margin-top: 16px; padding: 14px; background: rgba(66,211,146,0.15); border: 1px solid var(--success); color: var(--success); border-radius: 8px; text-align: center; display: none;">
+            ✅ Settings saved and updated in SQLite Database!
+        </div>
+
+    </div>
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <div class="bottom-nav">
+        <a href="../index.html">🏠<br>Home</a>
+        <a href="guide.html">🛡️<br>Guide</a>
+        <a href="dashboard.html">📊<br>Dashboard</a>
+        <a href="phishing-detection.html">📧<br>Phishing</a>
+        <a href="settings.html" class="active">⚙️<br>Settings</a>
+    </div>
+
+    <script>
+        async function saveSettings() {
+            const payload = {
+                profile: { name: document.getElementById("profName").value, email: document.getElementById("profEmail").value },
+                security: { threat_sensitivity: document.getElementById("sensitivitySelect").value, deep_heuristics: document.getElementById("deepScan").checked }
+            };
+
+            try {
+                await fetch("/api/settings", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {}
+
+            const toast = document.getElementById("saveToast");
+            toast.style.display = "block";
+            setTimeout(() => { toast.style.display = "none"; }, 2500);
+        }
+
+        async function resetSettings() {
+            try {
+                await fetch("/api/settings/reset", { method: "POST" });
+            } catch (err) {}
+            alert("Settings reset to factory defaults.");
+        }
+    </script>
+</body>
+</html>

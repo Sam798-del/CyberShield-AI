@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI — Command Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #050912;
+            --bg-secondary: #080f1d;
+            --card: #101a2a;
+            --card-light: #142238;
+            --border: #1e3554;
+            --royal-blue: #4169e1;
+            --royal-blue-dark: #3154c6;
+            --blue-light: #6d8cff;
+            --blue-glow: rgba(65, 105, 225, 0.35);
+            --cyber-cyan: #00f2fe;
+            --white: #f5f8ff;
+            --text: #d9e3f5;
+            --muted: #8293ad;
+            --success: #42d392;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        nav {
+            height: 70px;
+            width: 100%;
+            background: rgba(5, 9, 18, 0.95);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--royal-blue), #2747a9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 18px var(--blue-glow);
+        }
+
+        .brand-icon::before { content: "🛡️"; font-size: 18px; }
+        .brand span:last-child { color: var(--blue-light); }
+
+        .nav-links { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: white;
+            background: rgba(65, 105, 225, 0.2);
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+
+        .hero { margin-bottom: 30px; }
+        .hero h1 { font-size: 32px; font-weight: 800; margin-bottom: 6px; }
+        .hero p { color: var(--muted); font-size: 15px; }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(65, 105, 225, 0.15);
+            border: 1px solid var(--royal-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .metric-val { font-size: 26px; font-weight: 800; color: white; }
+        .metric-title { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .panel-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 26px;
+        }
+
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .panel-header h3 { font-size: 18px; font-weight: 700; }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            border-color: var(--royal-blue);
+            background: rgba(65, 105, 225, 0.15);
+            transform: translateX(4px);
+        }
+
+        .events-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .events-table th, .events-table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; }
+        .events-table th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 11px; }
+
+        .badge-status {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .badge-status.blocked { background: rgba(248, 113, 113, 0.2); color: var(--danger); }
+        .badge-status.clean { background: rgba(66, 211, 146, 0.2); color: var(--success); }
+        .badge-status.info { background: rgba(65, 105, 225, 0.2); color: var(--blue-light); }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: var(--bg-secondary); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 10000; }
+        .bottom-nav a { color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; height: 100%; }
+        .bottom-nav a.active { color: var(--blue-light); }
+
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="../index.html" class="brand">
+            <div class="brand-icon"></div>
+            <span>CyberShield <span>AI</span></span>
+        </a>
+
+        <div class="nav-links">
+            <a href="../index.html">🏠 Home</a>
+            <a href="dashboard.html" class="active">📊 Dashboard</a>
+            <a href="guide.html">🛡️ Guidance</a>
+            <a href="phishing-detection.html">📧 Phishing</a>
+            <a href="cyberbullying-detection.html">💬 Cyberbullying</a>
+            <a href="digital-identity.html">🔑 Identity Vault</a>
+            <a href="security-analyzer.html">🔍 Security Analyzer</a>
+            <a href="security-report.html">📈 Audit Report</a>
+            <a href="settings.html">⚙️ Settings</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- HERO HEADER -->
+        <div class="hero">
+            <h1>Security Command <span>Dashboard</span></h1>
+            <p>Real-time system telemetry, active threat monitoring, and zero-trust security controls.</p>
+        </div>
+
+        <!-- METRICS GRID -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">🛡️</div>
+                <div>
+                    <div class="metric-val" style="color: var(--success);">94 / 100</div>
+                    <div class="metric-title">Security Health Score</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">🔒</div>
+                <div>
+                    <div class="metric-val" style="color: var(--blue-light);">ACTIVE</div>
+                    <div class="metric-title">Real-Time AI Shield</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">🚨</div>
+                <div>
+                    <div class="metric-val" style="color: var(--warning);">14</div>
+                    <div class="metric-title">Threats Blocked Today</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">⚡</div>
+                <div>
+                    <div class="metric-val">&lt; 1.4ms</div>
+                    <div class="metric-title">Scan Response Latency</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD GRID -->
+        <div class="dashboard-grid">
+
+            <!-- LEFT: SECURITY EVENT LOG -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h3>Recent Threat Activity & Telemetry</h3>
+                    <a href="security-report.html" style="color: var(--blue-light); font-size: 13px; text-decoration: none; font-weight: 700;">View Full Audit Log →</a>
+                </div>
+
+                <table class="events-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Module / Threat</th>
+                            <th>Target / Input</th>
+                            <th>Action Taken</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>17:18:02</td>
+                            <td>📧 Phishing Scanner</td>
+                            <td>paypa1-verify.com</td>
+                            <td>Domain Spoof Blocked</td>
+                            <td><span class="badge-status blocked">BLOCKED</span></td>
+                        </tr>
+                        <tr>
+                            <td>17:05:44</td>
+                            <td>💬 Cyberbullying AI</td>
+                            <td>Social Chat Msg #492</td>
+                            <td>Toxicity Flagged (85%)</td>
+                            <td><span class="badge-status blocked">FLAGGED</span></td>
+                        </tr>
+                        <tr>
+                            <td>16:42:10</td>
+                            <td>🔑 Identity Vault</td>
+                            <td>Passphrase Encryption</td>
+                            <td>AES-256 Vault Sync</td>
+                            <td><span class="badge-status clean">SUCCESS</span></td>
+                        </tr>
+                        <tr>
+                            <td>15:30:19</td>
+                            <td>🔍 Security Analyzer</td>
+                            <td>https://cybershield.ai</td>
+                            <td>SSL & HSTS Verified</td>
+                            <td><span class="badge-status clean">SECURE</span></td>
+                        </tr>
+                        <tr>
+                            <td>14:15:00</td>
+                            <td>🌐 DNS Resolver</td>
+                            <td>Quad9 DoH Resolver</td>
+                            <td>Encrypted Query</td>
+                            <td><span class="badge-status info">PROTECTED</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- RIGHT: QUICK ACTIONS & CONTROLS -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h3>Quick Security Actions</h3>
+                </div>
+
+                <a href="phishing-detection.html" class="action-btn">
+                    <span>📧</span>
+                    <span>Scan Suspicious Email / URL</span>
+                </a>
+
+                <a href="cyberbullying-detection.html" class="action-btn">
+                    <span>💬</span>
+                    <span>Analyze Text Toxicity</span>
+                </a>
+
+                <a href="security-analyzer.html" class="action-btn">
+                    <span>🔍</span>
+                    <span>Run Full Security Audit</span>
+                </a>
+
+                <a href="digital-identity.html" class="action-btn">
+                    <span>🔑</span>
+                    <span>Check Password Vault</span>
+                </a>
+
+                <a href="security-report.html" class="action-btn">
+                    <span>📈</span>
+                    <span>Export Compliance Report</span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <div class="bottom-nav">
+        <a href="../index.html">🏠<br>Home</a>
+        <a href="guide.html">🛡️<br>Guide</a>
+        <a href="dashboard.html" class="active">📊<br>Dashboard</a>
+        <a href="phishing-detection.html">📧<br>Phishing</a>
+        <a href="settings.html">⚙️<br>Settings</a>
+    </div>
+
+</body>
+</html>
