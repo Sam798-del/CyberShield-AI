@@ -1,0 +1,67 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "app.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "frontend/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "app.py"
+    },
+    {
+      "src": "/pages/(.*)",
+      "dest": "/frontend/pages/$1"
+    },
+    {
+      "src": "/guide.html",
+      "dest": "/frontend/pages/guide.html"
+    },
+    {
+      "src": "/settings.html",
+      "dest": "/frontend/pages/settings.html"
+    },
+    {
+      "src": "/login.html",
+      "dest": "/frontend/pages/login.html"
+    },
+    {
+      "src": "/digital-identity.html",
+      "dest": "/frontend/pages/digital-identity.html"
+    },
+    {
+      "src": "/dashboard.html",
+      "dest": "/frontend/pages/dashboard.html"
+    },
+    {
+      "src": "/phishing-detection.html",
+      "dest": "/frontend/pages/phishing-detection.html"
+    },
+    {
+      "src": "/cyberbullying-detection.html",
+      "dest": "/frontend/pages/cyberbullying-detection.html"
+    },
+    {
+      "src": "/security-analyzer.html",
+      "dest": "/frontend/pages/security-analyzer.html"
+    },
+    {
+      "src": "/security-report.html",
+      "dest": "/frontend/pages/security-report.html"
+    },
+    {
+      "src": "/index.html",
+      "dest": "/frontend/index.html"
+    },
+    {
+      "src": "/",
+      "dest": "/frontend/index.html"
+    }
+  ]
+}
