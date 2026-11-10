@@ -219,4 +219,7 @@ __marimo__/
 
 cybershield.db
 cybershield.db-journal
+security-analyzer/analyzer.db
+security-analyzer/analyzer.db-journal
+.env
 

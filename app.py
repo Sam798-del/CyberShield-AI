@@ -39,6 +39,37 @@ def legacy_login():
 def legacy_identity():
     return send_from_directory(PAGES_DIR, "digital-identity.html")
 
+@app.route("/security-analyzer.html")
+def legacy_analyzer():
+    return send_from_directory(PAGES_DIR, "security-analyzer.html")
+
+# ===========================================================================
+# Mount Security Analyzer Service Routes (for unified deployment on Render/Vercel)
+# ===========================================================================
+try:
+    import importlib.util
+    sec_analyzer_path = os.path.join(BASE_DIR, "security-analyzer", "app.py")
+    if os.path.exists(sec_analyzer_path):
+        sec_spec = importlib.util.spec_from_file_location("security_analyzer_module", sec_analyzer_path)
+        sec_mod = importlib.util.module_from_spec(sec_spec)
+        sec_spec.loader.exec_module(sec_mod)
+
+        @app.route("/api/analyzer/password", methods=["POST"])
+        def unified_analyzer_password():
+            return sec_mod.password_endpoint()
+
+        @app.route("/api/analyzer/leak", methods=["POST"])
+        def unified_analyzer_leak():
+            return sec_mod.leak_endpoint()
+
+        @app.route("/api/analyzer/health", methods=["GET"])
+        def unified_analyzer_health():
+            return sec_mod.health()
+
+        print("  [Security Analyzer]   Mounted successfully on main server")
+except Exception as _sec_err:
+    print(f"  [Security Analyzer]   Warning: Could not mount analyzer module: {_sec_err}")
+
 # Default Settings Configuration
 DEFAULT_SETTINGS = {
     "profile": {
@@ -653,14 +684,16 @@ def get_local_ip():
 
 if __name__ == "__main__":
     local_ip = get_local_ip()
+    port = int(os.environ.get("PORT", 5000))
     print("=" * 65)
     print("      CyberShield-AI Server (Mobile & Desktop Enabled)")
     print("=" * 65)
-    print(f"  [Portal Home]         http://{local_ip}:5000/index.html")
-    print(f"  [Guidance Hub]        http://{local_ip}:5000/pages/guide.html")
-    print(f"  [Security Dashboard]  http://{local_ip}:5000/pages/dashboard.html")
-    print(f"  [Settings Page]       http://{local_ip}:5000/pages/settings.html")
+    print(f"  [Portal Home]         http://{local_ip}:{port}/index.html")
+    print(f"  [Guidance Hub]        http://{local_ip}:{port}/pages/guide.html")
+    print(f"  [Security Dashboard]  http://{local_ip}:{port}/pages/dashboard.html")
+    print(f"  [Security Analyzer]   http://{local_ip}:{port}/pages/security-analyzer.html")
+    print(f"  [Settings Page]       http://{local_ip}:{port}/pages/settings.html")
     print("=" * 65 + "\n")
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=False if os.environ.get("PORT") else True)
 
 
