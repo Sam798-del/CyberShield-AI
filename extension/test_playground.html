@@ -237,8 +237,98 @@
         </div>
       </div>
 
+      <!-- TEST 5: OUTBOUND MESSAGE BLOCKER ("THINK BEFORE YOU POST") -->
+      <div class="test-card" style="border: 1.5px solid rgba(239, 68, 68, 0.4);">
+        <div class="test-card-header">
+          <h2 class="test-title">🛑 Test 5: Outbound Send Blocker ("Think Before You Post")</h2>
+          <span class="pill" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444;">Live Intercept Guard</span>
+        </div>
+        <p class="test-desc">
+          CyberShield AI intercepts outgoing forum comments, tweets, and chat messages in real time. If an outbound message contains violent threats, slurs, death wishes, or harassment, the transmission is <strong>instantly blocked</strong> and an interactive prompt appears with <strong>[ ✏️ Edit Message ]</strong> so the user can rephrase safely!
+        </p>
+
+        <!-- Quick Test Selector Pills -->
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+          <button type="button" class="pill" style="cursor: pointer; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);" onclick="fillOutboundDemo('I SHOULD KILL YOU WITH HAMMER')">
+            💣 Test: Violent Threat + Weapon
+          </button>
+          <button type="button" class="pill" style="cursor: pointer; background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4);" onclick="fillOutboundDemo('you die slut here')">
+            🛑 Test: Death Command + Misogynistic Slur
+          </button>
+          <button type="button" class="pill" style="cursor: pointer; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);" onclick="fillOutboundDemo('you SHOULD DIE NO ONE LIKES YOU')">
+            🚫 Test: Death Wish + Social Exclusion
+          </button>
+          <button type="button" class="pill" style="cursor: pointer; background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);" onclick="fillOutboundDemo('Great presentation everyone, best of luck with the viva!')">
+            🌸 Test: Wholesome Safe Message
+          </button>
+        </div>
+
+        <form id="outboundDemoForm" onsubmit="handleDemoSubmit(event)">
+          <textarea id="testOutboundMsg" class="demo-input" style="min-height: 90px; resize: vertical; line-height: 1.5;" placeholder="Type an outbound message here, or click one of the quick test buttons above, then press Enter or click 'Send Comment'..."></textarea>
+          
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px;">
+            <button type="submit" id="testOutboundSendBtn" style="
+              background: linear-gradient(135deg, #0284c7, #0369a1);
+              border: 1px solid #38bdf8;
+              color: #ffffff;
+              padding: 10px 22px;
+              border-radius: 8px;
+              font-size: 13.5px;
+              font-weight: 800;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+            ">
+              <span>Send Comment</span> 🚀
+            </button>
+            <span style="font-size: 12px; color: #94a3b8;">
+              💡 <em>Tip:</em> Hitting <kbd style="background: #1e293b; padding: 2px 6px; border-radius: 4px; color: #fff;">Enter</kbd> inside the box also triggers the interceptor!
+            </span>
+          </div>
+        </form>
+
+        <div id="outboundDeliveryStatus"></div>
+
+        <div class="instruction-step" style="margin-top: 14px;">
+          💡 <strong>What to notice:</strong> 
+          1. Click any red/amber test button above ➔ Click <strong>"Send Comment"</strong>. 
+          2. The comment is <strong>completely blocked</strong> from sending!
+          3. CyberShield AI's modal appears with <strong>🛑 SEND BLOCKED</strong> and <strong>[ ✏️ Edit Message ]</strong>.
+          4. Click <strong>[ ✏️ Edit Message ]</strong> ➔ modal closes, focus returns to the input box with a cyan highlight!
+          5. Now click <strong>"🌸 Wholesome Safe Message"</strong> and send ➔ Delivered successfully!
+        </div>
+      </div>
+
     </div>
   </div>
+
+  <script>
+    function fillOutboundDemo(text) {
+      const box = document.getElementById("testOutboundMsg");
+      box.value = text;
+      box.focus();
+      document.getElementById("outboundDeliveryStatus").innerHTML = "";
+    }
+
+    function handleDemoSubmit(e) {
+      e.preventDefault();
+      const text = document.getElementById("testOutboundMsg").value.trim();
+      if (!text) return;
+
+      const statusBox = document.getElementById("outboundDeliveryStatus");
+      statusBox.innerHTML = `
+        <div style="margin-top: 14px; background: rgba(16, 185, 129, 0.12); border: 1.5px solid #10b981; color: #34d399; padding: 12px 16px; border-radius: 8px; font-size: 13.5px; display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 18px;">✅</span>
+          <div>
+            <strong>Message Published Successfully!</strong>
+            <div style="font-size: 12px; color: #a7f3d0; margin-top: 2px;">"${text}" passed all CyberShield NLP safety heuristics (0 harmful intents detected).</div>
+          </div>
+        </div>
+      `;
+    }
+  </script>
 
 </body>
 </html>

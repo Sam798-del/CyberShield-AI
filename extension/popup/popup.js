@@ -322,7 +322,8 @@ function setupEventListeners() {
       backendUrl: selectedBackend,
       autoScan: document.getElementById("toggleAutoScan").checked,
       toxicBlur: document.getElementById("toggleToxicBlur").checked,
-      passwordTips: document.getElementById("togglePasswordTips").checked
+      passwordTips: document.getElementById("togglePasswordTips").checked,
+      outboundBlocker: document.getElementById("toggleOutboundBlocker").checked
     }, () => {
       checkBackendStatus();
       switchView("main");
@@ -391,7 +392,7 @@ async function checkBackendStatus() {
 
 function loadExtensionSettings() {
   return new Promise((resolve) => {
-    chrome.storage.local.get(["backendUrl", "autoScan", "toxicBlur", "passwordTips"], (items) => {
+    chrome.storage.local.get(["backendUrl", "autoScan", "toxicBlur", "passwordTips", "outboundBlocker"], (items) => {
       if (items.backendUrl) {
         activeBackendUrl = items.backendUrl;
         const select = document.getElementById("backendSelect");
@@ -400,6 +401,7 @@ function loadExtensionSettings() {
       if (items.autoScan !== undefined) document.getElementById("toggleAutoScan").checked = items.autoScan;
       if (items.toxicBlur !== undefined) document.getElementById("toggleToxicBlur").checked = items.toxicBlur;
       if (items.passwordTips !== undefined) document.getElementById("togglePasswordTips").checked = items.passwordTips;
+      if (items.outboundBlocker !== undefined) document.getElementById("toggleOutboundBlocker").checked = items.outboundBlocker;
       resolve();
     });
   });

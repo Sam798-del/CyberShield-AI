@@ -29,6 +29,7 @@ chrome.runtime.onInstalled.addListener(() => {
     autoScan: true,
     toxicBlur: true,
     passwordTips: true,
+    outboundBlocker: true,
     backendUrl: CLOUD_API
   });
 });
@@ -170,6 +171,48 @@ function clientAnalyzeToxicity(text) {
   checkPatterns(body_shaming_patterns, "body_shaming", 50);
   checkPatterns(insult_patterns, "insult", 45);
   checkPatterns(profanity_patterns, "profanity", 50);
+
+  // Combinatorial SVO Semantic Intent Grammar Engine (Parity with modules/toxicity_engine.py)
+  const svoRules = [
+    { cat: "threat", weight: 85, regex: /\b(kill|murder|shoot|stab|choke|strangle|beat|smash|hit|cut|attack|destroy|hurt|burn|drown|torture|crush|punch|slap|slice|hang|slaughter|butcher)\s+(you|u|your\s+(head|face|throat|neck|body|chest)|her|him)\b/i, label: "direct violent assault" },
+    { cat: "threat", weight: 80, regex: /\b(i\s*('?ll|will|should|must|wanna|want\s+to|gonna|am\s+going\s+to|can))\s+.*(kill|murder|beat|hurt|destroy|stab|shoot|smash|slap|attack|burn|crush)\s+(you|u)\b/i, label: "violent declaration" },
+    { cat: "threat", weight: 75, regex: /\b(with\s+(a\s+)?(hammer|knife|gun|weapon|bat|blade|axe|acid|brick|pipe|crowbar|sword|rope|pistol|rifle))\b/i, label: "weapon assault" },
+    { cat: "threat", weight: 85, regex: /\b(you|u)\s+(should|must|need\s+to|deserve\s+to|ought\s+to|better|just)?\s*(die|perish|burn|suffer|rot|hang\s+yourself|kill\s+(yourself|urself)|end\s+your\s+life)\b|\bdie\s+(bitch|slut|whore|bastard|loser|idiot|now|alone|here)\b|\b(you|u)\s+die\b/i, label: "death wish / suicide incitement" },
+    { cat: "threat", weight: 75, regex: /\b(should|hope|wish|want|deserve|pray)\s+(you|u)\s+(die|perish|rot|suffer|burn|get\s+killed)\b/i, label: "fatality wish" },
+    { cat: "threat", weight: 75, regex: /\b(go|better|just)\s+die\b/i, label: "death incitement" },
+    { cat: "threat", weight: 85, regex: /\b(kill|hang)\s+(yourself|urself)\b/i, label: "suicide incitement" },
+    { cat: "social_exclusion", weight: 55, regex: /\b(no\s*one|nobody|not\s+a\s+single\s+person|none\s+of\s+us)\s+(likes?|wants?|cares?\s+about|cares?|loves?|needs?|trusts?|respects?|talks?\s+to)\s+(you|u|her|him|them)\b/i, label: "universal rejection" },
+    { cat: "social_exclusion", weight: 50, regex: /\b(don\'?t|do\s+not|never)\s+(invite|talk\s+to|speak\s+to|hang\s+out\s+with|message)\s+(her|him|them|you|u)\b/i, label: "relational ostracization" },
+    { cat: "social_exclusion", weight: 50, regex: /\b(make\s+a\s+group|group\s+chat)\s+without\s+(him|her|them|you|u)\b/i, label: "exclusion group" },
+    { cat: "social_exclusion", weight: 50, regex: /\b(ignore|block|mute)\s+(all\s+)?(his|her|their|your)\s+(messages|texts|calls|posts)\b/i, label: "communication blocking" },
+    { cat: "social_exclusion", weight: 50, regex: /\b(they|you|u|she|he)\s+(don\'?t|does\s+not|doesn\'?t)\s+belong\s+(here|with\s+us|in\s+this\s+group)\b/i, label: "exclusion alienation" },
+    { cat: "body_shaming", weight: 55, regex: /\b(look|looking|looks)\s+(so\s+)?(ridiculous|disgusting|horrible|repulsive|ugly|fat|gross|hideous|repugnant|like\s+a\s+(clown|joke|pig|cow|whale|freak))\b/i, label: "appearance denigration" },
+    { cat: "body_shaming", weight: 55, regex: /\b(appearance|face|weight|body|figure|skin)\s+(is\s+the\s+reason|makes\s+me\s+sick|is\s+disgusting|looks\s+terrible)\b/i, label: "body shaming" },
+    { cat: "body_shaming", weight: 50, regex: /\b(upload|post|take)\s+(a\s+)?(picture|photo)\s+looking\s+like\s+that\b/i, label: "aesthetic mockery" },
+    { cat: "intimidation", weight: 55, regex: /\b(keep|continue)\s+(messaging|texting|calling|harassing|stalking|following)\s+(you|u)\s+(until|forever)\b/i, label: "stalking pressure" },
+    { cat: "intimidation", weight: 55, regex: /\b(make\s+your\s+life|ruin\s+your|destroy\s+your)\s+(miserable|life|reputation|future|career|family)\b/i, label: "intimidation threat" },
+    { cat: "intimidation", weight: 50, regex: /\b(delete|deactivate|remove)\s+(your\s+)?(account|profile|channel|post)\b/i, label: "account silencing" },
+    { cat: "intimidation", weight: 50, regex: /\b(can\'?t|cannot|won\'?t)\s+escape\s+(me|what\s+i|this)\b/i, label: "coercive entrapment" },
+    { cat: "defamation", weight: 55, regex: /\b(spread|share|leak|post|circulate)\s+(this\s+)?(rumour|rumor|lie|lies|photo|picture|screenshot|chat|video|private|secret)\b/i, label: "rumour / doxing spread" },
+    { cat: "defamation", weight: 55, regex: /\b(fake\s+account|alt\s+account)\s+(just\s+)?to\s+expose\s+(you|her|him)\b/i, label: "smear campaign" },
+    { cat: "insult", weight: 50, regex: /\b(you(\'re|\s+are)|u\s+r)\s+(literally\s+)?(a\s+|an\s+|the\s+)?(dumbest|stupidest|biggest\s+loser|complete\s+joke|joke|laughing\s+stock|waste\s+of\s+space|brainless|moron|idiot|imbecile|retard|failure|clown|freak|loser)\b/i, label: "direct insult" },
+    { cat: "insult", weight: 45, regex: /\b(nobody|no\s*one)\s+takes\s+you\s+seriously\b/i, label: "intellectual ridicule" },
+    { cat: "insult", weight: 40, regex: /\b(your\s+)?opinions?\s+(are|is)\s+(embarrassing|pathetic|garbage|worthless)\b/i, label: "opinion humiliation" },
+    { cat: "profanity", weight: 55, regex: /\b(slut|whore|bitch|cunt|skank|hoe|motherfucker|asshole|bastard|dipshit|douchebag)\b/i, label: "abusive profanity / misogynistic slur" }
+  ];
+
+  for (const rule of svoRules) {
+    if (rule.regex.test(t_lower)) {
+      score = Math.max(score, rule.weight);
+      flagged.push(rule.label);
+      if (!detectedCategories.includes(rule.cat)) detectedCategories.push(rule.cat);
+    }
+  }
+
+  // Multi-category compounding
+  if (detectedCategories.length > 1) {
+    score += (detectedCategories.length - 1) * 15;
+  }
 
   score = Math.min(score, 100);
   let level = "SAFE / NON-TOXIC CONTENT";

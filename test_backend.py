@@ -105,5 +105,35 @@ class CyberShieldBackendTestCase(unittest.TestCase):
             self.assertEqual(data["status"], "success")
             self.assertGreaterEqual(data["toxicity_score"], 35)
 
+    def test_10_detect_cyberbullying_critical_threats(self):
+        # Specific regression cases: physical weapon threats, death wishes, misogynistic slurs
+        critical_cases = [
+            ("I SHOULD KILL YOU WITH HAMMER", 65),
+            ("you SHOULD DIE NO ONE LIKES YOU", 65),
+            ("you die slut here", 65)
+        ]
+        for phrase, min_score in critical_cases:
+            response = self.app.post('/api/detect/cyberbullying', data=json.dumps({"text": phrase}), content_type='application/json')
+            data = json.loads(response.data)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(data["status"], "success")
+            self.assertGreaterEqual(data["toxicity_score"], min_score)
+            self.assertEqual(data["toxicity_level"], "HIGHLY TOXIC / SEVERE HARASSMENT")
+
+    def test_11_cyberbullying_safe_non_toxic(self):
+        # Verification that safe inputs are not falsely flagged
+        safe_cases = [
+            "I bought a hammer from the hardware store.",
+            "I will help you with your homework tonight.",
+            "Great job on the presentation team! Keep up the good work."
+        ]
+        for phrase in safe_cases:
+            response = self.app.post('/api/detect/cyberbullying', data=json.dumps({"text": phrase}), content_type='application/json')
+            data = json.loads(response.data)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(data["status"], "success")
+            self.assertLess(data["toxicity_score"], 35)
+            self.assertEqual(data["toxicity_level"], "SAFE / NON-TOXIC CONTENT")
+
 if __name__ == '__main__':
     unittest.main()
