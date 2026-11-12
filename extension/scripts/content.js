@@ -4,7 +4,7 @@
 
 (function () {
   const currentUrl = window.location.href;
-  if (!currentUrl.startsWith("http://") && !currentUrl.startsWith("https://")) return;
+  if (!currentUrl.startsWith("http://") && !currentUrl.startsWith("https://") && !currentUrl.startsWith("file://")) return;
 
   let config = { autoScan: true, toxicBlur: true, passwordTips: true };
 
@@ -106,7 +106,10 @@
 
   // 5. Blur or Warn on Toxic Text (Social Media & Forums)
   function scanPageForToxicContent() {
-    const toxicPatterns = ["kill yourself", "i will find you", "go die", "worthless piece of trash"];
+    const toxicPatterns = [
+      "kill yourself", "i will find you", "go die", "worthless piece of trash",
+      "idiot", "loser", "shut up", "ugly", "destroy you", "hate you"
+    ];
     const textNodes = [];
 
     // Fast selective DOM tree walk for paragraphs & comments

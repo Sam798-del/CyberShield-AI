@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberShield AI â€” Live Extension Test Playground</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #0f172a;
+      --border: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --cyan: #38bdf8;
+      --green: #10b981;
+      --red: #ef4444;
+      --amber: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 30px 20px 80px;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 35px;
+      padding-bottom: 25px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .header h1 span { color: var(--cyan); }
+    .header p {
+      color: var(--muted);
+      font-size: 13.5px;
+      margin-top: 6px;
+    }
+    .test-grid {
+      display: grid;
+      gap: 22px;
+    }
+    .test-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      position: relative;
+    }
+    .test-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .test-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pill {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .pill-cyan { background: rgba(56, 189, 248, 0.15); color: var(--cyan); border: 1px solid rgba(56, 189, 248, 0.3); }
+    .pill-green { background: rgba(16, 185, 129, 0.15); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .pill-amber { background: rgba(245, 158, 11, 0.15); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    .test-desc {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .demo-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: #020617;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .demo-input:focus { border-color: var(--cyan); }
+
+    .comment-box {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .comment-author {
+      font-size: 12px;
+      font-weight: 700;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+    .comment-text {
+      font-size: 13.5px;
+      color: #e2e8f0;
+    }
+    .instruction-step {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 12.5px;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.08);
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px dashed rgba(56, 189, 248, 0.3);
+    }
+    .instruction-step strong { color: #fff; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header class="header">
+      <h1>🛡️ CyberShield <span>AI</span> Test Playground</h1>
+      <p>Interactive verification suite for live in-page security badges, password entropy guards, and cyberbullying detection.</p>
+    </header>
+
+    <div class="test-grid">
+
+      <!-- TEST 1: PASSWORD FIELD ENTROPY GUARD -->
+      <div class="test-card">
+        <div class="test-card-header">
+          <h2 class="test-title">🔑 Test 1: In-Field Password Entropy Guard</h2>
+          <span class="pill pill-green">Live DOM Hook</span>
+        </div>
+        <p class="test-desc">
+          Click inside the password input below and start typing. Observe the dynamic <strong>CyberShield Health</strong> tooltip calculating live entropy as you type!
+        </p>
+        <input type="password" class="demo-input" id="testPasswordInput" placeholder="Click here and type a password (e.g. pass123, then add symbols like @#$)...">
+        <div class="instruction-step">
+          💡 <strong>What to notice:</strong> As you add uppercase letters, numbers, and symbols, the meter shifts dynamically from <em>Weak (Red)</em> ➔ <em>Moderate (Amber)</em> ➔ <em>Very Strong (Green)</em>!
+        </div>
+      </div>
+
+      <!-- TEST 2: TOXIC TEXT AUTOMATIC BLURRING -->
+      <div class="test-card">
+        <div class="test-card-header">
+          <h2 class="test-title">💬 Test 2: In-Page Toxic Content Blurring</h2>
+          <span class="pill pill-amber">Live Social Guard</span>
+        </div>
+        <p class="test-desc">
+          CyberShield AI scans comments and forum posts on page load. Any abusive harassment or hate speech is automatically blurred with a click-to-reveal shield.
+        </p>
+        
+        <div class="comment-box">
+          <div class="comment-author">User @Alex99 (Normal Comment)</div>
+          <p class="comment-text">Hey everyone, thanks for checking out the new CyberShield defense platform. Looking forward to the demo!</p>
+        </div>
+
+        <div class="comment-box">
+          <div class="comment-author">User @TrollBot (Abusive Harassment)</div>
+          <p class="comment-text">You are an idiot loser, go die and leave forever nobody likes you!</p>
+        </div>
+
+        <div class="instruction-step">
+          💡 <strong>What to notice:</strong> The abusive comment above is automatically blurred out! Click directly on the blurred text to safely reveal it.
+        </div>
+      </div>
+
+      <!-- TEST 3: HIGHLIGHTED TEXT CYBERBULLYING SCANNER -->
+      <div class="test-card">
+        <div class="test-card-header">
+          <h2 class="test-title">🔍 Test 3: On-Demand Highlighted Text Scanner</h2>
+          <span class="pill pill-cyan">Popup Trigger</span>
+        </div>
+        <p class="test-desc">
+          Highlight any text on this page with your mouse, then open your <strong>CyberShield AI extension</strong> and click the <strong>💬 Toxic Text</strong> button.
+        </p>
+        
+        <div class="comment-box" style="border-left: 3px solid var(--cyan);">
+          <div class="comment-author">Highlight this text below:</div>
+          <p class="comment-text" style="user-select: all; font-size: 14px; font-weight: 500;">
+            "Shut up you pathetic idiot, I will find you and destroy your life!"
+          </p>
+        </div>
+
+        <div class="instruction-step">
+          💡 <strong>Steps:</strong> Select the text above ➔ Open CyberShield extension popup ➔ Click <strong>"💬 Toxic Text"</strong> ➔ An alert dialog immediately returns the toxicity severity score, flagged categories (insult, threat), and safety guidance!
+        </div>
+      </div>
+
+      <!-- TEST 4: LIVE PAGE PHISHING & CORNER BADGE -->
+      <div class="test-card">
+        <div class="test-card-header">
+          <h2 class="test-title">⚡ Test 4: Live Page Badge & Telemetry Scanner</h2>
+          <span class="pill pill-green">Corner Badge Active</span>
+        </div>
+        <p class="test-desc">
+          Look at the bottom-right corner of your browser screen right now. You will see the floating <strong>CyberShield Secure pill badge</strong>!
+        </p>
+        <div class="instruction-step">
+          💡 <strong>Steps:</strong> Click the corner badge to see the instant verdict dialog. Then open the extension popup and click <strong>"⚡ Re-Scan"</strong> to watch the 3-stage live radar telemetry pass!
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
