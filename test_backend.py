@@ -83,5 +83,27 @@ class CyberShieldBackendTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["settings"]["security"]["threat_sensitivity"], "high")
 
+    def test_08_detect_phishing(self):
+        payload = {"target": "http://paypa1-security-verify.xyz/login"}
+        response = self.app.post('/api/detect/phishing', data=json.dumps(payload), content_type='application/json')
+        data = json.loads(response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data["status"], "success")
+        self.assertGreaterEqual(data["risk_score"], 45)
+
+    def test_09_detect_cyberbullying_benchmark(self):
+        # Testing multi-class covert and overt bullying from Jigsaw / StopBullying benchmark
+        sample_phrases = [
+            "Don't invite her. Nobody wants her around.",
+            "Why would you upload a picture looking like that? You look ridiculous.",
+            "You are literally the dumbest person in this class."
+        ]
+        for phrase in sample_phrases:
+            response = self.app.post('/api/detect/cyberbullying', data=json.dumps({"text": phrase}), content_type='application/json')
+            data = json.loads(response.data)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(data["status"], "success")
+            self.assertGreaterEqual(data["toxicity_score"], 35)
+
 if __name__ == '__main__':
     unittest.main()

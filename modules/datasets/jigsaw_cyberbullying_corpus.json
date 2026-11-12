@@ -1,0 +1,120 @@
+{
+  "metadata": {
+    "dataset_name": "CyberShield AI Benchmark Toxicity Corpus",
+    "sources": [
+      "Google Jigsaw / Wikimedia Toxic Comment Classification Benchmark",
+      "IEEE / Kaggle Formspring & Twitter Cyberbullying Dataset",
+      "StopBullying.gov Federal Cyberbullying Taxonomy",
+      "Indian Cyber Crime Coordination Centre (I4C / IT Act 2000/2008 Guidelines)"
+    ],
+    "version": "2.1.0",
+    "description": "Multi-class lexical, n-gram, and relational aggression corpus for real-time text classification"
+  },
+  "categories": {
+    "threat": {
+      "display_name": "Physical Threat & Extreme Violence",
+      "severity_weight": 60,
+      "legal_context": "Section 506/507 IPC (Criminal Intimidation), US 18 U.S.C. § 875",
+      "patterns": [
+        "i will find you", "kill yourself", "go die", "beat you", "hurt you",
+        "destroy you", "slit your", "burn you", "murder", "end your life",
+        "physically hurt you", "smash your", "break your neck", "shoot you",
+        "hunt you down", "put you in hospital", "stab you", "hang yourself",
+        "die in a fire", "jump off", "drink bleach", "strangle you"
+      ]
+    },
+    "intimidation": {
+      "display_name": "Digital Intimidation, Harassment & Stalking",
+      "severity_weight": 45,
+      "legal_context": "Section 354D IPC (Cyberstalking) & Section 66E IT Act",
+      "patterns": [
+        "keep messaging you until", "to your reputation", "make your life miserable",
+        "delete your account", "can't escape", "disappear from this platform",
+        "i'll make your life miserable", "i will make your life miserable",
+        "watch your back", "track your ip", "you will pay for this",
+        "you're going to regret this", "you are going to regret this",
+        "ruin your life", "ruin your future", "hunt you down", "stalk",
+        "stalking you", "watching you", "know where you live", "find out where you live",
+        "no one will save you", "wait until i see you", "better be scared",
+        "never leave you alone", "harass you until", "log off forever"
+      ]
+    },
+    "defamation": {
+      "display_name": "Defamation, Rumours & Public Doxing",
+      "severity_weight": 45,
+      "legal_context": "Section 499/500 IPC (Defamation) & Section 66D IT Act (Cheating by Impersonation)",
+      "patterns": [
+        "spread this rumour", "spread this rumor", "embarrassing picture",
+        "fake account just to expose", "fake account to expose", "expose you",
+        "everyone should see this embarrassing", "share this post so everyone can laugh",
+        "spread lies about", "ruin his reputation", "ruin her reputation",
+        "leak your private", "post your secrets", "dox you", "expose your chats",
+        "spread this photo", "everyone look at this embarrassing", "expose who you really are",
+        "fake screenshots of you", "show everyone your private", "leak your number",
+        "share her address", "share his address", "expose your family"
+      ]
+    },
+    "social_exclusion": {
+      "display_name": "Social Exclusion & Ostracization (Relational Bullying)",
+      "severity_weight": 45,
+      "legal_context": "StopBullying.gov Taxonomy: Covert Psychological Aggression",
+      "patterns": [
+        "don't invite her", "don't invite him", "don't invite them", "nobody wants her around",
+        "nobody wants him around", "nobody wants you around", "nobody wants you here",
+        "make a group without", "ignore all his messages", "ignore all her messages",
+        "ignore all their messages", "unfollow this person", "they don't belong here",
+        "you don't belong here", "nobody asked you", "leave this group", "get out of here",
+        "kick him out", "kick her out", "nobody cares about you", "nobody likes you",
+        "leave us alone", "you are not welcome", "block this user", "kick them out of the group",
+        "don't talk to her", "don't talk to him", "pretend he doesn't exist",
+        "pretend she doesn't exist", "everyone mute this", "boycott this account",
+        "isolate him", "isolate her"
+      ]
+    },
+    "body_shaming": {
+      "display_name": "Body Shaming & Aesthetic Ridicule",
+      "severity_weight": 45,
+      "legal_context": "StopBullying.gov Taxonomy: Denigration & Physical Mockery",
+      "patterns": [
+        "looking like that", "look ridiculous", "look disgusting", "hide your face",
+        "wear clothes like that", "your appearance is the reason", "you look horrible",
+        "lose some weight", "so fat", "so skinny", "ugly face", "gross body",
+        "nobody wants to see your face", "dressing like a", "you look like a joke",
+        "pig face", "whale", "anorexic freak", "you look repulsive", "cover your face",
+        "plastic surgery", "deformed looking", "disgusting looking"
+      ]
+    },
+    "insult": {
+      "display_name": "Insults & Intellectual Humiliation",
+      "severity_weight": 40,
+      "legal_context": "Section 504 IPC (Intentional Insult with Intent to Provoke Breach of Peace)",
+      "patterns": [
+        "stupid", "idiot", "loser", "ugly", "fat", "dumb", "dumbest", "hate you", 
+        "freak", "trash", "worthless", "pathetic", "complete joke", "nobody takes you seriously",
+        "embarrassing", "laughs at you behind", "stop talking", "waste of space", "brainless",
+        "fool", "incompetent", "clown", "good for nothing", "retard", "moron", "imbecile",
+        "senseless", "hopeless failure", "biggest loser", "laughing stock", "joke of a person",
+        "delusional idiot", "shut up", "get a life", "creep"
+      ]
+    },
+    "profanity": {
+      "display_name": "Profanity & Vulgar Slurs",
+      "severity_weight": 25,
+      "legal_context": "Section 294 IPC (Obscene Acts and Songs) & Section 67 IT Act",
+      "patterns": [
+        "bitch", "bastard", "fuck", "shit", "asshole", "crap", "dick", "cunt",
+        "douchebag", "prick", "slut", "whore", "jackass", "dipshit", "piss off"
+      ]
+    },
+    "hate_speech": {
+      "display_name": "Hate Speech & Identity Harassment",
+      "severity_weight": 50,
+      "legal_context": "Section 153A/295A IPC & Section 66A IT Act",
+      "patterns": [
+        "subhuman", "terrorist", "freaks", "go back to your country",
+        "worthless caste", "dirty immigrant", "chink", "nigger", "faggot",
+        "dirty jew", "parasite race", "cleanse your kind", "inferior race"
+      ]
+    }
+  }
+}
