@@ -52,7 +52,17 @@ function initActiveTab() {
       if (tabs && tabs[0]) {
         const currentUrl = tabs[0].url || "";
         renderUrlDisplay(currentUrl);
-        scanUrl(currentUrl);
+
+        chrome.storage.local.get("autoScan", (items) => {
+          if (items.autoScan !== false) {
+            scanUrl(currentUrl, false);
+          } else {
+            updateGauge(0, "READY TO SCAN", "safe", [
+              "Real-Time Client Shield loaded.",
+              "Click 'Scan Active Page' below to inspect live security indicators."
+            ]);
+          }
+        });
       }
     });
   }
@@ -145,6 +155,7 @@ function clientAnalyzePhishing(urlStr) {
     statusType = "safe";
     if (flags.length <= 1) {
       flags.push("Legitimate domain syntax & trusted web reputation");
+      flags.push("0 Threat patterns or deceptive homoglyphs detected");
     }
   }
 
@@ -156,15 +167,22 @@ function clientAnalyzePhishing(urlStr) {
   };
 }
 
-async function scanUrl(urlStr) {
+async function scanUrl(urlStr, isManual = false) {
   if (!urlStr || urlStr.startsWith("chrome://") || urlStr.startsWith("edge://")) {
     updateGauge(0, "SYSTEM PAGE (SECURE)", "safe", ["Internal browser interface is isolated."]);
     return;
   }
 
   const verdictText = document.getElementById("threatVerdictText");
-  verdictText.innerText = "SCANNING...";
+  const scoreNum = document.getElementById("threatScoreNumber");
+
+  verdictText.innerText = "SCANNING LIVE URL & DOM...";
   verdictText.className = "verdict-text";
+  if (scoreNum) scoreNum.innerText = "Inspecting...";
+
+  if (isManual) {
+    await new Promise((r) => setTimeout(r, 350));
+  }
 
   let analyzed = null;
 
@@ -213,21 +231,30 @@ async function scanUrl(urlStr) {
   });
 }
 
-function updateGauge(score, verdictLabel, statusType, flags) {
+function updateGauge(riskScore, verdictLabel, statusType, flags) {
   const bar = document.getElementById("threatGaugeBar");
   const verdict = document.getElementById("threatVerdictText");
   const scoreNum = document.getElementById("threatScoreNumber");
   const list = document.getElementById("indicatorsList");
 
+  // Invert risk to intuitive Security Score: 100 = Safest, 0 = High Threat
+  const securityScore = Math.max(0, 100 - riskScore);
+
   if (bar) {
-    bar.style.width = `${Math.max(5, score)}%`;
+    bar.style.width = `${Math.max(8, securityScore)}%`;
     bar.style.backgroundColor = statusType === "danger" ? "#ef4444" : (statusType === "warning" ? "#f59e0b" : "#10b981");
   }
   if (verdict) {
     verdict.innerText = verdictLabel;
     verdict.className = `verdict-text ${statusType}`;
   }
-  if (scoreNum) scoreNum.innerText = `${score} / 100`;
+  if (scoreNum) {
+    if (verdictLabel === "READY TO SCAN") {
+      scoreNum.innerText = "Click Scan Below";
+    } else {
+      scoreNum.innerText = `Security: ${securityScore} / 100`;
+    }
+  }
 
   if (list) {
     list.innerHTML = "";
@@ -242,7 +269,25 @@ function updateGauge(score, verdictLabel, statusType, flags) {
 
 // ==================== 4. EVENT LISTENERS ====================
 function setupEventListeners() {
-  document.getElementById("scanCurrentPageBtn")?.addEventListener("click", () => initActiveTab());
+  document.getElementById("scanCurrentPageBtn")?.addEventListener("click", () => {
+    const btn = document.getElementById("scanCurrentPageBtn");
+    if (!btn) return;
+    const origHtml = `<span class="btn-icon">⚡</span> Scan Active Page`;
+    btn.disabled = true;
+    btn.innerHTML = `<span class="btn-icon">⏳</span> Scanning Page...`;
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const currentUrl = tabs && tabs[0] ? tabs[0].url : "";
+      renderUrlDisplay(currentUrl);
+      scanUrl(currentUrl, true).then(() => {
+        btn.innerHTML = `<span class="btn-icon">✓</span> Scan Complete`;
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.innerHTML = origHtml;
+        }, 1200);
+      });
+    });
+  });
 
   // Settings open/close
   document.getElementById("navSettingsBtn")?.addEventListener("click", () => switchView("settings"));
