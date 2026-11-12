@@ -153,18 +153,42 @@ def analyze_cyberbullying(text: str) -> dict:
         else:
             categories[cat_key] = False
 
-    # Semantic Regex Intent Scanner for natural language variations
-    semantic_intents = [
-        ("threat", 75, r"\b(kill|murder|shoot|stab|choke|strangle|beat|smash|hit|cut|attack|destroy|hurt|end|burn|drown)\s+(you|u)\b|\b(i\s*('?ll|will|should|must|wanna|want\s+to|gonna|am\s+going\s+to))\s+.*(kill|murder|beat|hurt|destroy|stab|shoot|smash|slap|attack)\s+(you|u)\b|\b(with\s+(a\s+)?(hammer|knife|gun|weapon|bat|blade|axe|acid|brick|pipe|crowbar))\b", "violent threat / physical assault"),
-        ("threat", 60, r"\b(should|hope|go|deserve to|must|wish you|better|need to)\s+(die|kill yourself|end your life|hang yourself|slit|burn)\b|\b(you|u)\s+(should|must|need to)\s+die\b|\bkill\s+(yourself|urself)\b", "death incitement / threat"),
-        ("social_exclusion", 45, r"\b(no\s*one|nobody|not a single person|everyone)\s+(likes?|wants?|cares?|loves?|cares about)\s+(you|u|her|him|them)\b|\b(don\'?t|do not|never)\s+(invite|talk to|speak to|message)\s+(her|him|them|you|u)\b|\b(make a group|group chat)\s+without\b|\b(ignore|mute)\s+(all\s+)?(his|her|their|your)\s+(messages|texts)\b|\b(unfollow|block|kick)\s+(this|that)\s+(person|account|user|loser)\b|\b(they|you|u)\s+don\'?t\s+belong\s+here\b", "social exclusion / rejection"),
-        ("body_shaming", 45, r"\b(look|looking|looks)\s+(ridiculous|disgusting|horrible|repulsive|ugly|fat|gross|like a joke)\b|\b(appearance|looks?|face|weight|body)\s+(is the reason|makes me sick)\b|\b(upload|post|take)\s+(a\s+)?(picture|photo)\s+looking like that\b|\b(never wear|wear clothes like that)\b", "body shaming"),
-        ("intimidation", 45, r"\b(keep|continue)\s+(messaging|texting|calling|harassing)\s+(you|u)\b|\b(make your life|ruin your|destroy your)\s+(miserable|life|reputation|future)\b|\b(delete|deactivate|remove)\s+(your\s+)?(account|profile|post)\b|\b(can\'?t|cannot|won\'?t)\s+escape\b|\bdisappear\s+from\s+this\s+(platform|site|app|group)\b", "digital intimidation"),
-        ("defamation", 45, r"\b(spread|share|leak|post)\s+(this\s+)?(rumour|rumor|lie|lies|photo|picture|screenshot|chat|video)\b|\b(fake account|alt account)\s+(just\s+)?to\s+expose\b|\b(everyone\s+(should|can)|let\'?s)\s+(see|laugh at|expose)\b", "defamation / rumour"),
-        ("insult", 40, r"\b(dumbest|stupidest|biggest loser|complete joke|laughing stock)\b|\b(nobody|no one)\s+takes\s+you\s+seriously\b|\b(your\s+)?opinions?\s+(are|is)\s+embarrassing\b|\b(laughs?|laughing)\s+at\s+you\s+behind\b|\b(shut\s+up|stop\s+talking)\b", "insult / humiliation")
+    # Combinatorial SVO Semantic Grammar Engine (Subject-Verb-Object Intent Rules)
+    svo_grammar_rules = [
+        # 1. Physical Assault & Violent Declarations
+        ("threat", 85, r"\b(kill|murder|shoot|stab|choke|strangle|beat|smash|hit|cut|attack|destroy|hurt|burn|drown|torture|crush|punch|slap|slice|hang|slaughter|butcher)\s+(you|u|your\s+(head|face|throat|neck|body|chest)|her|him)\b", "direct violent assault"),
+        ("threat", 80, r"\b(i\s*('?ll|will|should|must|wanna|want\s+to|gonna|am\s+going\s+to|can))\s+.*(kill|murder|beat|hurt|destroy|stab|shoot|smash|slap|attack|burn|crush)\s+(you|u)\b", "violent declaration"),
+        ("threat", 75, r"\b(with\s+(a\s+)?(hammer|knife|gun|weapon|bat|blade|axe|acid|brick|pipe|crowbar|sword|rope|pistol|rifle))\b", "weapon assault"),
+        # 2. Death Wishes & Suicide Incitement
+        ("threat", 85, r"\b(you|u)\s+(should|must|need\s+to|deserve\s+to|ought\s+to|better)\s+(die|perish|burn|suffer|rot|hang\s+yourself|kill\s+(yourself|urself)|end\s+your\s+life)\b", "death wish / suicide incitement"),
+        ("threat", 75, r"\b(should|hope|wish|want|deserve|pray)\s+(you|u)\s+(die|perish|rot|suffer|burn|get\s+killed)\b", "fatality wish"),
+        ("threat", 75, r"\b(go|better|just)\s+die\b", "death incitement"),
+        ("threat", 85, r"\b(kill|hang)\s+(yourself|urself)\b", "suicide incitement"),
+        # 3. Universal Rejection & Social Exclusion
+        ("social_exclusion", 55, r"\b(no\s*one|nobody|not\s+a\s+single\s+person|none\s+of\s+us)\s+(likes?|wants?|cares?\s+about|cares?|loves?|needs?|trusts?|respects?|talks?\s+to)\s+(you|u|her|him|them)\b", "universal rejection"),
+        ("social_exclusion", 50, r"\b(don\'?t|do\s+not|never)\s+(invite|talk\s+to|speak\s+to|hang\s+out\s+with|message)\s+(her|him|them|you|u)\b", "relational ostracization"),
+        ("social_exclusion", 50, r"\b(make\s+a\s+group|group\s+chat)\s+without\s+(him|her|them|you|u)\b", "exclusion group"),
+        ("social_exclusion", 50, r"\b(ignore|block|mute)\s+(all\s+)?(his|her|their|your)\s+(messages|texts|calls|posts)\b", "communication blocking"),
+        ("social_exclusion", 50, r"\b(they|you|u|she|he)\s+(don\'?t|does\s+not|doesn\'?t)\s+belong\s+(here|with\s+us|in\s+this\s+group)\b", "exclusion alienation"),
+        # 4. Body Shaming & Aesthetic Denigration
+        ("body_shaming", 55, r"\b(look|looking|looks)\s+(so\s+)?(ridiculous|disgusting|horrible|repulsive|ugly|fat|gross|hideous|repugnant|like\s+a\s+(clown|joke|pig|cow|whale|freak))\b", "appearance denigration"),
+        ("body_shaming", 55, r"\b(appearance|face|weight|body|figure|skin)\s+(is\s+the\s+reason|makes\s+me\s+sick|is\s+disgusting|looks\s+terrible)\b", "body shaming"),
+        ("body_shaming", 50, r"\b(upload|post|take)\s+(a\s+)?(picture|photo)\s+looking\s+like\s+that\b", "aesthetic mockery"),
+        # 5. Digital Intimidation, Coercion & Cyberstalking
+        ("intimidation", 55, r"\b(keep|continue)\s+(messaging|texting|calling|harassing|stalking|following)\s+(you|u)\s+(until|forever)\b", "stalking pressure"),
+        ("intimidation", 55, r"\b(make\s+your\s+life|ruin\s+your|destroy\s+your)\s+(miserable|life|reputation|future|career|family)\b", "intimidation threat"),
+        ("intimidation", 50, r"\b(delete|deactivate|remove)\s+(your\s+)?(account|profile|channel|post)\b", "account silencing"),
+        ("intimidation", 50, r"\b(can\'?t|cannot|won\'?t)\s+escape\s+(me|what\s+i|this)\b", "coercive entrapment"),
+        # 6. Defamation, Malicious Rumours & Doxing
+        ("defamation", 55, r"\b(spread|share|leak|post|circulate)\s+(this\s+)?(rumour|rumor|lie|lies|photo|picture|screenshot|chat|video|private|secret)\b", "rumour / doxing spread"),
+        ("defamation", 55, r"\b(fake\s+account|alt\s+account)\s+(just\s+)?to\s+expose\s+(you|her|him)\b", "smear campaign"),
+        # 7. Direct Insults & Intellectual Humiliation
+        ("insult", 50, r"\b(you(\'re|\s+are)|u\s+r)\s+(literally\s+)?(a\s+|an\s+|the\s+)?(dumbest|stupidest|biggest\s+loser|complete\s+joke|joke|laughing\s+stock|waste\s+of\s+space|brainless|moron|idiot|imbecile|retard|failure|clown|freak|loser)\b", "direct insult"),
+        ("insult", 45, r"\b(nobody|no\s*one)\s+takes\s+you\s+seriously\b", "intellectual ridicule"),
+        ("insult", 40, r"\b(your\s+)?opinions?\s+(are|is)\s+(embarrassing|pathetic|garbage|worthless)\b", "opinion humiliation")
     ]
 
-    for cat_key, weight, regex_pat, intent_label in semantic_intents:
+    for cat_key, weight, regex_pat, intent_label in svo_grammar_rules:
         if re.search(regex_pat, padded_text):
             if not categories.get(cat_key, False):
                 categories[cat_key] = True
