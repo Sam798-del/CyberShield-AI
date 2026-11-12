@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 body {
@@ -15,10 +15,14 @@ body {
 }
 
 .extension-container {
-  padding: 16px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+}
+
+.view-panel.hidden {
+  display: none !important;
 }
 
 /* Header */
@@ -33,14 +37,14 @@ body {
 .logo-group {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .shield-badge {
-  font-size: 22px;
+  font-size: 20px;
   background: #1e293b;
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -49,7 +53,7 @@ body {
 }
 
 .brand-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: #ffffff;
 }
@@ -59,29 +63,55 @@ body {
 }
 
 .brand-sub {
-  font-size: 10px;
+  font-size: 9.5px;
   color: #94a3b8;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-btn {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: #334155;
+  color: #ffffff;
 }
 
 .status-indicator {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   background: #064e3b;
   border: 1px solid #059669;
-  padding: 4px 8px;
+  padding: 3px 7px;
   border-radius: 12px;
-  font-size: 11px;
+  font-size: 10.5px;
   color: #34d399;
   font-weight: 600;
 }
 
 .status-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   background: #10b981;
   border-radius: 50%;
-  box-shadow: 0 0 6px #10b981;
+  box-shadow: 0 0 5px #10b981;
 }
 
 /* User Strip */
@@ -92,26 +122,54 @@ body {
   background: #131d31;
   border: 1px solid #1e293b;
   border-radius: 8px;
-  padding: 8px 10px;
+  padding: 7px 10px;
 }
 
 .user-info {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  color: #cbd5e1;
 }
 
-.trust-badge {
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  color: #38bdf8;
-  font-size: 10px;
+.user-avatar {
+  font-size: 16px;
+}
+
+.user-name {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #e2e8f0;
+  display: block;
+}
+
+.user-role {
+  font-size: 9.5px;
+  color: #64748b;
+  display: block;
+}
+
+.strip-stats {
+  display: flex;
+  gap: 5px;
+}
+
+.stat-pill {
+  font-size: 9.5px;
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 4px;
+}
+
+.stat-pill.trust {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+}
+
+.stat-pill.incidents {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #34d399;
 }
 
 /* Scan Card */
@@ -119,10 +177,10 @@ body {
   background: #131d31;
   border: 1px solid #1e293b;
   border-radius: 10px;
-  padding: 12px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
 }
 
 .card-header {
@@ -132,7 +190,7 @@ body {
 }
 
 .card-label {
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 700;
   color: #64748b;
   letter-spacing: 0.5px;
@@ -141,8 +199,8 @@ body {
 .protocol-badge {
   font-size: 9px;
   font-weight: 700;
-  padding: 2px 5px;
-  border-radius: 4px;
+  padding: 1px 5px;
+  border-radius: 3px;
 }
 
 .protocol-badge.safe {
@@ -160,24 +218,24 @@ body {
   font-size: 11px;
   color: #e2e8f0;
   background: #0b1120;
-  padding: 8px;
-  border-radius: 6px;
+  padding: 6px 8px;
+  border-radius: 5px;
   border: 1px solid #1e293b;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Gauge Box */
+/* Gauge */
 .threat-gauge-box {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .gauge-bar-wrapper {
   width: 100%;
-  height: 8px;
+  height: 7px;
   background: #1e293b;
   border-radius: 4px;
   overflow: hidden;
@@ -194,79 +252,79 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 11px;
+  font-size: 10.5px;
 }
 
-.verdict-text {
-  font-weight: 700;
-  letter-spacing: 0.3px;
-}
-
+.verdict-text { font-weight: 700; }
 .verdict-text.safe { color: #34d399; }
 .verdict-text.warning { color: #fbbf24; }
 .verdict-text.danger { color: #f87171; }
-
-.score-number {
-  color: #94a3b8;
-  font-weight: 600;
-}
+.score-number { color: #94a3b8; font-weight: 600; }
 
 /* Buttons */
 .primary-btn {
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #ffffff;
   border: none;
-  padding: 9px 12px;
+  padding: 8px 12px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  transition: background 0.2s ease, transform 0.1s ease;
+  gap: 5px;
+  transition: background 0.2s ease;
 }
 
 .primary-btn:hover {
   background: linear-gradient(135deg, #1d4ed8, #1e40af);
 }
 
-.primary-btn:active {
-  transform: scale(0.98);
+.link-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 11px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px;
 }
+
+.link-btn:hover { color: #e2e8f0; }
 
 /* Findings Card */
 .findings-card {
   background: #131d31;
   border: 1px solid #1e293b;
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 9px 11px;
 }
 
 .section-title {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .indicators-list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  max-height: 110px;
+  gap: 5px;
+  max-height: 95px;
   overflow-y: auto;
 }
 
 .indicator-item {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  font-size: 11px;
+  gap: 6px;
+  font-size: 10.5px;
   color: #cbd5e1;
   line-height: 1.3;
 }
@@ -279,19 +337,19 @@ body {
 .tools-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 7px;
 }
 
 .tool-btn {
   background: #131d31;
   border: 1px solid #1e293b;
   color: #cbd5e1;
-  padding: 8px 4px;
-  border-radius: 8px;
+  padding: 7px 4px;
+  border-radius: 7px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -302,13 +360,94 @@ body {
   color: #ffffff;
 }
 
-.tool-icon {
-  font-size: 14px;
+.tool-icon { font-size: 13px; }
+.tool-label { font-size: 9.5px; font-weight: 600; }
+
+/* Login & Settings Views */
+.auth-card, .settings-card {
+  background: #131d31;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.tool-label {
-  font-size: 9.5px;
+.auth-title, .settings-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.auth-desc {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.input-group label {
+  font-size: 10px;
+  color: #94a3b8;
   font-weight: 600;
+}
+
+.input-group input, .setting-item select {
+  background: #0b1120;
+  border: 1px solid #334155;
+  color: #f1f5f9;
+  padding: 6px 8px;
+  border-radius: 5px;
+  font-size: 11px;
+}
+
+.input-group input:focus, .setting-item select:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 6px;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.close-btn:hover { color: #f1f5f9; }
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid #1e293b;
+}
+
+.setting-text strong {
+  display: block;
+  font-size: 11px;
+  color: #e2e8f0;
+}
+
+.setting-text span {
+  display: block;
+  font-size: 9.5px;
+  color: #64748b;
 }
 
 /* Footer */
@@ -316,10 +455,10 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 10px;
+  font-size: 9.5px;
   color: #64748b;
   border-top: 1px solid #1e293b;
-  padding-top: 8px;
+  padding-top: 6px;
 }
 
 .live-dot {

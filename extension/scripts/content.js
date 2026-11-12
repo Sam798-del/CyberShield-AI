@@ -1,53 +1,80 @@
-// CyberShield AI — Content Script (Injected DOM Guard)
-
+// CyberShield AI — Content Script (Injected DOM Security Guard)
+// Owner: Shreya
+// Features: Live URL Badges, Warning Banners, Toxic Text Blur, Password Strength Tips
 
 (function () {
-  console.log("CyberShield AI Content Script loaded on:", window.location.href);
+  const currentUrl = window.location.href;
+  if (!currentUrl.startsWith("http://") && !currentUrl.startsWith("https://")) return;
 
-  // 1. Automatic Live Page Check
-  const pageUrl = window.location.href;
-  if (pageUrl.startsWith("http://") || pageUrl.startsWith("https://")) {
-    chrome.runtime.sendMessage(
-      { action: "CHECK_PHISHING", url: pageUrl },
-      (response) => {
-        if (response && response.risk_score >= 45) {
-          injectWarningBanner(response.risk_level, response.risk_score, response.flags);
-        }
-      }
-    );
-  }
+  let config = { autoScan: true, toxicBlur: true, passwordTips: true };
 
-  // 2. Listen for messages from Popup / Service Worker
-  chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-    if (msg.action === "SHOW_BANNER") {
-      injectWarningBanner(msg.threatLevel, msg.score, [msg.reason]);
-    }
+  // 1. Initialize configuration from extension storage
+  chrome.storage.local.get(["autoScan", "toxicBlur", "passwordTips"], (items) => {
+    if (items.autoScan !== undefined) config.autoScan = items.autoScan;
+    if (items.toxicBlur !== undefined) config.toxicBlur = items.toxicBlur;
+    if (items.passwordTips !== undefined) config.passwordTips = items.passwordTips;
 
-    if (msg.action === "SCAN_SELECTED_TEXT") {
-      const selected = window.getSelection().toString().trim();
-      if (!selected) {
-        alert("CyberShield AI: Please highlight some text on this page first to scan for cyberbullying!");
-        return;
-      }
-      chrome.runtime.sendMessage(
-        { action: "CHECK_TOXICITY", text: selected },
-        (res) => {
-          if (res && res.status === "success") {
-            showToxicityModal(selected, res);
-          } else {
-            alert("CyberShield AI: Text appears safe or backend offline.");
-          }
-        }
-      );
-    }
+    if (config.autoScan) scanActivePage();
+    if (config.toxicBlur) scanPageForToxicContent();
+    if (config.passwordTips) attachPasswordGuards();
   });
 
-  // 3. Inject Floating Warning Banner for Dangerous Sites
-  function injectWarningBanner(threatLevel, score, flags) {
-    if (document.getElementById("cybershield-warning-banner")) return;
+  // 2. Scan Current Webpage URL via Background Service Worker
+  function scanActivePage() {
+    chrome.runtime.sendMessage({ action: "CHECK_PHISHING", url: currentUrl }, (res) => {
+      if (res && res.status === "success") {
+        renderPageBadge(res.risk_level, res.risk_score);
+        if (res.risk_score >= 45) {
+          renderTopWarningBanner(res.risk_level, res.risk_score, res.flags?.[0]);
+        }
+      }
+    });
+  }
+
+  // 3. In-Page Visual Badge (Safe / Suspicious / Dangerous)
+  function renderPageBadge(riskLevel, score) {
+    if (document.getElementById("cybershield-corner-badge")) return;
+
+    const isDanger = score >= 45;
+    const isWarning = score >= 20 && score < 45;
+    const badgeColor = isDanger ? "#ef4444" : (isWarning ? "#f59e0b" : "#10b981");
+    const badgeText = isDanger ? "Threat Alert" : (isWarning ? "Caution" : "Secure");
+
+    const badge = document.createElement("div");
+    badge.id = "cybershield-corner-badge";
+    badge.title = `CyberShield AI: ${riskLevel} (${score}/100)`;
+    badge.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0f172a;
+      color: #f1f5f9;
+      border: 1px solid ${badgeColor};
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 2147483640;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    `;
+    badge.innerHTML = `<span style="color:${badgeColor}">●</span> ${badgeText}`;
+    badge.onclick = () => {
+      alert(`CyberShield AI Verdict:\n\nStatus: ${riskLevel}\nRisk Score: ${score}/100\nDomain: ${window.location.hostname}`);
+    };
+    document.body.appendChild(badge);
+  }
+
+  // 4. Top Floating Warning Banner for Critical Threats
+  function renderTopWarningBanner(riskLevel, score, primaryFlag) {
+    if (document.getElementById("cybershield-top-banner")) return;
 
     const banner = document.createElement("div");
-    banner.id = "cybershield-warning-banner";
+    banner.id = "cybershield-top-banner";
     banner.style.cssText = `
       position: fixed;
       top: 0;
@@ -55,94 +82,136 @@
       width: 100%;
       background: linear-gradient(135deg, #7f1d1d, #991b1b);
       color: #ffffff;
-      padding: 12px 20px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      font-size: 13px;
+      padding: 10px 18px;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 12.5px;
       font-weight: 600;
       z-index: 2147483647;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.4);
       border-bottom: 2px solid #ef4444;
     `;
-
-    const mainText = document.createElement("div");
-    mainText.innerHTML = `
-      <span style="font-size:16px; margin-right:8px;">⚠️</span>
-      <strong>CyberShield AI Alert:</strong> ${threatLevel} detected on this page! (Risk: ${score}/100) — <em>${flags && flags[0] ? flags[0] : "Deceptive domain parameters"}</em>
+    banner.innerHTML = `
+      <div>
+        <span style="font-size:15px; margin-right:6px;">⚠️</span>
+        <strong>CyberShield AI:</strong> ${riskLevel} (${score}/100) — <em>${primaryFlag || "Suspicious lookalike detected"}</em>
+      </div>
+      <button style="background:rgba(255,255,255,0.2); border:1px solid #fff; color:#fff; padding:3px 8px; border-radius:4px; font-size:11px; cursor:pointer;" id="csDismissBanner">Dismiss</button>
     `;
-
-    const btnGroup = document.createElement("div");
-    btnGroup.style.cssText = "display: flex; gap: 10px; align-items: center;";
-
-    const dismissBtn = document.createElement("button");
-    dismissBtn.innerText = "Dismiss Warning";
-    dismissBtn.style.cssText = `
-      background: rgba(255,255,255,0.2);
-      border: 1px solid rgba(255,255,255,0.4);
-      color: #fff;
-      padding: 4px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 11px;
-    `;
-    dismissBtn.onclick = () => banner.remove();
-
-    btnGroup.appendChild(dismissBtn);
-    banner.appendChild(mainText);
-    banner.appendChild(btnGroup);
-
     document.body.prepend(banner);
+    document.getElementById("csDismissBanner").onclick = () => banner.remove();
   }
 
-  // 4. Toxicity Result Dialog
-  function showToxicityModal(text, res) {
-    const isToxic = res.toxicity_score >= 35;
-    const alertColor = isToxic ? "#ef4444" : "#10b981";
-    const statusTitle = isToxic ? "⚠️ Harmful / Toxic Content Detected" : "✓ Content Appears Safe";
+  // 5. Blur or Warn on Toxic Text (Social Media & Forums)
+  function scanPageForToxicContent() {
+    const toxicPatterns = ["kill yourself", "i will find you", "go die", "worthless piece of trash"];
+    const textNodes = [];
 
-    const modal = document.createElement("div");
-    modal.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 320px;
-      background: #0f172a;
-      color: #f1f5f9;
-      border: 1px solid ${alertColor};
-      border-radius: 8px;
-      padding: 16px;
-      font-family: sans-serif;
-      z-index: 2147483647;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-      font-size: 12px;
-    `;
-
-    modal.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <strong style="color:${alertColor}; font-size:13px;">${statusTitle}</strong>
-        <span style="cursor:pointer; color:#94a3b8;" id="closeToxModal">✕</span>
-      </div>
-      <p style="color:#94a3b8; font-style:italic; margin-bottom:8px;">"${text.slice(0, 60)}..."</p>
-      <div style="background:#1e293b; padding:8px; border-radius:6px; margin-bottom:10px;">
-        <div>Toxicity Score: <strong>${res.toxicity_score}/100</strong></div>
-        <div style="font-size:11px; color:#cbd5e1; margin-top:4px;">${res.toxicity_level}</div>
-      </div>
-      <div style="font-size:11px; color:#94a3b8;">
-        <strong>Safety Action:</strong> ${res.safety_actions && res.safety_actions[0] ? res.safety_actions[0] : "Maintain regular safety."}
-      </div>
-    `;
-
-    document.body.appendChild(modal);
-    modal.querySelector("#closeToxModal").onclick = () => modal.remove();
-    setTimeout(() => { if (modal.parentNode) modal.remove(); }, 8000);
+    // Fast selective DOM tree walk for paragraphs & comments
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    let node;
+    while ((node = walker.nextNode())) {
+      if (node.nodeValue && node.nodeValue.length > 10 && node.parentElement.tagName !== "SCRIPT" && node.parentElement.tagName !== "STYLE") {
+        const valLower = node.nodeValue.toLowerCase();
+        for (const pattern of toxicPatterns) {
+          if (valLower.includes(pattern)) {
+            applyToxicBlur(node.parentElement);
+            break;
+          }
+        }
+      }
+    }
   }
 
-  // 5. Password Field Guard Trigger
-  document.querySelectorAll('input[type="password"]').forEach((input) => {
-    input.addEventListener("focus", () => {
-      input.setAttribute("data-cybershield-protected", "true");
+  function applyToxicBlur(element) {
+    if (element.hasAttribute("data-cybershield-blurred")) return;
+    element.setAttribute("data-cybershield-blurred", "true");
+    element.style.filter = "blur(5px)";
+    element.style.cursor = "pointer";
+    element.title = "CyberShield AI: Potentially toxic harassment hidden. Click to reveal.";
+    element.onclick = (e) => {
+      e.stopPropagation();
+      element.style.filter = "none";
+      element.title = "Revealed content";
+    };
+  }
+
+  // 6. Real-Time Password Strength Tips in Password Fields
+  // [Neeraja Integration Hook: Connects to Neeraja's Password Entropy & Breach APIs]
+  function attachPasswordGuards() {
+    document.querySelectorAll('input[type="password"]').forEach((input) => {
+      if (input.hasAttribute("data-cybershield-guarded")) return;
+      input.setAttribute("data-cybershield-guarded", "true");
+
+      const tipBox = document.createElement("div");
+      tipBox.style.cssText = `
+        display: none;
+        font-family: -apple-system, sans-serif;
+        font-size: 11px;
+        color: #94a3b8;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        padding: 6px 10px;
+        margin-top: 4px;
+        z-index: 10000;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      `;
+
+      input.parentElement.appendChild(tipBox);
+
+      input.addEventListener("focus", () => { tipBox.style.display = "block"; });
+      input.addEventListener("blur", () => { tipBox.style.display = "none"; });
+
+      input.addEventListener("input", () => {
+        const pwd = input.value;
+        const length = pwd.length;
+        const hasUpper = /[A-Z]/.test(pwd);
+        const hasNumber = /\d/.test(pwd);
+        const hasSpecial = /[@$!%*?&#^]/.test(pwd);
+
+        let strength = "Weak";
+        let color = "#ef4444";
+
+        if (length >= 12 && hasUpper && hasNumber && hasSpecial) {
+          strength = "Very Strong";
+          color = "#10b981";
+        } else if (length >= 8 && (hasUpper || hasNumber)) {
+          strength = "Moderate";
+          color = "#f59e0b";
+        }
+
+        tipBox.innerHTML = `
+          <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+            <span>🛡️ CyberShield Health:</span>
+            <strong style="color:${color}">${strength}</strong>
+          </div>
+          <div style="font-size:10px; color:#64748b;">Min 12+ chars, uppercase, digits & symbols for high entropy.</div>
+        `;
+      });
     });
+  }
+
+  // 7. Message Handler from Popup for Highlighted Text Scan
+  chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    if (msg.action === "SCAN_SELECTED_TEXT") {
+      const selected = window.getSelection().toString().trim();
+      if (!selected) {
+        alert("CyberShield AI: Please highlight text on this page first to scan for cyberbullying!");
+        return;
+      }
+      chrome.runtime.sendMessage({ action: "CHECK_TOXICITY", text: selected }, (res) => {
+        if (res && res.status === "success") {
+          const isHarmful = res.toxicity_score >= 35;
+          alert(`CyberShield AI Toxicity Analysis:\n\nSeverity: ${res.toxicity_level}\nScore: ${res.toxicity_score}/100\nRecommendation: ${res.safety_actions?.[0] || "Content is safe."}`);
+        }
+      });
+    }
+
+    if (msg.action === "UPDATE_STATUS") {
+      renderPageBadge(msg.riskLevel, msg.score);
+    }
   });
 })();

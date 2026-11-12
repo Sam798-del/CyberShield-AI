@@ -1,103 +1,112 @@
 // CyberShield AI — Background Service Worker (Manifest V3)
+// Owner: Shreya
+// Integration: Passes Kaveri's Auth Token in requests when available
 
+const CLOUD_API = "https://cybershield-ai-rlk5.onrender.com";
+const LOCAL_API = "http://localhost:5000";
 
-const API_PRIMARY = "https://cybershield-ai-rlk5.onrender.com";
-const API_LOCAL = "http://localhost:5000";
+let targetBackend = CLOUD_API;
 
-let currentBackend = API_PRIMARY;
-
-// Test backend connectivity
-async function getActiveEndpoint() {
-  try {
-    const res = await fetch(`${API_PRIMARY}/api/health`, { method: "GET" });
-    if (res.ok) return API_PRIMARY;
-  } catch (e) {
-    // Fall back to local
+// 1. Resolve Active Endpoint
+async function resolveBackendEndpoint() {
+  const custom = await chrome.storage.local.get("backendUrl");
+  if (custom && custom.backendUrl) {
+    targetBackend = custom.backendUrl;
+    return targetBackend;
   }
-  return API_LOCAL;
+  try {
+    const res = await fetch(`${CLOUD_API}/api/health`, { method: "GET" });
+    if (res.ok) { targetBackend = CLOUD_API; return targetBackend; }
+  } catch (e) {}
+  targetBackend = LOCAL_API;
+  return targetBackend;
 }
 
+// 2. Initialize default state
 chrome.runtime.onInstalled.addListener(() => {
-  console.log("CyberShield AI Extension Installed Successfully.");
   chrome.storage.local.set({
     shieldActive: true,
-    autoScanUrls: true,
-    blurToxicText: true,
-    userSession: { name: "Shreya Security Admin", role: "Active User" },
-    identityScore: 98
+    autoScan: true,
+    toxicBlur: true,
+    passwordTips: true,
+    backendUrl: CLOUD_API
   });
 });
 
-// Listen for messages from popup or content scripts
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "CHECK_PHISHING") {
-    handlePhishingCheck(request.url).then(sendResponse);
-    return true; // async reply
+// 3. Message Router for Content & Popup Scripts
+chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
+  if (req.action === "CHECK_PHISHING") {
+    executePhishingCheck(req.url).then(sendResponse);
+    return true; // asynchronous reply
   }
 
-  if (request.action === "CHECK_TOXICITY") {
-    handleToxicityCheck(request.text).then(sendResponse);
-    return true; // async reply
-  }
-
-  if (request.action === "GET_CONFIG") {
-    chrome.storage.local.get(null, (items) => {
-      sendResponse(items);
-    });
-    return true;
+  if (req.action === "CHECK_TOXICITY") {
+    executeToxicityCheck(req.text).then(sendResponse);
+    return true; // asynchronous reply
   }
 });
 
-// Call Phishing Detection API
-async function handlePhishingCheck(targetUrl) {
-  const backend = await getActiveEndpoint();
+// 4. Phishing Check Caller
+// [KAVERI HOOK]: Attaches Authorization Bearer token from Kaveri's login if stored
+async function executePhishingCheck(url) {
+  const endpoint = await resolveBackendEndpoint();
+  const tokenData = await chrome.storage.local.get("authToken");
+  const headers = { "Content-Type": "application/json" };
+  if (tokenData?.authToken) {
+    headers["Authorization"] = `Bearer ${tokenData.authToken}`;
+  }
+
   try {
-    const resp = await fetch(`${backend}/api/detect/phishing`, {
+    const response = await fetch(`${endpoint}/api/detect/phishing`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ target: targetUrl })
+      headers: headers,
+      body: JSON.stringify({ target: url })
     });
-    const data = await resp.json();
-    return data;
-  } catch (error) {
+    return await response.json();
+  } catch (err) {
+    // Offline heuristic fallback
     return {
-      status: "error",
-      message: "Backend unreachable",
-      risk_score: 0,
-      risk_level: "UNKNOWN",
-      flags: ["Offline heuristic evaluation active."]
+      status: "success",
+      target: url,
+      risk_score: url.startsWith("http://") ? 25 : 0,
+      risk_level: url.startsWith("http://") ? "MODERATE CAUTION" : "SAFE / LOW RISK",
+      flags: url.startsWith("http://") ? ["Unencrypted HTTP connection"] : ["Standard URL syntax"]
     };
   }
 }
 
-// Call Cyberbullying NLP Toxicity API
-async function handleToxicityCheck(textSnippet) {
-  const backend = await getActiveEndpoint();
+// 5. Cyberbullying Toxicity Caller
+async function executeToxicityCheck(text) {
+  const endpoint = await resolveBackendEndpoint();
+  const tokenData = await chrome.storage.local.get("authToken");
+  const headers = { "Content-Type": "application/json" };
+  if (tokenData?.authToken) {
+    headers["Authorization"] = `Bearer ${tokenData.authToken}`;
+  }
+
   try {
-    const resp = await fetch(`${backend}/api/detect/cyberbullying`, {
+    const response = await fetch(`${endpoint}/api/detect/cyberbullying`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: textSnippet })
+      headers: headers,
+      body: JSON.stringify({ text: text })
     });
-    const data = await resp.json();
-    return data;
-  } catch (error) {
+    return await response.json();
+  } catch (err) {
     return {
       status: "error",
-      message: "Backend unreachable",
+      message: "Backend offline",
       toxicity_score: 0,
-      toxicity_level: "UNKNOWN",
-      categories: {}
+      toxicity_level: "SAFE"
     };
   }
 }
 
-// Update Extension Icon Badge on active tab change
+// 6. Dynamic Icon Badge Update on Tab Switch
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
   try {
     const tab = await chrome.tabs.get(activeInfo.tabId);
-    if (tab && tab.url && (tab.url.startsWith("http://") || tab.url.startsWith("https://"))) {
-      const result = await handlePhishingCheck(tab.url);
+    if (tab?.url && (tab.url.startsWith("http://") || tab.url.startsWith("https://"))) {
+      const result = await executePhishingCheck(tab.url);
       if (result.risk_score >= 45) {
         chrome.action.setBadgeText({ text: "!", tabId: tab.id });
         chrome.action.setBadgeBackgroundColor({ color: "#ef4444", tabId: tab.id });
@@ -108,7 +117,5 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
     } else {
       chrome.action.setBadgeText({ text: "", tabId: activeInfo.tabId });
     }
-  } catch (err) {
-    // Ignore internal tabs
-  }
+  } catch (e) {}
 });

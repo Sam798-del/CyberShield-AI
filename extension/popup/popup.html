@@ -8,7 +8,8 @@
 </head>
 <body>
   <div class="extension-container">
-    <!-- Header -->
+    
+    <!-- Top App Navigation -->
     <header class="header">
       <div class="logo-group">
         <div class="shield-badge">🛡️</div>
@@ -17,80 +18,162 @@
           <p class="brand-sub">Real-Time Client Defense</p>
         </div>
       </div>
-      <div class="status-indicator active" id="shieldStatusBadge" title="Real-time Shield Active">
-        <span class="status-dot"></span>
-        <span class="status-text">Protected</span>
+      <div class="nav-actions">
+        <button class="icon-btn" id="navSettingsBtn" title="Extension Settings">⚙️</button>
+        <div class="status-indicator active" id="shieldStatusBadge" title="Real-time Shield Active">
+          <span class="status-dot"></span>
+          <span class="status-text">Active</span>
+        </div>
       </div>
     </header>
 
-    <!-- User Account Strip (Kaveri Auth Integration) -->
-    <div class="user-strip" id="userAuthStrip">
-      <div class="user-info">
-        <span class="user-avatar">👤</span>
-        <span class="user-name" id="userNameLabel">Active Session</span>
+    <!-- VIEW 1: LOGIN / AUTH SCREEN (Shown if logged out) -->
+    <!-- [Kaveri Integration Hook: Authenticates session token issued by Kaveri's Auth Engine] -->
+    <div class="view-panel hidden" id="loginView">
+      <div class="auth-card">
+        <h3 class="auth-title">Sign In to CyberShield</h3>
+        <p class="auth-desc">Connect your extension to sync threat history and identity scores.</p>
+        <div class="input-group">
+          <label>Email Address</label>
+          <input type="email" id="authEmailInput" placeholder="name@domain.com" value="shreya@cybershield.ai">
+        </div>
+        <div class="input-group">
+          <label>Session Token / Password</label>
+          <input type="password" id="authTokenInput" placeholder="Enter session token or password" value="cs_ai_tok_8877665544332211">
+        </div>
+        <button class="primary-btn" id="saveAuthBtn">Save & Authenticate</button>
+        <button class="link-btn" id="skipAuthBtn">Continue as Guest Scanner</button>
       </div>
-      <span class="trust-badge" id="identityTrustPill" title="Identity Trust Score">Trust: 98%</span>
     </div>
 
-    <!-- Active Tab Threat Overview -->
-    <section class="scan-card">
-      <div class="card-header">
-        <span class="card-label">CURRENT TAB URL</span>
-        <span class="protocol-badge safe" id="protocolBadge">HTTPS</span>
-      </div>
-      <div class="url-display" id="activeUrlDisplay" title="Current tab domain">
-        Detecting active page...
-      </div>
-
-      <!-- Threat Level Gauge -->
-      <div class="threat-gauge-box" id="gaugeBox">
-        <div class="gauge-bar-wrapper">
-          <div class="gauge-bar" id="threatGaugeBar" style="width: 5%;"></div>
+    <!-- VIEW 2: MAIN DEFENSE DASHBOARD (Default View) -->
+    <div class="view-panel" id="mainDashboardView">
+      
+      <!-- User Account & Identity Summary Strip -->
+      <!-- [Kaveri Identity Hook & Neeraja Audit Hook] -->
+      <div class="user-strip">
+        <div class="user-info">
+          <span class="user-avatar" id="userAvatar">👤</span>
+          <div>
+            <span class="user-name" id="userNameLabel">Shreya Admin</span>
+            <span class="user-role" id="userRoleLabel">Active Defense</span>
+          </div>
         </div>
-        <div class="gauge-details">
-          <span class="verdict-text safe" id="threatVerdictText">ANALYZING PAGE</span>
-          <span class="score-number" id="threatScoreNumber">0 / 100</span>
+        <div class="strip-stats">
+          <!-- Trust Score: Provided by Kaveri's Identity Engine -->
+          <span class="stat-pill trust" id="trustScoreBadge" title="Identity Trust Score (Kaveri Module)">Trust: 98%</span>
+          <!-- Threats Blocked: Provided by Neeraja's Incident Telemetry -->
+          <span class="stat-pill incidents" id="incidentsBadge" title="Threats Blocked (Neeraja Module)">Blocked: 3</span>
         </div>
       </div>
 
-      <!-- Quick Action CTA -->
-      <button class="primary-btn" id="scanCurrentPageBtn">
-        <span class="btn-icon">⚡</span> Scan Active Page
-      </button>
-    </section>
+      <!-- Active Tab Scanner Card -->
+      <section class="scan-card">
+        <div class="card-header">
+          <span class="card-label">CURRENT TAB URL</span>
+          <span class="protocol-badge safe" id="protocolBadge">HTTPS</span>
+        </div>
+        <div class="url-display" id="activeUrlDisplay" title="Current tab URL">
+          Detecting active page...
+        </div>
 
-    <!-- Threat Findings List -->
-    <section class="findings-card">
-      <h3 class="section-title">Security Indicators</h3>
-      <ul class="indicators-list" id="indicatorsList">
-        <li class="indicator-item safe">
-          <span class="ind-icon">✓</span>
-          <span class="ind-text">Ready to inspect page links, forms, and headers.</span>
-        </li>
-      </ul>
-    </section>
+        <!-- Threat Level Gauge -->
+        <div class="threat-gauge-box">
+          <div class="gauge-bar-wrapper">
+            <div class="gauge-bar" id="threatGaugeBar" style="width: 5%;"></div>
+          </div>
+          <div class="gauge-details">
+            <span class="verdict-text safe" id="threatVerdictText">ANALYZING PAGE</span>
+            <span class="score-number" id="threatScoreNumber">0 / 100</span>
+          </div>
+        </div>
 
-    <!-- Quick Tool Tabs -->
-    <div class="tools-grid">
-      <button class="tool-btn" id="checkSelectionBtn" title="Scan highlighted text for cyberbullying">
-        <span class="tool-icon">💬</span>
-        <span class="tool-label">Toxic Text Check</span>
-      </button>
-      <button class="tool-btn" id="openDashboardBtn" title="Open Full Web Dashboard">
-        <span class="tool-icon">📊</span>
-        <span class="tool-label">Dashboard</span>
-      </button>
-      <button class="tool-btn" id="openSettingsBtn" title="Extension Settings">
-        <span class="tool-icon">⚙️</span>
-        <span class="tool-label">Settings</span>
-      </button>
+        <button class="primary-btn" id="scanCurrentPageBtn">
+          <span class="btn-icon">⚡</span> Scan Active Page
+        </button>
+      </section>
+
+      <!-- Threat Findings List -->
+      <section class="findings-card">
+        <h3 class="section-title">Security Indicators</h3>
+        <ul class="indicators-list" id="indicatorsList">
+          <li class="indicator-item safe">
+            <span class="ind-icon">✓</span>
+            <span class="ind-text">Ready to inspect page links, forms, and headers.</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Quick Action Tools Grid -->
+      <div class="tools-grid">
+        <button class="tool-btn" id="checkSelectionBtn" title="Scan highlighted text for cyberbullying">
+          <span class="tool-icon">💬</span>
+          <span class="tool-label">Toxic Text</span>
+        </button>
+        <button class="tool-btn" id="openWebPortalBtn" title="Open Full CyberShield Web Dashboard">
+          <span class="tool-icon">📊</span>
+          <span class="tool-label">Dashboard</span>
+        </button>
+        <button class="tool-btn" id="logoutBtn" title="Switch User or Session">
+          <span class="tool-icon">🔑</span>
+          <span class="tool-label">Account</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- VIEW 3: SETTINGS SCREEN INSIDE EXTENSION -->
+    <div class="view-panel hidden" id="settingsView">
+      <div class="settings-card">
+        <div class="settings-header">
+          <h3 class="settings-title">Extension Settings</h3>
+          <button class="close-btn" id="closeSettingsBtn">✕</button>
+        </div>
+        
+        <div class="setting-item">
+          <div class="setting-text">
+            <strong>Auto-Scan Visited URLs</strong>
+            <span>Check phishing risk automatically on page load</span>
+          </div>
+          <input type="checkbox" id="toggleAutoScan" checked>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-text">
+            <strong>Auto-Blur Toxic Text</strong>
+            <span>Blur abusive comments and harassment on social media</span>
+          </div>
+          <input type="checkbox" id="toggleToxicBlur" checked>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-text">
+            <strong>Password Field Strength Tips</strong>
+            <span>Show live password entropy tips in password fields</span>
+          </div>
+          <input type="checkbox" id="togglePasswordTips" checked>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-text">
+            <strong>Backend API Server</strong>
+            <span>Select cloud Render or local development endpoint</span>
+          </div>
+          <select id="backendSelect">
+            <option value="https://cybershield-ai-rlk5.onrender.com">Render Cloud (Live)</option>
+            <option value="http://localhost:5000">Localhost:5000</option>
+          </select>
+        </div>
+
+        <button class="primary-btn" id="saveSettingsBtn">Save Settings</button>
+      </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer">
-      <span>CyberShield AI • v1.0.0</span>
-      <span class="live-dot" id="backendHealthDot" title="Backend Connection Status">API: Online</span>
+      <span>CyberShield AI • Shreya Module</span>
+      <span class="live-dot" id="backendHealthDot" title="Live Backend Status">API: Online</span>
     </footer>
+
   </div>
 
   <script src="popup.js"></script>
