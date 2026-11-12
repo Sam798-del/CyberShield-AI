@@ -1,5 +1,5 @@
 // CyberShield AI — Background Service Worker (Manifest V3)
-// Owner: Shreya
+
 
 const API_PRIMARY = "https://cybershield-ai-rlk5.onrender.com";
 const API_LOCAL = "http://localhost:5000";
