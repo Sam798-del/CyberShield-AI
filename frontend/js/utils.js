@@ -129,8 +129,9 @@ const CyberShieldUtils = {
             threat: {
                 weight: 60,
                 patterns: [
-                    "i will find you", "kill yourself", "go die", "beat you", "hurt you",
-                    "destroy you", "slit your", "burn you", "murder", "end your life"
+                    "i will find you", "kill yourself", "go die", "should die", "hope you die",
+                    "deserve to die", "beat you", "hurt you", "destroy you", "slit your", "burn you",
+                    "murder", "end your life"
                 ]
             },
             intimidation: {
@@ -156,9 +157,11 @@ const CyberShieldUtils = {
                 patterns: [
                     "don't invite her", "don't invite him", "don't invite them", "nobody wants her around",
                     "nobody wants him around", "nobody wants you around", "nobody wants you here",
+                    "no one wants you around", "no one wants you here", "no one likes you", "nobody likes you",
+                    "nobody cares about you", "no one cares about you", "nobody loves you", "no one loves you",
                     "make a group without", "ignore all his messages", "ignore all her messages",
                     "unfollow this person", "they don't belong here", "you don't belong here",
-                    "nobody asked you", "leave this group", "nobody likes you"
+                    "nobody asked you", "leave this group"
                 ]
             },
             body_shaming: {

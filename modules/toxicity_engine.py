@@ -150,6 +150,24 @@ def analyze_cyberbullying(text: str) -> dict:
         else:
             categories[cat_key] = False
 
+    # Semantic Regex Intent Scanner for natural language variations
+    semantic_intents = [
+        ("threat", 60, r"\b(should|hope|go|deserve to|must|wish you|better|need to)\s+(die|kill yourself|end your life|hang yourself|slit|burn)\b|\b(you|u)\s+(should|must|need to)\s+die\b|\bkill\s+(yourself|urself)\b", "death incitement / threat"),
+        ("social_exclusion", 45, r"\b(no\s*one|nobody|not a single person|everyone)\s+(likes?|wants?|cares?|loves?|cares about)\s+(you|u|her|him|them)\b|\b(don\'?t|do not|never)\s+(invite|talk to|speak to|message)\s+(her|him|them|you|u)\b|\b(make a group|group chat)\s+without\b|\b(ignore|mute)\s+(all\s+)?(his|her|their|your)\s+(messages|texts)\b|\b(unfollow|block|kick)\s+(this|that)\s+(person|account|user|loser)\b|\b(they|you|u)\s+don\'?t\s+belong\s+here\b", "social exclusion / rejection"),
+        ("body_shaming", 45, r"\b(look|looking|looks)\s+(ridiculous|disgusting|horrible|repulsive|ugly|fat|gross|like a joke)\b|\b(appearance|looks?|face|weight|body)\s+(is the reason|makes me sick)\b|\b(upload|post|take)\s+(a\s+)?(picture|photo)\s+looking like that\b|\b(never wear|wear clothes like that)\b", "body shaming"),
+        ("intimidation", 45, r"\b(keep|continue)\s+(messaging|texting|calling|harassing)\s+(you|u)\b|\b(make your life|ruin your|destroy your)\s+(miserable|life|reputation|future)\b|\b(delete|deactivate|remove)\s+(your\s+)?(account|profile|post)\b|\b(can\'?t|cannot|won\'?t)\s+escape\b|\bdisappear\s+from\s+this\s+(platform|site|app|group)\b", "digital intimidation"),
+        ("defamation", 45, r"\b(spread|share|leak|post)\s+(this\s+)?(rumour|rumor|lie|lies|photo|picture|screenshot|chat|video)\b|\b(fake account|alt account)\s+(just\s+)?to\s+expose\b|\b(everyone\s+(should|can)|let\'?s)\s+(see|laugh at|expose)\b", "defamation / rumour"),
+        ("insult", 40, r"\b(dumbest|stupidest|biggest loser|complete joke|laughing stock)\b|\b(nobody|no one)\s+takes\s+you\s+seriously\b|\b(your\s+)?opinions?\s+(are|is)\s+embarrassing\b|\b(laughs?|laughing)\s+at\s+you\s+behind\b|\b(shut\s+up|stop\s+talking)\b", "insult / humiliation")
+    ]
+
+    for cat_key, weight, regex_pat, intent_label in semantic_intents:
+        if re.search(regex_pat, padded_text):
+            if not categories.get(cat_key, False):
+                categories[cat_key] = True
+                category_matches.append(TAXONOMY_CATEGORIES.get(cat_key, {}).get("display_name", cat_key))
+                score += weight
+            flagged_words.append(intent_label)
+
     # Compounding aggression factor (attacks spanning multiple categories)
     if len(category_matches) > 1:
         score += (len(category_matches) - 1) * 15

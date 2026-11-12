@@ -16,10 +16,10 @@
       "severity_weight": 60,
       "legal_context": "Section 506/507 IPC (Criminal Intimidation), US 18 U.S.C. § 875",
       "patterns": [
-        "i will find you", "kill yourself", "go die", "beat you", "hurt you",
-        "destroy you", "slit your", "burn you", "murder", "end your life",
-        "physically hurt you", "smash your", "break your neck", "shoot you",
-        "hunt you down", "put you in hospital", "stab you", "hang yourself",
+        "i will find you", "kill yourself", "go die", "should die", "hope you die",
+        "deserve to die", "beat you", "hurt you", "destroy you", "slit your", "burn you",
+        "murder", "end your life", "physically hurt you", "smash your", "break your neck",
+        "shoot you", "hunt you down", "put you in hospital", "stab you", "hang yourself",
         "die in a fire", "jump off", "drink bleach", "strangle you"
       ]
     },
@@ -61,10 +61,12 @@
       "patterns": [
         "don't invite her", "don't invite him", "don't invite them", "nobody wants her around",
         "nobody wants him around", "nobody wants you around", "nobody wants you here",
+        "no one wants you here", "no one wants you around", "no one likes you",
         "make a group without", "ignore all his messages", "ignore all her messages",
         "ignore all their messages", "unfollow this person", "they don't belong here",
         "you don't belong here", "nobody asked you", "leave this group", "get out of here",
-        "kick him out", "kick her out", "nobody cares about you", "nobody likes you",
+        "kick him out", "kick her out", "nobody cares about you", "no one cares about you",
+        "nobody likes you", "nobody loves you", "no one loves you",
         "leave us alone", "you are not welcome", "block this user", "kick them out of the group",
         "don't talk to her", "don't talk to him", "pretend he doesn't exist",
         "pretend she doesn't exist", "everyone mute this", "boycott this account",

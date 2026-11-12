@@ -135,8 +135,8 @@
   function scanPageForToxicContent() {
     const toxicPatterns = [
       // 1. Extreme Threats & Violence
-      "kill yourself", "i will find you", "go die", "worthless piece of trash",
-      "destroy you", "beat you", "hurt you", "slit your", "burn you", "murder", "end your life",
+      "kill yourself", "i will find you", "go die", "should die", "hope you die", "deserve to die",
+      "worthless piece of trash", "destroy you", "beat you", "hurt you", "slit your", "burn you", "murder", "end your life",
       // 2. Insults & Humiliation
       "idiot", "loser", "shut up", "ugly", "hate you", "pathetic", "dumbest",
       "complete joke", "nobody takes you seriously", "embarrassing", "laughs at you behind",
@@ -144,10 +144,10 @@
       // 3. Social Exclusion & Ostracization
       "don't invite her", "don't invite him", "don't invite them", "nobody wants her around",
       "nobody wants him around", "nobody wants you around", "nobody wants you here",
+      "no one wants you around", "no one wants you here", "no one likes you", "nobody likes you",
       "make a group without", "ignore all his messages", "ignore all her messages",
       "ignore all their messages", "unfollow this person", "they don't belong here",
       "you don't belong here", "nobody asked you", "leave this group", "get out of here",
-      "nobody likes you",
       // 4. Body Shaming & Appearance Ridicule
       "looking like that", "look ridiculous", "look disgusting", "hide your face",
       "wear clothes like that", "your appearance is the reason", "you look horrible",
