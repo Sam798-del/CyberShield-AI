@@ -16,12 +16,20 @@ FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 PAGES_DIR = os.path.join(FRONTEND_DIR, "pages")
 DB_PATH = os.path.join(BASE_DIR, "cybershield.db")
 
+EXTENSION_DIR = os.path.join(BASE_DIR, "extension")
+
 app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path="")
 CORS(app)
 
 @app.route("/")
 def serve_index():
     return send_from_directory(FRONTEND_DIR, "index.html")
+
+@app.route("/test-playground")
+@app.route("/test_playground.html")
+@app.route("/extension/test_playground.html")
+def serve_test_playground():
+    return send_from_directory(EXTENSION_DIR, "test_playground.html")
 
 @app.route("/guide.html")
 def legacy_guide():
