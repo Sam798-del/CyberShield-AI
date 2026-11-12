@@ -22,9 +22,12 @@ DATASET_PATH = os.path.join(os.path.dirname(__file__), "datasets", "jigsaw_cyber
 DEFAULT_TAXONOMY = {
     "threat": {
         "display_name": "Physical Threat & Extreme Violence",
-        "severity_weight": 60,
+        "severity_weight": 75,
         "patterns": [
-            "i will find you", "kill yourself", "go die", "beat you", "hurt you",
+            "i will find you", "kill yourself", "kill you", "i will kill you", "should kill you",
+            "i should kill you", "murder you", "shoot you", "stab you", "strangle you",
+            "beat you to death", "with a hammer", "with a knife", "with a gun", "go die",
+            "should die", "hope you die", "deserve to die", "beat you", "hurt you",
             "destroy you", "slit your", "burn you", "murder", "end your life"
         ]
     },
@@ -152,6 +155,7 @@ def analyze_cyberbullying(text: str) -> dict:
 
     # Semantic Regex Intent Scanner for natural language variations
     semantic_intents = [
+        ("threat", 75, r"\b(kill|murder|shoot|stab|choke|strangle|beat|smash|hit|cut|attack|destroy|hurt|end|burn|drown)\s+(you|u)\b|\b(i\s*('?ll|will|should|must|wanna|want\s+to|gonna|am\s+going\s+to))\s+.*(kill|murder|beat|hurt|destroy|stab|shoot|smash|slap|attack)\s+(you|u)\b|\b(with\s+(a\s+)?(hammer|knife|gun|weapon|bat|blade|axe|acid|brick|pipe|crowbar))\b", "violent threat / physical assault"),
         ("threat", 60, r"\b(should|hope|go|deserve to|must|wish you|better|need to)\s+(die|kill yourself|end your life|hang yourself|slit|burn)\b|\b(you|u)\s+(should|must|need to)\s+die\b|\bkill\s+(yourself|urself)\b", "death incitement / threat"),
         ("social_exclusion", 45, r"\b(no\s*one|nobody|not a single person|everyone)\s+(likes?|wants?|cares?|loves?|cares about)\s+(you|u|her|him|them)\b|\b(don\'?t|do not|never)\s+(invite|talk to|speak to|message)\s+(her|him|them|you|u)\b|\b(make a group|group chat)\s+without\b|\b(ignore|mute)\s+(all\s+)?(his|her|their|your)\s+(messages|texts)\b|\b(unfollow|block|kick)\s+(this|that)\s+(person|account|user|loser)\b|\b(they|you|u)\s+don\'?t\s+belong\s+here\b", "social exclusion / rejection"),
         ("body_shaming", 45, r"\b(look|looking|looks)\s+(ridiculous|disgusting|horrible|repulsive|ugly|fat|gross|like a joke)\b|\b(appearance|looks?|face|weight|body)\s+(is the reason|makes me sick)\b|\b(upload|post|take)\s+(a\s+)?(picture|photo)\s+looking like that\b|\b(never wear|wear clothes like that)\b", "body shaming"),
@@ -165,7 +169,7 @@ def analyze_cyberbullying(text: str) -> dict:
             if not categories.get(cat_key, False):
                 categories[cat_key] = True
                 category_matches.append(TAXONOMY_CATEGORIES.get(cat_key, {}).get("display_name", cat_key))
-                score += weight
+            score = max(score, weight)
             flagged_words.append(intent_label)
 
     # Compounding aggression factor (attacks spanning multiple categories)

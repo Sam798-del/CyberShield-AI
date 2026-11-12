@@ -135,7 +135,8 @@
   function scanPageForToxicContent() {
     const toxicPatterns = [
       // 1. Extreme Threats & Violence
-      "kill yourself", "i will find you", "go die", "should die", "hope you die", "deserve to die",
+      "kill yourself", "kill you", "should kill you", "i will kill you", "kill you with",
+      "i will find you", "go die", "should die", "hope you die", "deserve to die",
       "worthless piece of trash", "destroy you", "beat you", "hurt you", "slit your", "burn you", "murder", "end your life",
       // 2. Insults & Humiliation
       "idiot", "loser", "shut up", "ugly", "hate you", "pathetic", "dumbest",

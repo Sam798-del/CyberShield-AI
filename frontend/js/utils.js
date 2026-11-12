@@ -129,7 +129,9 @@ const CyberShieldUtils = {
             threat: {
                 weight: 60,
                 patterns: [
-                    "i will find you", "kill yourself", "go die", "should die", "hope you die",
+                    "i will find you", "kill yourself", "kill you", "should kill you", "i will kill you",
+                    "kill you with", "murder you", "shoot you", "stab you", "strangle you",
+                    "with a hammer", "with a knife", "with a gun", "go die", "should die", "hope you die",
                     "deserve to die", "beat you", "hurt you", "destroy you", "slit your", "burn you",
                     "murder", "end your life"
                 ]

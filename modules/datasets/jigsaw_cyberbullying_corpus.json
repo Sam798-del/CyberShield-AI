@@ -13,14 +13,16 @@
   "categories": {
     "threat": {
       "display_name": "Physical Threat & Extreme Violence",
-      "severity_weight": 60,
+      "severity_weight": 75,
       "legal_context": "Section 506/507 IPC (Criminal Intimidation), US 18 U.S.C. § 875",
       "patterns": [
-        "i will find you", "kill yourself", "go die", "should die", "hope you die",
-        "deserve to die", "beat you", "hurt you", "destroy you", "slit your", "burn you",
-        "murder", "end your life", "physically hurt you", "smash your", "break your neck",
-        "shoot you", "hunt you down", "put you in hospital", "stab you", "hang yourself",
-        "die in a fire", "jump off", "drink bleach", "strangle you"
+        "i will find you", "kill yourself", "kill you", "i will kill you", "should kill you",
+        "i should kill you", "murder you", "shoot you", "stab you", "strangle you",
+        "beat you to death", "with a hammer", "with a knife", "with a gun", "go die",
+        "should die", "hope you die", "deserve to die", "beat you", "hurt you", "destroy you",
+        "slit your", "burn you", "murder", "end your life", "physically hurt you", "smash your",
+        "break your neck", "hunt you down", "put you in hospital", "hang yourself",
+        "die in a fire", "jump off", "drink bleach"
       ]
     },
     "intimidation": {

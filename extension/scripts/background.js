@@ -110,7 +110,9 @@ function clientAnalyzeToxicity(text) {
   const t_lower = " " + (text || "").toLowerCase().trim() + " ";
   
   const threat_patterns = [
-    "i will find you", "kill yourself", "go die", "should die", "hope you die", "deserve to die",
+    "i will find you", "kill yourself", "kill you", "should kill you", "i will kill you",
+    "kill you with", "murder you", "shoot you", "stab you", "strangle you",
+    "go die", "should die", "hope you die", "deserve to die",
     "beat you", "hurt you", "destroy you", "slit your", "burn you", "murder", "end your life"
   ];
   const intimidation_patterns = [
