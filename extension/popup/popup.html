@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberShield AI</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="extension-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-group">
+        <div class="shield-badge">🛡️</div>
+        <div>
+          <h1 class="brand-title">CyberShield <span class="brand-ai">AI</span></h1>
+          <p class="brand-sub">Real-Time Client Defense</p>
+        </div>
+      </div>
+      <div class="status-indicator active" id="shieldStatusBadge" title="Real-time Shield Active">
+        <span class="status-dot"></span>
+        <span class="status-text">Protected</span>
+      </div>
+    </header>
+
+    <!-- User Account Strip (Kaveri Auth Integration) -->
+    <div class="user-strip" id="userAuthStrip">
+      <div class="user-info">
+        <span class="user-avatar">👤</span>
+        <span class="user-name" id="userNameLabel">Active Session</span>
+      </div>
+      <span class="trust-badge" id="identityTrustPill" title="Identity Trust Score">Trust: 98%</span>
+    </div>
+
+    <!-- Active Tab Threat Overview -->
+    <section class="scan-card">
+      <div class="card-header">
+        <span class="card-label">CURRENT TAB URL</span>
+        <span class="protocol-badge safe" id="protocolBadge">HTTPS</span>
+      </div>
+      <div class="url-display" id="activeUrlDisplay" title="Current tab domain">
+        Detecting active page...
+      </div>
+
+      <!-- Threat Level Gauge -->
+      <div class="threat-gauge-box" id="gaugeBox">
+        <div class="gauge-bar-wrapper">
+          <div class="gauge-bar" id="threatGaugeBar" style="width: 5%;"></div>
+        </div>
+        <div class="gauge-details">
+          <span class="verdict-text safe" id="threatVerdictText">ANALYZING PAGE</span>
+          <span class="score-number" id="threatScoreNumber">0 / 100</span>
+        </div>
+      </div>
+
+      <!-- Quick Action CTA -->
+      <button class="primary-btn" id="scanCurrentPageBtn">
+        <span class="btn-icon">⚡</span> Scan Active Page
+      </button>
+    </section>
+
+    <!-- Threat Findings List -->
+    <section class="findings-card">
+      <h3 class="section-title">Security Indicators</h3>
+      <ul class="indicators-list" id="indicatorsList">
+        <li class="indicator-item safe">
+          <span class="ind-icon">✓</span>
+          <span class="ind-text">Ready to inspect page links, forms, and headers.</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Quick Tool Tabs -->
+    <div class="tools-grid">
+      <button class="tool-btn" id="checkSelectionBtn" title="Scan highlighted text for cyberbullying">
+        <span class="tool-icon">💬</span>
+        <span class="tool-label">Toxic Text Check</span>
+      </button>
+      <button class="tool-btn" id="openDashboardBtn" title="Open Full Web Dashboard">
+        <span class="tool-icon">📊</span>
+        <span class="tool-label">Dashboard</span>
+      </button>
+      <button class="tool-btn" id="openSettingsBtn" title="Extension Settings">
+        <span class="tool-icon">⚙️</span>
+        <span class="tool-label">Settings</span>
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>CyberShield AI • v1.0.0</span>
+      <span class="live-dot" id="backendHealthDot" title="Backend Connection Status">API: Online</span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
