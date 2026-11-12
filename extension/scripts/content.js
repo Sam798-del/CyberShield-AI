@@ -1,5 +1,5 @@
 // CyberShield AI — Content Script (Injected DOM Guard)
-// Owner: Shreya
+
 
 (function () {
   console.log("CyberShield AI Content Script loaded on:", window.location.href);
