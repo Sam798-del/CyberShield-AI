@@ -171,7 +171,7 @@ async function scanUrl(urlStr, isManual = false) {
 
   if (btn) {
     btn.disabled = true;
-    btn.innerHTML = `<span class="btn-icon">⏳</span> ${isManual ? "Deep Auditing..." : "Auto-Scanning..."}`;
+    btn.innerHTML = `<span class="btn-icon">⏳</span> ${isManual ? "Scanning..." : "Auto-Scanning..."}`;
   }
 
   // --- STAGE 1: Live SSL & Protocol Telemetry (0ms - 200ms) ---
@@ -248,10 +248,10 @@ async function scanUrl(urlStr, isManual = false) {
   updateGauge(analyzed.score, analyzed.risk_level, analyzed.statusType, analyzed.flags);
 
   if (btn) {
-    btn.innerHTML = `<span class="btn-icon">✓</span> ${isManual ? "Deep Audit Complete" : "Protected"}`;
+    btn.innerHTML = `<span class="btn-icon">✓</span> ${isManual ? "Verified" : "Protected"}`;
     setTimeout(() => {
       btn.disabled = false;
-      btn.innerHTML = `<span class="btn-icon">🔄</span> Re-Scan & Deep Audit`;
+      btn.innerHTML = `<span class="btn-icon">⚡</span> Re-Scan`;
     }, 1200);
   }
 
