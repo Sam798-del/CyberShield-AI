@@ -120,31 +120,97 @@ const CyberShieldUtils = {
     },
 
     heuristicCyberbullyingScan(textInput) {
-        const text = (textInput || "").toLowerCase();
+        const text = " " + (textInput || "").toLowerCase().trim() + " ";
         const flaggedWords = [];
-        let score = 10;
+        const detectedCategories = [];
+        let score = 0;
 
-        const harassmentKeywords = ["hate", "die", "useless", "loser", "ugly", "stupid", "delete your account", "quit", "nobody likes you", "freak", "kill"];
-        
-        harassmentKeywords.forEach(word => {
-            if (text.includes(word)) {
-                score += 30;
-                flaggedWords.push(word);
+        const categories = {
+            threat: {
+                weight: 60,
+                patterns: [
+                    "i will find you", "kill yourself", "go die", "beat you", "hurt you",
+                    "destroy you", "slit your", "burn you", "murder", "end your life"
+                ]
+            },
+            intimidation: {
+                weight: 45,
+                patterns: [
+                    "keep messaging you until", "to your reputation", "make your life miserable",
+                    "delete your account", "can't escape", "disappear from this platform",
+                    "watch your back", "track your ip", "you will pay for this", "ruin your life",
+                    "ruin your future", "stalk"
+                ]
+            },
+            defamation: {
+                weight: 45,
+                patterns: [
+                    "spread this rumour", "spread this rumor", "embarrassing picture",
+                    "fake account just to expose", "fake account to expose", "expose you",
+                    "everyone should see this embarrassing", "share this post so everyone can laugh",
+                    "leak your private", "dox you"
+                ]
+            },
+            social_exclusion: {
+                weight: 45,
+                patterns: [
+                    "don't invite her", "don't invite him", "don't invite them", "nobody wants her around",
+                    "nobody wants him around", "nobody wants you around", "nobody wants you here",
+                    "make a group without", "ignore all his messages", "ignore all her messages",
+                    "unfollow this person", "they don't belong here", "you don't belong here",
+                    "nobody asked you", "leave this group", "nobody likes you"
+                ]
+            },
+            body_shaming: {
+                weight: 45,
+                patterns: [
+                    "looking like that", "look ridiculous", "look disgusting", "hide your face",
+                    "wear clothes like that", "your appearance is the reason", "you look horrible",
+                    "lose some weight", "so fat", "ugly face"
+                ]
+            },
+            insult: {
+                weight: 40,
+                patterns: [
+                    "stupid", "idiot", "loser", "ugly", "fat", "dumb", "dumbest", "hate you",
+                    "freak", "trash", "worthless", "pathetic", "complete joke", "nobody takes you seriously",
+                    "embarrassing", "laughs at you behind", "stop talking", "waste of space"
+                ]
+            },
+            profanity: {
+                weight: 25,
+                patterns: ["bitch", "bastard", "fuck", "shit", "asshole", "crap"]
             }
+        };
+
+        Object.keys(categories).forEach(cat => {
+            const data = categories[cat];
+            let matched = false;
+            data.patterns.forEach(w => {
+                if (text.includes(w)) {
+                    score += data.weight;
+                    flaggedWords.push(w);
+                    matched = true;
+                }
+            });
+            if (matched) detectedCategories.push(cat);
         });
 
-        score = Math.min(score, 99);
+        score = Math.min(score, 100);
         const isToxic = score >= 35;
-        const toxicityLevel = score >= 70 ? "🚨 HIGH TOXICITY / TARGETED HARASSMENT" : (score >= 35 ? "⚠ MODERATE TOXICITY DETECTED" : "✅ SAFE / LOW TOXICITY");
+        const toxicityLevel = score >= 65 
+            ? "🚨 HIGH TOXICITY / TARGETED HARASSMENT" 
+            : (score >= 35 ? "⚠️ MODERATE TOXICITY DETECTED" : "✅ SAFE / NON-TOXIC CONTENT");
 
         return {
             toxicity_score: score,
             toxicity_level: toxicityLevel,
-            flagged_words: flaggedWords.length > 0 ? flaggedWords : ["None"],
+            flagged_words: flaggedWords.length > 0 ? [...new Set(flaggedWords)] : ["None"],
+            categories: detectedCategories,
             safety_actions: isToxic ? [
                 "Document evidence by taking full screenshots and chat logs.",
                 "Do NOT respond to the harassment or engage with the sender.",
-                "Block the sender and report the abusive content to platform moderators."
+                "Block the sender and report the abusive content to platform moderators (or cybercrime.gov.in / 1930 for threats)."
             ] : [
                 "Text appears safe and non-harassing."
             ]

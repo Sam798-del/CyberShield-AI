@@ -8,13 +8,16 @@ const CyberShieldAPI = {
             const res = await fetch("/api/detect/phishing", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ input_text: inputText }),
+                body: JSON.stringify({ input_text: inputText, target: inputText }),
                 signal: AbortSignal.timeout(3000)
             });
             if (res.ok) {
-                return await res.json();
+                const textData = await res.text();
+                if (textData && textData.trim().startsWith("{")) {
+                    return JSON.parse(textData);
+                }
             }
-            throw new Error("API returned status " + res.status);
+            throw new Error("API returned non-JSON response");
         } catch (err) {
             console.log("Using client-side Phishing Heuristics engine fallback.");
             return CyberShieldUtils.heuristicPhishingScan(inputText);
@@ -30,9 +33,12 @@ const CyberShieldAPI = {
                 signal: AbortSignal.timeout(3000)
             });
             if (res.ok) {
-                return await res.json();
+                const textData = await res.text();
+                if (textData && textData.trim().startsWith("{")) {
+                    return JSON.parse(textData);
+                }
             }
-            throw new Error("API returned status " + res.status);
+            throw new Error("API returned non-JSON response");
         } catch (err) {
             console.log("Using client-side Cyberbullying Heuristics engine fallback.");
             return CyberShieldUtils.heuristicCyberbullyingScan(text);
