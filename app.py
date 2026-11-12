@@ -52,7 +52,7 @@ def legacy_analyzer():
     return send_from_directory(PAGES_DIR, "security-analyzer.html")
 
 # ===========================================================================
-# Mount Security Analyzer Service Routes (for unified deployment on Render/Vercel)
+# Mount Security Analyzer Service Routes (for unified deployment on Render)
 # ===========================================================================
 try:
     import importlib.util
