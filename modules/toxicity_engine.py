@@ -82,8 +82,8 @@ DEFAULT_TAXONOMY = {
     },
     "profanity": {
         "display_name": "Profanity & Vulgar Slurs",
-        "severity_weight": 25,
-        "patterns": ["bitch", "bastard", "fuck", "shit", "asshole", "crap"]
+        "severity_weight": 50,
+        "patterns": ["bitch", "bastard", "fuck", "shit", "asshole", "crap", "slut", "whore", "cunt", "skank", "hoe"]
     },
     "hate_speech": {
         "display_name": "Hate Speech & Identity Harassment",
@@ -160,7 +160,7 @@ def analyze_cyberbullying(text: str) -> dict:
         ("threat", 80, r"\b(i\s*('?ll|will|should|must|wanna|want\s+to|gonna|am\s+going\s+to|can))\s+.*(kill|murder|beat|hurt|destroy|stab|shoot|smash|slap|attack|burn|crush)\s+(you|u)\b", "violent declaration"),
         ("threat", 75, r"\b(with\s+(a\s+)?(hammer|knife|gun|weapon|bat|blade|axe|acid|brick|pipe|crowbar|sword|rope|pistol|rifle))\b", "weapon assault"),
         # 2. Death Wishes & Suicide Incitement
-        ("threat", 85, r"\b(you|u)\s+(should|must|need\s+to|deserve\s+to|ought\s+to|better)\s+(die|perish|burn|suffer|rot|hang\s+yourself|kill\s+(yourself|urself)|end\s+your\s+life)\b", "death wish / suicide incitement"),
+        ("threat", 85, r"\b(you|u)\s+(should|must|need\s+to|deserve\s+to|ought\s+to|better|just)?\s*(die|perish|burn|suffer|rot|hang\s+yourself|kill\s+(yourself|urself)|end\s+your\s+life)\b|\bdie\s+(bitch|slut|whore|bastard|loser|idiot|now|alone|here)\b|\b(you|u)\s+die\b", "death wish / suicide incitement"),
         ("threat", 75, r"\b(should|hope|wish|want|deserve|pray)\s+(you|u)\s+(die|perish|rot|suffer|burn|get\s+killed)\b", "fatality wish"),
         ("threat", 75, r"\b(go|better|just)\s+die\b", "death incitement"),
         ("threat", 85, r"\b(kill|hang)\s+(yourself|urself)\b", "suicide incitement"),
@@ -185,7 +185,9 @@ def analyze_cyberbullying(text: str) -> dict:
         # 7. Direct Insults & Intellectual Humiliation
         ("insult", 50, r"\b(you(\'re|\s+are)|u\s+r)\s+(literally\s+)?(a\s+|an\s+|the\s+)?(dumbest|stupidest|biggest\s+loser|complete\s+joke|joke|laughing\s+stock|waste\s+of\s+space|brainless|moron|idiot|imbecile|retard|failure|clown|freak|loser)\b", "direct insult"),
         ("insult", 45, r"\b(nobody|no\s*one)\s+takes\s+you\s+seriously\b", "intellectual ridicule"),
-        ("insult", 40, r"\b(your\s+)?opinions?\s+(are|is)\s+(embarrassing|pathetic|garbage|worthless)\b", "opinion humiliation")
+        ("insult", 40, r"\b(your\s+)?opinions?\s+(are|is)\s+(embarrassing|pathetic|garbage|worthless)\b", "opinion humiliation"),
+        # 8. Severe Profanity & Misogynistic Slurs
+        ("profanity", 55, r"\b(slut|whore|bitch|cunt|skank|hoe|motherfucker|asshole|bastard|dipshit|douchebag)\b", "abusive profanity / misogynistic slur")
     ]
 
     for cat_key, weight, regex_pat, intent_label in svo_grammar_rules:

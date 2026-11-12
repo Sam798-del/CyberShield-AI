@@ -183,8 +183,8 @@ const CyberShieldUtils = {
                 ]
             },
             profanity: {
-                weight: 25,
-                patterns: ["bitch", "bastard", "fuck", "shit", "asshole", "crap"]
+                weight: 50,
+                patterns: ["bitch", "bastard", "fuck", "shit", "asshole", "crap", "slut", "whore", "cunt", "skank", "hoe"]
             }
         };
 
@@ -206,7 +206,7 @@ const CyberShieldUtils = {
             { cat: 'threat', weight: 85, re: /\b(kill|murder|shoot|stab|choke|strangle|beat|smash|hit|cut|attack|destroy|hurt|burn|drown|torture|crush|punch|slap|slice|hang|slaughter|butcher)\s+(you|u|your\s+(head|face|throat|neck|body|chest)|her|him)\b/i, name: 'violent assault' },
             { cat: 'threat', weight: 80, re: /\b(i\s*('?ll|will|should|must|wanna|want\s+to|gonna|am\s+going\s+to|can))\s+.*(kill|murder|beat|hurt|destroy|stab|shoot|smash|slap|attack|burn|crush)\s+(you|u)\b/i, name: 'violent declaration' },
             { cat: 'threat', weight: 75, re: /\b(with\s+(a\s+)?(hammer|knife|gun|weapon|bat|blade|axe|acid|brick|pipe|crowbar|sword|rope|pistol|rifle))\b/i, name: 'weapon assault' },
-            { cat: 'threat', weight: 85, re: /\b(you|u)\s+(should|must|need\s+to|deserve\s+to|ought\s+to|better)\s+(die|perish|burn|suffer|rot|hang\s+yourself|kill\s+(yourself|urself)|end\s+your\s+life)\b/i, name: 'death wish' },
+            { cat: 'threat', weight: 85, re: /\b(you|u)\s+(should|must|need\s+to|deserve\s+to|ought\s+to|better|just)?\s*(die|perish|burn|suffer|rot|hang\s+yourself|kill\s+(yourself|urself)|end\s+your\s+life)\b|\bdie\s+(bitch|slut|whore|bastard|loser|idiot|now|alone|here)\b|\b(you|u)\s+die\b/i, name: 'death wish' },
             { cat: 'threat', weight: 75, re: /\b(should|hope|wish|want|deserve|pray)\s+(you|u)\s+(die|perish|rot|suffer|burn|get\s+killed)\b/i, name: 'fatality wish' },
             { cat: 'threat', weight: 75, re: /\b(go|better|just)\s+die\b/i, name: 'death incitement' },
             { cat: 'threat', weight: 85, re: /\b(kill|hang)\s+(yourself|urself)\b/i, name: 'suicide incitement' },
@@ -225,7 +225,8 @@ const CyberShieldUtils = {
             { cat: 'defamation', weight: 55, re: /\b(spread|share|leak|post|circulate)\s+(this\s+)?(rumour|rumor|lie|lies|photo|picture|screenshot|chat|video|private|secret)\b/i, name: 'rumour spread' },
             { cat: 'defamation', weight: 55, re: /\b(fake\s+account|alt\s+account)\s+(just\s+)?to\s+expose\s+(you|her|him)\b/i, name: 'smear campaign' },
             { cat: 'insult', weight: 50, re: /\b(you(\'re|\s+are)|u\s+r)\s+(literally\s+)?(a\s+|an\s+|the\s+)?(dumbest|stupidest|biggest\s+loser|complete\s+joke|joke|laughing\s+stock|waste\s+of\s+space|brainless|moron|idiot|imbecile|retard|failure|clown|freak|loser)\b/i, name: 'direct insult' },
-            { cat: 'insult', weight: 45, re: /\b(nobody|no\s*one)\s+takes\s+you\s+seriously\b/i, name: 'intellectual ridicule' }
+            { cat: 'insult', weight: 45, re: /\b(nobody|no\s*one)\s+takes\s+you\s+seriously\b/i, name: 'intellectual ridicule' },
+            { cat: 'profanity', weight: 60, re: /\b(slut|whore|bitch|cunt|skank|hoe|motherfucker|asshole|bastard|dipshit|douchebag)\b/i, name: 'misogynistic slur / abusive profanity' }
         ];
 
         svoGrammarRules.forEach(rule => {

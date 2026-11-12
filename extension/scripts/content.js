@@ -136,7 +136,7 @@
     const toxicPatterns = [
       // 1. Extreme Threats & Violence
       "kill yourself", "kill you", "should kill you", "i will kill you", "kill you with",
-      "i will find you", "go die", "should die", "hope you die", "deserve to die",
+      "i will find you", "go die", "should die", "hope you die", "deserve to die", "you die", "die slut",
       "worthless piece of trash", "destroy you", "beat you", "hurt you", "slit your", "burn you", "murder", "end your life",
       // 2. Insults & Humiliation
       "idiot", "loser", "shut up", "ugly", "hate you", "pathetic", "dumbest",
@@ -165,7 +165,7 @@
       "everyone should see this embarrassing", "share this post so everyone can laugh",
       "leak your private", "dox you",
       // 7. Profanity & Slurs
-      "bitch", "bastard", "fuck", "shit", "asshole"
+      "bitch", "bastard", "fuck", "shit", "asshole", "slut", "whore", "cunt", "skank", "hoe"
     ];
 
     // Method A: Check leaf block/inline elements

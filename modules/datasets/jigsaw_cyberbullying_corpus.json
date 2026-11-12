@@ -103,11 +103,12 @@
     },
     "profanity": {
       "display_name": "Profanity & Vulgar Slurs",
-      "severity_weight": 25,
+      "severity_weight": 50,
       "legal_context": "Section 294 IPC (Obscene Acts and Songs) & Section 67 IT Act",
       "patterns": [
         "bitch", "bastard", "fuck", "shit", "asshole", "crap", "dick", "cunt",
-        "douchebag", "prick", "slut", "whore", "jackass", "dipshit", "piss off"
+        "douchebag", "prick", "slut", "whore", "jackass", "dipshit", "piss off",
+        "skank", "hoe", "motherfucker", "cock", "pussy"
       ]
     },
     "hate_speech": {

@@ -112,7 +112,7 @@ function clientAnalyzeToxicity(text) {
   const threat_patterns = [
     "i will find you", "kill yourself", "kill you", "should kill you", "i will kill you",
     "kill you with", "murder you", "shoot you", "stab you", "strangle you",
-    "go die", "should die", "hope you die", "deserve to die",
+    "go die", "should die", "hope you die", "deserve to die", "you die", "die slut",
     "beat you", "hurt you", "destroy you", "slit your", "burn you", "murder", "end your life"
   ];
   const intimidation_patterns = [
@@ -145,7 +145,7 @@ function clientAnalyzeToxicity(text) {
     "freak", "trash", "worthless", "pathetic", "complete joke", "nobody takes you seriously",
     "embarrassing", "laughs at you behind", "stop talking", "waste of space"
   ];
-  const profanity_patterns = ["bitch", "bastard", "fuck", "shit", "asshole", "crap"];
+  const profanity_patterns = ["bitch", "bastard", "fuck", "shit", "asshole", "crap", "slut", "whore", "cunt", "skank", "hoe"];
 
   let score = 0;
   const flagged = [];
@@ -163,13 +163,13 @@ function clientAnalyzeToxicity(text) {
     if (matchFound) detectedCategories.push(catName);
   }
 
-  checkPatterns(threat_patterns, "threat", 60);
-  checkPatterns(intimidation_patterns, "intimidation", 45);
-  checkPatterns(defamation_patterns, "defamation", 45);
-  checkPatterns(exclusion_patterns, "social_exclusion", 45);
-  checkPatterns(body_shaming_patterns, "body_shaming", 45);
-  checkPatterns(insult_patterns, "insult", 40);
-  checkPatterns(profanity_patterns, "profanity", 25);
+  checkPatterns(threat_patterns, "threat", 75);
+  checkPatterns(intimidation_patterns, "intimidation", 50);
+  checkPatterns(defamation_patterns, "defamation", 50);
+  checkPatterns(exclusion_patterns, "social_exclusion", 50);
+  checkPatterns(body_shaming_patterns, "body_shaming", 50);
+  checkPatterns(insult_patterns, "insult", 45);
+  checkPatterns(profanity_patterns, "profanity", 50);
 
   score = Math.min(score, 100);
   let level = "SAFE / NON-TOXIC CONTENT";
