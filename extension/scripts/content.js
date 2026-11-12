@@ -131,11 +131,40 @@
     document.getElementById("csDismissBanner").onclick = () => banner.remove();
   }
 
-  // 6. Blur or Warn on Toxic Text (Social Media & Forums)
+  // 6. Blur or Warn on Toxic Text (Social Media & Forums - Multi-Class Behavioral Taxonomy)
   function scanPageForToxicContent() {
     const toxicPatterns = [
+      // 1. Extreme Threats & Violence
       "kill yourself", "i will find you", "go die", "worthless piece of trash",
-      "idiot", "loser", "shut up", "ugly", "destroy you", "hate you", "pathetic"
+      "destroy you", "beat you", "hurt you", "slit your", "burn you", "murder", "end your life",
+      // 2. Insults & Humiliation
+      "idiot", "loser", "shut up", "ugly", "hate you", "pathetic", "dumbest",
+      "complete joke", "nobody takes you seriously", "embarrassing", "laughs at you behind",
+      "stop talking", "waste of space", "brainless", "incompetent", "clown",
+      // 3. Social Exclusion & Ostracization
+      "don't invite her", "don't invite him", "don't invite them", "nobody wants her around",
+      "nobody wants him around", "nobody wants you around", "nobody wants you here",
+      "make a group without", "ignore all his messages", "ignore all her messages",
+      "ignore all their messages", "unfollow this person", "they don't belong here",
+      "you don't belong here", "nobody asked you", "leave this group", "get out of here",
+      "nobody likes you",
+      // 4. Body Shaming & Appearance Ridicule
+      "looking like that", "look ridiculous", "look disgusting", "hide your face",
+      "wear clothes like that", "your appearance is the reason", "you look horrible",
+      "lose some weight", "so fat", "ugly face", "gross body",
+      // 5. Digital Intimidation, Harassment & Stalking
+      "keep messaging you until", "to your reputation", "make your life miserable",
+      "delete your account", "can't escape", "disappear from this platform",
+      "i'll make your life miserable", "i will make your life miserable",
+      "watch your back", "track your ip", "you will pay for this", "ruin your life",
+      "ruin your future", "hunt you down", "stalk",
+      // 6. Defamation, Rumours & Doxing
+      "spread this rumour", "spread this rumor", "embarrassing picture",
+      "fake account just to expose", "fake account to expose", "expose you",
+      "everyone should see this embarrassing", "share this post so everyone can laugh",
+      "leak your private", "dox you",
+      // 7. Profanity & Slurs
+      "bitch", "bastard", "fuck", "shit", "asshole"
     ];
 
     // Method A: Check leaf block/inline elements

@@ -105,25 +105,72 @@ function clientAnalyzePhishing(urlStr) {
   };
 }
 
-// Real-Time Client Cyberbullying Detection Fallback Engine
+// Real-Time Client Cyberbullying Detection Fallback Engine (Multi-Class Behavioral Taxonomy)
 function clientAnalyzeToxicity(text) {
-  const t_lower = (text || "").toLowerCase().trim();
-  const insult_words = ["stupid", "idiot", "loser", "ugly", "fat", "dumb", "hate you", "freak", "trash", "worthless"];
-  const harass_words = ["kill yourself", "die", "go die", "nobody likes you", "shut up", "get a life", "creep", "stalk"];
-  const threat_words = ["i will find you", "beat you", "hurt you", "destroy you", "track your ip", "expose you"];
-  const profanity_words = ["bitch", "bastard", "fuck", "shit", "asshole"];
+  const t_lower = " " + (text || "").toLowerCase().trim() + " ";
+  
+  const threat_patterns = [
+    "i will find you", "kill yourself", "go die", "beat you", "hurt you",
+    "destroy you", "slit your", "burn you", "murder", "end your life"
+  ];
+  const intimidation_patterns = [
+    "keep messaging you until", "to your reputation", "make your life miserable",
+    "delete your account", "can't escape", "disappear from this platform",
+    "watch your back", "track your ip", "you will pay for this", "ruin your life",
+    "ruin your future", "stalk"
+  ];
+  const defamation_patterns = [
+    "spread this rumour", "spread this rumor", "embarrassing picture",
+    "fake account just to expose", "fake account to expose", "expose you",
+    "everyone should see this embarrassing", "share this post so everyone can laugh",
+    "leak your private", "dox you"
+  ];
+  const exclusion_patterns = [
+    "don't invite her", "don't invite him", "don't invite them", "nobody wants her around",
+    "nobody wants him around", "nobody wants you around", "nobody wants you here",
+    "make a group without", "ignore all his messages", "ignore all her messages",
+    "unfollow this person", "they don't belong here", "you don't belong here",
+    "nobody asked you", "leave this group", "nobody likes you"
+  ];
+  const body_shaming_patterns = [
+    "looking like that", "look ridiculous", "look disgusting", "hide your face",
+    "wear clothes like that", "your appearance is the reason", "you look horrible",
+    "lose some weight", "so fat", "ugly face"
+  ];
+  const insult_patterns = [
+    "stupid", "idiot", "loser", "ugly", "fat", "dumb", "dumbest", "hate you",
+    "freak", "trash", "worthless", "pathetic", "complete joke", "nobody takes you seriously",
+    "embarrassing", "laughs at you behind", "stop talking", "waste of space"
+  ];
+  const profanity_patterns = ["bitch", "bastard", "fuck", "shit", "asshole", "crap"];
 
   let score = 0;
   const flagged = [];
+  const detectedCategories = [];
 
-  insult_words.forEach(w => { if (t_lower.includes(w)) { score += 25; flagged.push(w); } });
-  harass_words.forEach(w => { if (t_lower.includes(w)) { score += 40; flagged.push(w); } });
-  threat_words.forEach(w => { if (t_lower.includes(w)) { score += 50; flagged.push(w); } });
-  profanity_words.forEach(w => { if (t_lower.includes(w)) { score += 15; flagged.push(w); } });
+  function checkPatterns(list, catName, weight) {
+    let matchFound = false;
+    list.forEach(w => {
+      if (t_lower.includes(w)) {
+        score += weight;
+        flagged.push(w);
+        matchFound = true;
+      }
+    });
+    if (matchFound) detectedCategories.push(catName);
+  }
+
+  checkPatterns(threat_patterns, "threat", 60);
+  checkPatterns(intimidation_patterns, "intimidation", 45);
+  checkPatterns(defamation_patterns, "defamation", 45);
+  checkPatterns(exclusion_patterns, "social_exclusion", 45);
+  checkPatterns(body_shaming_patterns, "body_shaming", 45);
+  checkPatterns(insult_patterns, "insult", 40);
+  checkPatterns(profanity_patterns, "profanity", 25);
 
   score = Math.min(score, 100);
   let level = "SAFE / NON-TOXIC CONTENT";
-  if (score >= 70) level = "HIGHLY TOXIC / SEVERE HARASSMENT";
+  if (score >= 65) level = "HIGHLY TOXIC / SEVERE HARASSMENT";
   else if (score >= 35) level = "MODERATE TOXICITY DETECTED";
 
   return {
@@ -131,8 +178,13 @@ function clientAnalyzeToxicity(text) {
     text: text,
     toxicity_score: score,
     toxicity_level: level,
+    categories: detectedCategories,
     flagged_words: [...new Set(flagged)],
-    safety_actions: score >= 35 ? ["Block the sender.", "Capture screenshot evidence.", "Report to platform moderators."] : ["Content is safe."]
+    safety_actions: score >= 35 ? [
+      "Capture screenshot evidence with timestamps.",
+      "Mute or block the harasser on this platform.",
+      "Report abusive conduct under community safety standards."
+    ] : ["Content is safe."]
   };
 }
 
