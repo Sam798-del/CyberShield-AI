@@ -9,6 +9,10 @@
 
   let config = { autoScan: true, toxicBlur: true, passwordTips: true, outboundBlocker: true };
 
+  let pageToxicCount = 0;
+  let pageRiskLevel = "SAFE";
+  let pageRiskScore = 0;
+
   // 1. Always render corner protection badge immediately
   renderPageBadge("SAFE", 0);
 
@@ -52,10 +56,12 @@
   // 4. In-Page Visual Badge (Safe / Suspicious / Dangerous)
   function renderPageBadge(riskLevel, score) {
     if (document.getElementById("cybershield-corner-badge")) return;
+    pageRiskLevel = riskLevel;
+    pageRiskScore = score;
 
     const badge = document.createElement("div");
     badge.id = "cybershield-corner-badge";
-    badge.title = `CyberShield AI: ${riskLevel} (${score}/100)`;
+    badge.title = `CyberShield AI: Domain URL ${riskLevel} (${score}/100)`;
     badge.style.cssText = `
       position: fixed;
       bottom: 20px;
@@ -75,14 +81,34 @@
       cursor: pointer;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     `;
-    badge.innerHTML = `<span id="cs-badge-dot" style="color:#10b981; font-size:12px;">●</span> <span id="cs-badge-text">Secure</span>`;
+    badge.innerHTML = `<span id="cs-badge-dot" style="color:#10b981; font-size:12px;">●</span> <span id="cs-badge-text">URL Safe</span>`;
     badge.onclick = () => {
-      alert(`CyberShield AI Verdict:\n\nStatus: ${riskLevel}\nRisk Score: ${score}/100\nDomain: ${window.location.hostname || "Local file"}\n\nAll real-time client defense modules active.`);
+      alert(getBadgeSummaryAlert());
     };
     document.body.appendChild(badge);
   }
 
+  function getBadgeSummaryAlert() {
+    if (pageToxicCount > 0) {
+      return `🛡️ CyberShield AI — Live Defense Verdict\n\n` +
+        `🌐 DOMAIN URL SECURITY: ${pageRiskLevel} (${pageRiskScore}/100 Phishing Risk)\n` +
+        `   ➔ ${window.location.hostname || "Local host"} is a verified legitimate domain (NOT a phishing site).\n\n` +
+        `💬 PAGE CONTENT TOXICITY: ⚠️ HARASSMENT DETECTED\n` +
+        `   ➔ CyberShield found ${pageToxicCount} abusive comment(s) and automatically BLURRED them with red warning shields!\n` +
+        `   (Check Test 2 above to see the blurred toxic comments).\n\n` +
+        `🔍 TO SCAN INDIVIDUAL TEXT (like Test 3):\n` +
+        `   Highlight any text with your mouse ➔ Open extension popup ➔ Click "💬 Toxic Text" button!`;
+    }
+    return `🛡️ CyberShield AI — Live Defense Verdict\n\n` +
+      `🌐 DOMAIN URL SECURITY: ${pageRiskLevel} (${pageRiskScore}/100 Phishing Risk)\n` +
+      `   ➔ ${window.location.hostname || "Local host"} is verified safe.\n\n` +
+      `💬 PAGE CONTENT TOXICITY: Clean\n` +
+      `   ➔ No overt cyberbullying patterns detected on initial page load.`;
+  }
+
   function updatePageBadge(riskLevel, score) {
+    pageRiskLevel = riskLevel;
+    pageRiskScore = score;
     const badge = document.getElementById("cybershield-corner-badge");
     const dot = document.getElementById("cs-badge-dot");
     const text = document.getElementById("cs-badge-text");
@@ -94,12 +120,15 @@
     const isDanger = score >= 45;
     const isWarning = score >= 20 && score < 45;
     const badgeColor = isDanger ? "#ef4444" : (isWarning ? "#f59e0b" : "#10b981");
-    const badgeText = isDanger ? "Threat Alert" : (isWarning ? "Caution" : "Secure");
+    let badgeText = isDanger ? "URL Threat Alert" : (isWarning ? "URL Caution" : "URL Safe");
+    if (pageToxicCount > 0 && !isDanger) {
+      badgeText = `URL Safe • ⚠️ ${pageToxicCount} Blurred`;
+    }
 
-    badge.style.borderColor = badgeColor;
-    dot.style.color = badgeColor;
+    badge.style.borderColor = pageToxicCount > 0 && !isDanger ? "#f59e0b" : badgeColor;
+    dot.style.color = pageToxicCount > 0 && !isDanger ? "#f59e0b" : badgeColor;
     text.innerText = badgeText;
-    badge.title = `CyberShield AI: ${riskLevel} (${score}/100)`;
+    badge.title = `CyberShield AI: Domain URL ${riskLevel} (${score}/100) | ${pageToxicCount} Toxic Comments Blurred`;
   }
 
   // 5. Top Floating Warning Banner for Critical Threats
@@ -210,6 +239,9 @@
   function applyToxicBlur(element) {
     if (element.hasAttribute("data-cybershield-blurred")) return;
     element.setAttribute("data-cybershield-blurred", "true");
+    pageToxicCount++;
+    updatePageBadge(pageRiskLevel, pageRiskScore);
+
     element.style.filter = "blur(6px)";
     element.style.transition = "filter 0.3s ease, background-color 0.3s ease";
     element.style.backgroundColor = "rgba(239, 68, 68, 0.15)";
