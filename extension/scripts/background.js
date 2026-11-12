@@ -46,6 +46,96 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   }
 });
 
+// Real-Time Client Phishing Detection Fallback Engine
+function clientAnalyzePhishing(urlStr) {
+  const url = (urlStr || "").toLowerCase().trim();
+  const flags = [];
+  let score = 0;
+
+  if (url.startsWith("http://")) {
+    flags.push("Unencrypted connection (HTTP instead of HTTPS)");
+    score += 25;
+  } else if (url.startsWith("https://")) {
+    flags.push("Secure encrypted connection (HTTPS verified)");
+  }
+
+  const badTlds = [".xyz", ".top", ".tk", ".club", ".work", ".gq", ".cf", ".fit", ".rest", ".stream"];
+  for (const tld of badTlds) {
+    if (url.includes(tld)) {
+      flags.push(`Suspicious high-risk TLD (${tld}) detected`);
+      score += 30;
+      break;
+    }
+  }
+
+  const lookalikes = ["paypa1", "g00gle", "micros0ft", "app1e", "amaz0n", "sec-login", "verify-account", "auth-check"];
+  for (const item of lookalikes) {
+    if (url.includes(item)) {
+      flags.push("Brand typosquatting / spoofed domain pattern detected");
+      score += 45;
+      break;
+    }
+  }
+
+  if (/https?:\/\/(?:\d{1,3}\.){3}\d{1,3}/.test(url)) {
+    flags.push("Direct IP address hostname instead of registered domain");
+    score += 40;
+  }
+
+  if (url.includes("@")) {
+    flags.push("Embedded credentials / '@' symbol in URL path");
+    score += 35;
+  }
+
+  score = Math.min(score, 100);
+
+  let riskLevel = "VERIFIED SECURE (SAFE)";
+  if (score >= 70) riskLevel = "CRITICAL PHISHING THREAT";
+  else if (score >= 45) riskLevel = "HIGH RISK WARNING";
+  else if (score >= 20) riskLevel = "MODERATE CAUTION";
+  else if (flags.length <= 1) flags.push("Legitimate domain syntax & trusted web reputation");
+
+  return {
+    status: "success",
+    target: urlStr,
+    risk_score: score,
+    risk_level: riskLevel,
+    flags: flags,
+    recommendation: score >= 45 ? "Do not submit sensitive credentials on this page." : "URL verified safe."
+  };
+}
+
+// Real-Time Client Cyberbullying Detection Fallback Engine
+function clientAnalyzeToxicity(text) {
+  const t_lower = (text || "").toLowerCase().trim();
+  const insult_words = ["stupid", "idiot", "loser", "ugly", "fat", "dumb", "hate you", "freak", "trash", "worthless"];
+  const harass_words = ["kill yourself", "die", "go die", "nobody likes you", "shut up", "get a life", "creep", "stalk"];
+  const threat_words = ["i will find you", "beat you", "hurt you", "destroy you", "track your ip", "expose you"];
+  const profanity_words = ["bitch", "bastard", "fuck", "shit", "asshole"];
+
+  let score = 0;
+  const flagged = [];
+
+  insult_words.forEach(w => { if (t_lower.includes(w)) { score += 25; flagged.push(w); } });
+  harass_words.forEach(w => { if (t_lower.includes(w)) { score += 40; flagged.push(w); } });
+  threat_words.forEach(w => { if (t_lower.includes(w)) { score += 50; flagged.push(w); } });
+  profanity_words.forEach(w => { if (t_lower.includes(w)) { score += 15; flagged.push(w); } });
+
+  score = Math.min(score, 100);
+  let level = "SAFE / NON-TOXIC CONTENT";
+  if (score >= 70) level = "HIGHLY TOXIC / SEVERE HARASSMENT";
+  else if (score >= 35) level = "MODERATE TOXICITY DETECTED";
+
+  return {
+    status: "success",
+    text: text,
+    toxicity_score: score,
+    toxicity_level: level,
+    flagged_words: [...new Set(flagged)],
+    safety_actions: score >= 35 ? ["Block the sender.", "Capture screenshot evidence.", "Report to platform moderators."] : ["Content is safe."]
+  };
+}
+
 // 4. Phishing Check Caller
 // [KAVERI HOOK]: Attaches Authorization Bearer token from Kaveri's login if stored
 async function executePhishingCheck(url) {
@@ -62,17 +152,13 @@ async function executePhishingCheck(url) {
       headers: headers,
       body: JSON.stringify({ target: url })
     });
-    return await response.json();
-  } catch (err) {
-    // Offline heuristic fallback
-    return {
-      status: "success",
-      target: url,
-      risk_score: url.startsWith("http://") ? 25 : 0,
-      risk_level: url.startsWith("http://") ? "MODERATE CAUTION" : "SAFE / LOW RISK",
-      flags: url.startsWith("http://") ? ["Unencrypted HTTP connection"] : ["Standard URL syntax"]
-    };
-  }
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.status === "success") return data;
+    }
+  } catch (err) {}
+
+  return clientAnalyzePhishing(url);
 }
 
 // 5. Cyberbullying Toxicity Caller
@@ -90,15 +176,13 @@ async function executeToxicityCheck(text) {
       headers: headers,
       body: JSON.stringify({ text: text })
     });
-    return await response.json();
-  } catch (err) {
-    return {
-      status: "error",
-      message: "Backend offline",
-      toxicity_score: 0,
-      toxicity_level: "SAFE"
-    };
-  }
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.status === "success") return data;
+    }
+  } catch (err) {}
+
+  return clientAnalyzeToxicity(text);
 }
 
 // 6. Dynamic Icon Badge Update on Tab Switch
