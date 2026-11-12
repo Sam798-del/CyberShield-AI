@@ -73,7 +73,10 @@
       <section class="scan-card">
         <div class="card-header">
           <span class="card-label">CURRENT TAB URL</span>
-          <span class="protocol-badge safe" id="protocolBadge">HTTPS</span>
+          <div class="header-badges">
+            <span class="auto-badge" id="autoScanBadge" title="Automated Real-Time Defense">⚡ Auto-Protect</span>
+            <span class="protocol-badge safe" id="protocolBadge">HTTPS</span>
+          </div>
         </div>
         <div class="url-display" id="activeUrlDisplay" title="Current tab URL">
           Detecting active page...
@@ -82,17 +85,18 @@
         <!-- Threat Level Gauge -->
         <div class="threat-gauge-box">
           <div class="gauge-bar-wrapper">
-            <div class="gauge-bar" id="threatGaugeBar" style="width: 100%; background: #10b981;"></div>
+            <div class="gauge-bar" id="threatGaugeBar" style="width: 5%;"></div>
           </div>
           <div class="gauge-details">
-            <span class="verdict-text safe" id="threatVerdictText">READY TO SCAN</span>
-            <span class="score-number" id="threatScoreNumber">Security: 100 / 100</span>
+            <span class="verdict-text safe" id="threatVerdictText">ANALYZING PAGE</span>
+            <span class="score-number" id="threatScoreNumber">Security: -- / 100</span>
           </div>
         </div>
 
         <button class="primary-btn" id="scanCurrentPageBtn">
-          <span class="btn-icon">⚡</span> Scan Active Page
+          <span class="btn-icon">🔄</span> Re-Scan & Deep Audit
         </button>
+        <p class="scan-hint">⚡ Auto-scanned in real time on page load.</p>
       </section>
 
       <!-- Threat Findings List -->

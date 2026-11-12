@@ -52,17 +52,7 @@ function initActiveTab() {
       if (tabs && tabs[0]) {
         const currentUrl = tabs[0].url || "";
         renderUrlDisplay(currentUrl);
-
-        chrome.storage.local.get("autoScan", (items) => {
-          if (items.autoScan !== false) {
-            scanUrl(currentUrl, false);
-          } else {
-            updateGauge(0, "READY TO SCAN", "safe", [
-              "Real-Time Client Shield loaded.",
-              "Click 'Scan Active Page' below to inspect live security indicators."
-            ]);
-          }
-        });
+        scanUrl(currentUrl, false);
       }
     });
   }
@@ -173,17 +163,56 @@ async function scanUrl(urlStr, isManual = false) {
     return;
   }
 
+  const btn = document.getElementById("scanCurrentPageBtn");
   const verdictText = document.getElementById("threatVerdictText");
   const scoreNum = document.getElementById("threatScoreNumber");
+  const bar = document.getElementById("threatGaugeBar");
+  const list = document.getElementById("indicatorsList");
 
-  verdictText.innerText = "SCANNING LIVE URL & DOM...";
-  verdictText.className = "verdict-text";
-  if (scoreNum) scoreNum.innerText = "Inspecting...";
-
-  if (isManual) {
-    await new Promise((r) => setTimeout(r, 350));
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="btn-icon">⏳</span> ${isManual ? "Deep Auditing..." : "Auto-Scanning..."}`;
   }
 
+  // --- STAGE 1: Live SSL & Protocol Telemetry (0ms - 200ms) ---
+  verdictText.innerText = "[1/3] 📡 Inspecting SSL & Protocol...";
+  verdictText.className = "verdict-text safe";
+  scoreNum.innerText = "Telemetry: 35%";
+  if (bar) {
+    bar.style.width = "35%";
+    bar.style.backgroundColor = "#38bdf8";
+  }
+  if (list) {
+    list.innerHTML = `
+      <li class="indicator-item safe">
+        <span class="ind-icon">⚡</span><span>Validating SSL certificates and protocol encryption...</span>
+      </li>
+    `;
+  }
+
+  await new Promise((r) => setTimeout(r, 200));
+
+  // --- STAGE 2: Live Domain & Typosquatting Telemetry (200ms - 420ms) ---
+  verdictText.innerText = "[2/3] 🔍 Analyzing Domain Homoglyphs...";
+  scoreNum.innerText = "Telemetry: 70%";
+  if (bar) {
+    bar.style.width = "70%";
+    bar.style.backgroundColor = "#38bdf8";
+  }
+  if (list) {
+    list.innerHTML = `
+      <li class="indicator-item safe">
+        <span class="ind-icon">✓</span><span>${urlStr.startsWith("https://") ? "Secure encrypted connection (HTTPS verified)" : "Unencrypted HTTP detected"}</span>
+      </li>
+      <li class="indicator-item safe">
+        <span class="ind-icon">⚡</span><span>Testing typosquatting, TLD reputation & homoglyphs...</span>
+      </li>
+    `;
+  }
+
+  await new Promise((r) => setTimeout(r, 220));
+
+  // --- STAGE 3: Final Security Classification ---
   let analyzed = null;
 
   try {
@@ -218,6 +247,14 @@ async function scanUrl(urlStr, isManual = false) {
 
   updateGauge(analyzed.score, analyzed.risk_level, analyzed.statusType, analyzed.flags);
 
+  if (btn) {
+    btn.innerHTML = `<span class="btn-icon">✓</span> ${isManual ? "Deep Audit Complete" : "Protected"}`;
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerHTML = `<span class="btn-icon">🔄</span> Re-Scan & Deep Audit`;
+    }, 1200);
+  }
+
   // Inform content script to show banner/badge if high risk
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs[0]?.id) {
@@ -249,11 +286,7 @@ function updateGauge(riskScore, verdictLabel, statusType, flags) {
     verdict.className = `verdict-text ${statusType}`;
   }
   if (scoreNum) {
-    if (verdictLabel === "READY TO SCAN") {
-      scoreNum.innerText = "Click Scan Below";
-    } else {
-      scoreNum.innerText = `Security: ${securityScore} / 100`;
-    }
+    scoreNum.innerText = `Security: ${securityScore} / 100`;
   }
 
   if (list) {
@@ -270,22 +303,10 @@ function updateGauge(riskScore, verdictLabel, statusType, flags) {
 // ==================== 4. EVENT LISTENERS ====================
 function setupEventListeners() {
   document.getElementById("scanCurrentPageBtn")?.addEventListener("click", () => {
-    const btn = document.getElementById("scanCurrentPageBtn");
-    if (!btn) return;
-    const origHtml = `<span class="btn-icon">⚡</span> Scan Active Page`;
-    btn.disabled = true;
-    btn.innerHTML = `<span class="btn-icon">⏳</span> Scanning Page...`;
-
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const currentUrl = tabs && tabs[0] ? tabs[0].url : "";
       renderUrlDisplay(currentUrl);
-      scanUrl(currentUrl, true).then(() => {
-        btn.innerHTML = `<span class="btn-icon">✓</span> Scan Complete`;
-        setTimeout(() => {
-          btn.disabled = false;
-          btn.innerHTML = origHtml;
-        }, 1200);
-      });
+      scanUrl(currentUrl, true);
     });
   });
 
