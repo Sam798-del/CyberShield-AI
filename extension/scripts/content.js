@@ -655,25 +655,130 @@
     };
   }
 
-  // Intercept Outbound Message Transmissions (DOM Event Capturing)
+  // Helper to extract text from standard inputs, textareas, or modern contenteditable/rich-text editors
+  function getTargetText(el) {
+    if (!el) return "";
+    if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") return el.value || "";
+    const editable = el.isContentEditable ? el : el.closest('[contenteditable="true"], [role="textbox"]');
+    if (editable) return editable.innerText || editable.textContent || "";
+    return el.value || el.innerText || el.textContent || "";
+  }
+
+  // Helper to find associated text input/composer when a Send or Post button is clicked across any website
+  function findAssociatedInputElement(btn) {
+    // 1. Check if activeElement is currently an input/composer
+    const active = document.activeElement;
+    if (active && active !== btn && (active.tagName === "TEXTAREA" || active.tagName === "INPUT" || active.isContentEditable || active.getAttribute("role") === "textbox")) {
+      const val = getTargetText(active);
+      if (val && val.trim().length >= 2) return active;
+    }
+
+    // 2. Check closest form
+    const form = btn.closest("form");
+    if (form) {
+      const inp = form.querySelector('textarea, [contenteditable="true"], [role="textbox"], input[type="text"], input:not([type])');
+      if (inp && getTargetText(inp).trim().length >= 2) return inp;
+    }
+
+    // 3. Search upwards in container hierarchies (YouTube, Twitter/X, Reddit, LinkedIn, Discord wrappers)
+    let parent = btn.parentElement;
+    let depth = 0;
+    while (parent && depth < 8 && parent !== document.body) {
+      const candidates = parent.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"], input[type="text"], input:not([type])');
+      for (const cand of candidates) {
+        if (cand !== btn && !cand.contains(btn)) {
+          const val = getTargetText(cand);
+          if (val && val.trim().length >= 2) return cand;
+        }
+      }
+      parent = parent.parentElement;
+      depth++;
+    }
+
+    // 4. Fallback: Search all active textareas or contenteditables on page that have text
+    const allInputs = document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]');
+    for (const cand of allInputs) {
+      const val = getTargetText(cand);
+      if (val && val.trim().length >= 2) return cand;
+    }
+    return null;
+  }
+
+  // Intercept Outbound Message Transmissions & Provide Real-Time "Think Before You Post" Guidance
   function attachOutboundMessageGuard() {
     if (window.__cybershield_outbound_guard_attached) return;
     window.__cybershield_outbound_guard_attached = true;
 
-    // A. Intercept Enter key in comment inputs, textareas, and contenteditable boxes
+    // 1. Real-Time Typing Guidance ("Think Before You Post" live safety indicator)
+    let liveTipTimeout = null;
+    document.addEventListener("input", (e) => {
+      if (!config.outboundBlocker) return;
+      const target = e.target;
+      if (!target) return;
+      const el = target.closest('textarea, input[type="text"], input[type="search"], input:not([type]), [contenteditable="true"], [role="textbox"]') || target;
+      if (!el) return;
+
+      clearTimeout(liveTipTimeout);
+      liveTipTimeout = setTimeout(() => {
+        const text = getTargetText(el);
+        const pillId = "cs-live-think-pill";
+        const existingPill = document.getElementById(pillId);
+
+        if (!text || text.trim().length < 3) {
+          if (existingPill) existingPill.remove();
+          el.style.borderColor = "";
+          el.style.boxShadow = "";
+          return;
+        }
+
+        const analysis = evaluateToxicitySync(text);
+        if (analysis.isToxic) {
+          el.style.transition = "border-color 0.2s, box-shadow 0.2s";
+          el.style.borderColor = "#ef4444";
+          el.style.boxShadow = "0 0 8px rgba(239, 68, 68, 0.4)";
+
+          if (!existingPill) {
+            const pill = document.createElement("div");
+            pill.id = pillId;
+            pill.style.cssText = `
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+              font-size: 11.5px;
+              font-weight: 700;
+              color: #f87171;
+              background: #0f172a;
+              border: 1px solid #ef4444;
+              border-radius: 6px;
+              padding: 5px 10px;
+              margin-top: 4px;
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+              z-index: 99999;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+              animation: csFadeIn 0.2s ease;
+            `;
+            pill.innerHTML = `🛡️ <strong>CyberShield:</strong> ⚠️ "Think Before You Post" (Harmful language detected)`;
+            if (el.parentElement) el.parentElement.appendChild(pill);
+          }
+        } else {
+          if (existingPill) existingPill.remove();
+          el.style.borderColor = "";
+          el.style.boxShadow = "";
+        }
+      }, 200);
+    }, true);
+
+    // 2. Intercept Enter Key (Enter, Ctrl+Enter, Cmd+Enter across chat & forum apps)
     document.addEventListener("keydown", (e) => {
       if (!config.outboundBlocker) return;
-      if (e.key !== "Enter" || e.shiftKey || e.ctrlKey || e.altKey || e.metaKey) return;
+      if (e.key !== "Enter") return;
+      if (e.shiftKey && e.target && e.target.tagName === "TEXTAREA") return;
+
       const target = e.target;
       if (!target) return;
 
-      const isInput = target.tagName === "INPUT" && (target.type === "text" || target.type === "search" || !target.type);
-      const isTextarea = target.tagName === "TEXTAREA";
-      const isContentEditable = target.isContentEditable || target.getAttribute("contenteditable") === "true" || target.getAttribute("role") === "textbox";
-
-      if (!isInput && !isTextarea && !isContentEditable) return;
-
-      const text = isContentEditable ? (target.innerText || target.textContent || "") : (target.value || "");
+      const el = target.closest('textarea, input[type="text"], input[type="search"], input:not([type]), [contenteditable="true"], [role="textbox"]') || target;
+      const text = getTargetText(el);
       if (!text || text.trim().length < 2) return;
 
       const analysis = evaluateToxicitySync(text);
@@ -681,20 +786,20 @@
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
-        renderOutboundBlockModal(analysis, target);
+        renderOutboundBlockModal(analysis, el);
         return false;
       }
-    }, true); // Capture phase: intercepts BEFORE website listeners fire
+    }, true);
 
-    // B. Intercept Form Submissions containing toxic text
+    // 3. Intercept Form Submissions
     document.addEventListener("submit", (e) => {
       if (!config.outboundBlocker) return;
       const form = e.target;
       if (!form || !form.querySelectorAll) return;
 
-      const inputs = form.querySelectorAll('textarea, input[type="text"], input[type="search"], input:not([type]), [contenteditable="true"]');
+      const inputs = form.querySelectorAll('textarea, input[type="text"], input[type="search"], input:not([type]), [contenteditable="true"], [role="textbox"]');
       for (const inp of inputs) {
-        const text = inp.isContentEditable ? (inp.innerText || inp.textContent || "") : (inp.value || "");
+        const text = getTargetText(inp);
         if (text && text.trim().length >= 2) {
           const analysis = evaluateToxicitySync(text);
           if (analysis.isToxic) {
@@ -708,16 +813,17 @@
       }
     }, true);
 
-    // C. Intercept Click Events on Send / Submit / Comment Buttons
+    // 4. Intercept Click on Send / Submit / Comment / Tweet / Post Buttons across all websites
     document.addEventListener("click", (e) => {
       if (!config.outboundBlocker) return;
       const target = e.target;
       if (!target) return;
 
-      const btn = target.closest('button, input[type="submit"], [role="button"], a.btn, div.btn');
+      const btn = target.closest('button, input[type="submit"], [role="button"], a.btn, div.btn, div[role="button"], span[role="button"]');
       if (!btn) return;
+      if (btn.closest("#cybershield-outbound-blocker-modal")) return;
 
-      const btnText = (btn.innerText || btn.value || btn.title || btn.getAttribute("aria-label") || "").toLowerCase();
+      const btnText = (btn.innerText || btn.value || btn.title || btn.getAttribute("aria-label") || btn.getAttribute("data-testid") || "").toLowerCase();
       const isSendAction = btn.type === "submit" ||
         btnText.includes("send") ||
         btnText.includes("post") ||
@@ -725,28 +831,25 @@
         btnText.includes("submit") ||
         btnText.includes("reply") ||
         btnText.includes("tweet") ||
+        btnText.includes("publish") ||
         (btn.id && btn.id.toLowerCase().includes("send")) ||
         (btn.className && typeof btn.className === "string" && btn.className.toLowerCase().includes("send"));
 
       if (!isSendAction) return;
 
-      // Locate associated input/textarea in the container or active page
-      const container = btn.closest("form") || btn.closest(".comment-box") || btn.closest(".test-card") || btn.parentElement;
-      if (container) {
-        const inputs = container.querySelectorAll('textarea, input[type="text"], input[type="search"], input:not([type]), [contenteditable="true"]');
-        for (const inp of inputs) {
-          const text = inp.isContentEditable ? (inp.innerText || inp.textContent || "") : (inp.value || "");
-          if (text && text.trim().length >= 2) {
-            const analysis = evaluateToxicitySync(text);
-            if (analysis.isToxic) {
-              e.preventDefault();
-              e.stopPropagation();
-              e.stopImmediatePropagation();
-              renderOutboundBlockModal(analysis, inp);
-              return false;
-            }
-          }
-        }
+      const input = findAssociatedInputElement(btn);
+      if (!input) return;
+
+      const text = getTargetText(input);
+      if (!text || text.trim().length < 2) return;
+
+      const analysis = evaluateToxicitySync(text);
+      if (analysis.isToxic) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        renderOutboundBlockModal(analysis, input);
+        return false;
       }
     }, true);
   }
