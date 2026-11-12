@@ -147,11 +147,15 @@ async function executePhishingCheck(url) {
   }
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1200);
     const response = await fetch(`${endpoint}/api/detect/phishing`, {
       method: "POST",
       headers: headers,
-      body: JSON.stringify({ target: url })
+      body: JSON.stringify({ target: url }),
+      signal: controller.signal
     });
+    clearTimeout(timeoutId);
     if (response.ok) {
       const data = await response.json();
       if (data && data.status === "success") return data;
@@ -171,11 +175,15 @@ async function executeToxicityCheck(text) {
   }
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1200);
     const response = await fetch(`${endpoint}/api/detect/cyberbullying`, {
       method: "POST",
       headers: headers,
-      body: JSON.stringify({ text: text })
+      body: JSON.stringify({ text: text }),
+      signal: controller.signal
     });
+    clearTimeout(timeoutId);
     if (response.ok) {
       const data = await response.json();
       if (data && data.status === "success") return data;
