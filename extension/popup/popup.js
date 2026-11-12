@@ -1,5 +1,5 @@
 // CyberShield AI — Extension Popup Controller
-// Owner: Shreya
+
 
 const BACKEND_URLS = [
   "https://cybershield-ai-rlk5.onrender.com",
