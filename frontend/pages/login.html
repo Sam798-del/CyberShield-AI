@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI — Sign In & Registration</title>
+    <link rel="icon" type="image/png" href="../assets/icon-48.png">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <style>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px 80px;
+        }
+
+        .login-container {
+            max-width: 1000px;
+            width: 100%;
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .login-left {
+            flex: 1;
+            padding: 36px;
+            background: linear-gradient(135deg, rgba(16,35,77,0.95), rgba(7,23,51,0.98));
+            border-radius: 14px;
+            border: 1px solid rgba(116,103,245,0.4);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+        }
+
+        .shield-graphic {
+            width: 140px;
+            height: 160px;
+            margin: 20px auto;
+            border: 3px solid #6350f4;
+            border-radius: 45% 45% 50% 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(99,80,244,0.35), inset 0 0 30px rgba(99,80,244,0.2);
+            font-size: 54px;
+        }
+
+        .login-right {
+            flex: 1;
+            max-width: 460px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(111,129,201,.18);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            color: #8494be;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: #edf0ff;
+            border-bottom: 3px solid #6350f4;
+        }
+
+        .password-rules {
+            display: none;
+            margin: 6px 0 14px;
+            padding: 10px;
+            background: rgba(4,16,39,.6);
+            border: 1px solid rgba(99,120,199,.3);
+            border-radius: 7px;
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .password-rules .ok { color: #31d5ae; }
+        .password-rules .bad { color: #f05a8b; }
+
+        .otp-box {
+            display: none;
+            margin-bottom: 16px;
+        }
+
+        .otp-box input {
+            text-align: center;
+            letter-spacing: 6px;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .auth-error {
+            display: none;
+            padding: 10px;
+            border-radius: 7px;
+            background: rgba(240,90,139,.15);
+            border: 1px solid #f05a8b;
+            color: #f05a8b;
+            font-size: 11px;
+            margin-bottom: 14px;
+        }
+
+        .auth-success {
+            display: none;
+            padding: 10px;
+            border-radius: 7px;
+            background: rgba(49,213,174,.15);
+            border: 1px solid #31d5ae;
+            color: #31d5ae;
+            font-size: 11px;
+            margin-bottom: 14px;
+        }
+
+        @media (max-width: 900px) {
+            .login-container {
+                flex-direction: column;
+            }
+            .login-left {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body data-page-id="login">
+
+    <div class="login-wrapper">
+        <div class="login-container">
+
+            <!-- LEFT BRAND GRAPHIC -->
+            <div class="login-left">
+                <span class="ai-badge" style="margin-bottom: 10px;">✦ CyberShield AI Security</span>
+                <h1 style="font-size: 28px; font-weight: 800; margin-bottom: 10px; color: #edf0ff;">Stronger <span style="color: #7b70ff;">Identities</span>.<br>Safer Tomorrows.</h1>
+                <p style="color: #8494be; font-size: 12px; line-height: 1.6;">CyberShield AI protects your digital identity, evaluates online threats in real time, and secures your workspace with zero-trust telemetry.</p>
+                <div class="shield-graphic"><img src="../assets/icon-128.png" alt="CyberShield Logo" style="width: 80px; height: 80px; object-fit: contain;"></div>
+
+                <div style="display: flex; justify-content: space-around; margin-top: 16px; text-align: center;">
+                    <div><span style="font-size: 18px;">🛡️</span><div style="font-size: 10px; color: #8494be;">Identity Vault</div></div>
+                    <div><span style="font-size: 18px;">🔍</span><div style="font-size: 10px; color: #8494be;">Threat Scanner</div></div>
+                    <div><span style="font-size: 18px;">📈</span><div style="font-size: 10px; color: #8494be;">AI Audit Logs</div></div>
+                </div>
+            </div>
+
+            <!-- RIGHT LOGIN CARD -->
+            <div class="login-right">
+                <section class="panel" style="padding: 24px;">
+                    <div class="tabs">
+                        <div class="tab active" id="tabLogin" onclick="showLogin()">Sign In</div>
+                        <div class="tab" id="tabSignup" onclick="showSignup()">Create Account</div>
+                    </div>
+
+                    <h2 id="formTitle" style="font-size: 18px; font-weight: 800; margin-bottom: 4px; color: #edf0ff;">Welcome Back</h2>
+                    <p style="color: #8494be; font-size: 11px; margin-bottom: 16px;" id="formSubtitle">Log in to access your CyberShield AI dashboard</p>
+
+                    <div id="authError" class="auth-error"></div>
+                    <div id="authSuccess" class="auth-success"></div>
+
+                    <div class="badge badge-info" style="margin-bottom: 16px; width: 100%; justify-content: flex-start;" id="securityNote">
+                        🔐 Protected Sign-In: Authenticated accounts access CyberShield AI Modules.
+                    </div>
+
+                    <!-- QUICK DEMO SIGN IN BUTTON -->
+                    <button class="btn btn-secondary" style="width: 100%; margin-bottom: 16px; padding: 10px;" onclick="quickDemoLogin()">
+                        ⚡ One-Click Demo Sign In as Neeraja Shinde
+                    </button>
+
+                    <form id="authForm" onsubmit="handleAuth(event)">
+                        <div id="nameGroup" class="form-group" style="display:none">
+                            <label class="form-label">Full Name</label>
+                            <input id="fullName" type="text" class="text-field" value="Neeraja Shinde" placeholder="Full name">
+                        </div>
+
+                        <div id="phoneGroup" class="form-group" style="display:none">
+                            <label class="form-label">Phone Number</label>
+                            <input id="phone" type="tel" class="text-field" value="+91 98765 43210" placeholder="Phone number">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input id="email" type="email" class="text-field" value="neeraja.shinde@cybershield.ai" placeholder="Email address" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input id="password" type="password" class="text-field" value="Neeraja@2026Sec" placeholder="Password" oninput="checkPasswordRules(this.value)" required>
+                        </div>
+
+                        <div id="passwordRules" class="password-rules">
+                            <div id="rLength">○ At least 8 characters</div>
+                            <div id="rUpper">○ One uppercase letter</div>
+                            <div id="rLower">○ One lowercase letter</div>
+                            <div id="rNumber">○ One number</div>
+                            <div id="rSpecial">○ One special character</div>
+                        </div>
+
+                        <div id="otpBox" class="otp-box form-group">
+                            <div id="otpInbox" class="badge badge-info" style="margin-bottom: 8px; width: 100%;"></div>
+                            <label class="form-label">Enter 4-Digit Verification Code</label>
+                            <input id="otpInput" type="text" maxlength="4" class="text-field" placeholder="1234">
+                        </div>
+
+                        <button id="authBtn" type="submit" class="primary-button" style="width: 100%; padding: 12px; margin-top: 6px;"><span>🔐 Sign In to CyberShield AI →</span></button>
+                    </form>
+                </section>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../js/state.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        let mode = "login";
+        let generatedOtp = null;
+
+        function showLogin() {
+            mode = "login";
+            document.getElementById("tabLogin").classList.add("active");
+            document.getElementById("tabSignup").classList.remove("active");
+            document.getElementById("formTitle").textContent = "Welcome Back";
+            document.getElementById("formSubtitle").textContent = "Log in to access your CyberShield AI dashboard";
+            document.getElementById("nameGroup").style.display = "none";
+            document.getElementById("phoneGroup").style.display = "none";
+            document.getElementById("passwordRules").style.display = "none";
+            document.getElementById("otpBox").style.display = "none";
+            document.getElementById("authBtn").querySelector("span").textContent = "🔐 Sign In to CyberShield AI →";
+            hideMessages();
+        }
+
+        function showSignup() {
+            mode = "signup";
+            document.getElementById("tabSignup").classList.add("active");
+            document.getElementById("tabLogin").classList.remove("active");
+            document.getElementById("formTitle").textContent = "Create Account";
+            document.getElementById("formSubtitle").textContent = "Register a new zero-trust administrator account";
+            document.getElementById("nameGroup").style.display = "block";
+            document.getElementById("phoneGroup").style.display = "block";
+            document.getElementById("passwordRules").style.display = "block";
+            document.getElementById("authBtn").querySelector("span").textContent = "📩 Send 2FA Verification Code →";
+            hideMessages();
+        }
+
+        function hideMessages() {
+            document.getElementById("authError").style.display = "none";
+            document.getElementById("authSuccess").style.display = "none";
+        }
+
+        function checkPasswordRules(pw) {
+            if (mode !== "signup") return;
+            const check = (id, valid) => {
+                const el = document.getElementById(id);
+                el.className = valid ? "ok" : "bad";
+                el.textContent = (valid ? "✓ " : "○ ") + el.textContent.substring(2);
+            };
+            check("rLength", pw.length >= 8);
+            check("rUpper", /[A-Z]/.test(pw));
+            check("rLower", /[a-z]/.test(pw));
+            check("rNumber", /[0-9]/.test(pw));
+            check("rSpecial", /[^A-Za-z0-9]/.test(pw));
+        }
+
+        function quickDemoLogin() {
+            if (window.CyberShieldState) {
+                CyberShieldState.login({
+                    name: "Neeraja Shinde",
+                    email: "neeraja.shinde@cybershield.ai",
+                    phone: "+91 98765 43210",
+                    avatarInitials: "NS"
+                });
+            }
+            window.location.href = "guide.html";
+        }
+
+        function handleAuth(e) {
+            e.preventDefault();
+            hideMessages();
+
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+
+            if (!email || !password) {
+                showError("Please fill out all required fields.");
+                return;
+            }
+
+            if (mode === "signup" && !generatedOtp) {
+                generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+                document.getElementById("otpBox").style.display = "block";
+                document.getElementById("otpInbox").textContent = `🔔 Demo 2FA SMS Code: ${generatedOtp}`;
+                document.getElementById("authBtn").querySelector("span").textContent = "✓ Verify Code & Create Account";
+                showSuccess("Verification code sent! Enter the 4-digit code above.");
+                return;
+            }
+
+            if (mode === "signup" && generatedOtp) {
+                const entered = document.getElementById("otpInput").value.trim();
+                if (entered !== generatedOtp) {
+                    showError("Invalid 2FA verification code. Please try again.");
+                    return;
+                }
+            }
+
+            const name = document.getElementById("fullName").value.trim() || "Neeraja Shinde";
+            const parts = name.split(" ");
+            const initials = (parts[0][0] + (parts[1] ? parts[1][0] : "")).toUpperCase();
+
+            if (window.CyberShieldState) {
+                CyberShieldState.login({
+                    name: name,
+                    email: email,
+                    phone: document.getElementById("phone").value || "+91 98765 43210",
+                    avatarInitials: initials
+                });
+            }
+
+            window.location.href = "guide.html";
+        }
+
+        function showError(msg) {
+            const err = document.getElementById("authError");
+            err.textContent = msg;
+            err.style.display = "block";
+        }
+
+        function showSuccess(msg) {
+            const succ = document.getElementById("authSuccess");
+            succ.textContent = msg;
+            succ.style.display = "block";
+        }
+    </script>
+</body>
+</html>

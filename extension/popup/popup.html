@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberShield AI</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="extension-container">
+    
+    <!-- Top App Navigation -->
+    <header class="header">
+      <div class="logo-group">
+        <div class="shield-badge">
+          <img src="../assets/icon-48.png" alt="CyberShield Logo" class="brand-logo-img">
+        </div>
+        <div>
+          <h1 class="brand-title">CyberShield <span class="brand-ai">AI</span></h1>
+          <p class="brand-sub">Real-Time Client Defense</p>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="navSettingsBtn" title="Extension Settings">⚙️</button>
+        <div class="status-indicator active" id="shieldStatusBadge" title="Real-time Shield Active">
+          <span class="status-dot"></span>
+          <span class="status-text">Active</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- VIEW 1: LOGIN / AUTH SCREEN (Shown if logged out) -->
+    <div class="view-panel hidden" id="loginView">
+      <div class="auth-card">
+        <h3 class="auth-title">Sign In to CyberShield</h3>
+        <p class="auth-desc">Connect your extension to sync threat history and identity scores.</p>
+        <div class="input-group">
+          <label>Email Address</label>
+          <input type="email" id="authEmailInput" placeholder="name@domain.com" value="admin@cybershield.ai">
+        </div>
+        <div class="input-group">
+          <label>Session Token / Password</label>
+          <input type="password" id="authTokenInput" placeholder="Enter session token or password" value="cs_ai_tok_8877665544332211">
+        </div>
+        <button class="primary-btn" id="saveAuthBtn">Save & Authenticate</button>
+        <button class="link-btn" id="skipAuthBtn">Continue as Guest Scanner</button>
+      </div>
+    </div>
+
+    <!-- VIEW 2: MAIN DEFENSE DASHBOARD (Default View) -->
+    <div class="view-panel" id="mainDashboardView">
+      
+      <!-- User Account & Identity Summary Strip -->
+      <div class="user-strip">
+        <div class="user-info">
+          <span class="user-avatar" id="userAvatar">👤</span>
+          <div>
+            <span class="user-name" id="userNameLabel">CyberShield Admin</span>
+            <span class="user-role" id="userRoleLabel">Active Defense</span>
+          </div>
+        </div>
+        <div class="strip-stats">
+          <span class="stat-pill trust" id="trustScoreBadge" title="Identity Trust Score">Trust: 98%</span>
+          <span class="stat-pill incidents" id="incidentsBadge" title="Threats Blocked">Blocked: 3</span>
+        </div>
+      </div>
+
+      <!-- Active Tab Scanner Card -->
+      <section class="scan-card">
+        <div class="card-header">
+          <span class="card-label">CURRENT TAB URL</span>
+          <div class="header-badges">
+            <span class="auto-badge" id="autoScanBadge" title="Automated Real-Time Defense">⚡ Auto-Protect</span>
+            <span class="protocol-badge safe" id="protocolBadge">HTTPS</span>
+          </div>
+        </div>
+        <div class="url-display" id="activeUrlDisplay" title="Current tab URL">
+          Detecting active page...
+        </div>
+
+        <!-- Threat Level Gauge -->
+        <div class="threat-gauge-box">
+          <div class="gauge-bar-wrapper">
+            <div class="gauge-bar" id="threatGaugeBar" style="width: 5%;"></div>
+          </div>
+          <div class="gauge-details">
+            <span class="verdict-text safe" id="threatVerdictText">ANALYZING PAGE</span>
+            <span class="score-number" id="threatScoreNumber">Security: -- / 100</span>
+          </div>
+        </div>
+
+        <button class="primary-btn" id="scanCurrentPageBtn">
+          <span class="btn-icon">⚡</span> Re-Scan
+        </button>
+        <p class="scan-hint">⚡ Auto-scanned in real time on page load.</p>
+      </section>
+
+      <!-- REAL-TIME SECURITY ANALYZER (DATA BREACH & CREDENTIAL SCANNER) -->
+      <section class="scan-card analyzer-card" style="margin-top: 10px; border-color: rgba(99, 80, 244, 0.4); background: linear-gradient(135deg, #0d172e, #0c1529);">
+        <div class="card-header">
+          <span class="card-label" style="color: #a5b4fc; font-weight: 700;">🔍 SECURITY ANALYZER</span>
+          <span class="auto-badge" id="analyzerStatusBadge" style="background: rgba(99, 80, 244, 0.2); color: #c7d2fe; border: 1px solid rgba(99, 80, 244, 0.4);">Live Telemetry</span>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin: 8px 0 6px;">
+          <div>
+            <div style="font-size:10px; color:#8494be;">Current Chrome Domain</div>
+            <strong id="activeDomainDisplay" style="font-size:12px; color:#edf0ff;">Detecting...</strong>
+          </div>
+          <button class="primary-btn" id="checkDomainBreachBtn" style="padding: 4px 9px; font-size: 10px; min-width: auto; background: linear-gradient(110deg,#6350f4,#7b6bff);">
+            ⚡ Check Breaches
+          </button>
+        </div>
+
+        <!-- Domain Breach Status Box -->
+        <div id="domainBreachResultBox" style="background: rgba(15, 23, 42, 0.7); border-radius: 6px; padding: 8px; border: 1px solid #1e293b; font-size: 10.5px; margin-bottom: 8px;">
+          <div id="domainBreachSummary" style="color: #94a3b8;">Scanning domain breach footprint in real time...</div>
+        </div>
+
+        <div style="display: flex; gap: 6px;">
+          <button class="link-btn" id="openFullAnalyzerBtn" style="width: 100%; text-align: center; border: 1px solid rgba(99, 80, 244, 0.5); border-radius: 6px; padding: 6px; color: #c7d2fe; background: rgba(99, 80, 244, 0.15); font-size: 10px; font-weight: 600; cursor: pointer;">
+            🚀 Open Domain in Security Analyzer Web App ↗
+          </button>
+        </div>
+      </section>
+
+      <!-- UNIFIED DASHBOARD & REPORT TELEMETRY CARD -->
+      <section class="scan-card telemetry-card" style="margin-top: 10px; border-color: rgba(0, 242, 254, 0.35); background: linear-gradient(135deg, #091a38, #071329);">
+        <div class="card-header">
+          <span class="card-label" style="color: #38bdf8; font-weight: 700;">📊 UNIFIED TELEMETRY & REPORT</span>
+          <span class="auto-badge" id="telemetryStatusBadge" style="background: rgba(0, 242, 254, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4);">Synced</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0 10px;">
+          <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid #1e293b; border-radius: 6px; padding: 6px 8px; text-align: center;">
+            <div style="font-size: 8.5px; color: #8494be; text-transform: uppercase; font-weight: 700;">Security Score</div>
+            <div id="extScoreValue" style="font-size: 17px; font-weight: 800; color: #10b981; margin-top: 2px;">90/100</div>
+            <div id="extScoreLabel" style="font-size: 8.5px; color: #94a3b8;">Good Protection</div>
+          </div>
+
+          <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid #1e293b; border-radius: 6px; padding: 6px 8px; text-align: center;">
+            <div style="font-size: 8.5px; color: #8494be; text-transform: uppercase; font-weight: 700;">Threats Blocked</div>
+            <div id="extThreatsValue" style="font-size: 17px; font-weight: 800; color: #38bdf8; margin-top: 2px;">131</div>
+            <div id="extThreatsLabel" style="font-size: 8.5px; color: #94a3b8;">Quarantined</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+          <button class="primary-btn" id="openDashboardBtn" style="padding: 6px 8px; font-size: 10px; background: linear-gradient(110deg,#3154c6,#00f2fe); color: #fff; font-weight: 700; border-radius: 6px; border: 0; cursor: pointer;">
+            📊 Open Dashboard ↗
+          </button>
+          <button class="primary-btn" id="openReportBtn" style="padding: 6px 8px; font-size: 10px; background: linear-gradient(110deg,#6350f4,#7b6bff); color: #fff; font-weight: 700; border-radius: 6px; border: 0; cursor: pointer;">
+            📄 AI Report ↗
+          </button>
+        </div>
+      </section>
+
+      <!-- Threat Findings List -->
+      <section class="findings-card" style="margin-top: 10px;">
+        <h3 class="section-title">Security Indicators</h3>
+        <ul class="indicators-list" id="indicatorsList">
+          <li class="indicator-item safe">
+            <span class="ind-icon">✓</span>
+            <span class="ind-text">Ready to inspect page links, forms, and headers.</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Quick Action Tools Grid -->
+      <div class="tools-grid">
+        <button class="tool-btn" id="checkSelectionBtn" title="Scan highlighted text for cyberbullying">
+          <span class="tool-icon">💬</span>
+          <span class="tool-label">Toxic Text</span>
+        </button>
+        <button class="tool-btn" id="toolAnalyzerBtn" title="Open Security Analyzer (Password & Data Breach Scanner)">
+          <span class="tool-icon">🔍</span>
+          <span class="tool-label">Analyzer</span>
+        </button>
+        <button class="tool-btn" id="openWebPortalBtn" title="Open Full CyberShield Web Dashboard">
+          <span class="tool-icon">📊</span>
+          <span class="tool-label">Dashboard</span>
+        </button>
+        <button class="tool-btn" id="toolReportBtn" title="Open AI Security Audit Report">
+          <span class="tool-icon">📄</span>
+          <span class="tool-label">AI Report</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- VIEW 3: SETTINGS SCREEN INSIDE EXTENSION -->
+    <div class="view-panel hidden" id="settingsView">
+      <div class="settings-card">
+        <div class="settings-header">
+          <h3 class="settings-title">Extension Settings</h3>
+          <button class="close-btn" id="closeSettingsBtn">✕</button>
+        </div>
+        
+        <div class="setting-item">
+          <div class="setting-text">
+            <strong>Auto-Scan Visited URLs</strong>
+            <span>Check phishing risk automatically on page load</span>
+          </div>
+          <input type="checkbox" id="toggleAutoScan" checked>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-text">
+            <strong>Auto-Blur Toxic Text</strong>
+            <span>Blur abusive comments and harassment on social media</span>
+          </div>
+          <input type="checkbox" id="toggleToxicBlur" checked>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-text">
+            <strong>Password Field Strength Tips</strong>
+            <span>Show live password entropy tips in password fields</span>
+          </div>
+          <input type="checkbox" id="togglePasswordTips" checked>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-text">
+            <strong>Backend API Server</strong>
+            <span>Select cloud Render or local development endpoint</span>
+          </div>
+          <select id="backendSelect">
+            <option value="http://localhost:5000" selected>Localhost:5000 (Recommended)</option>
+            <option value="https://cybershield-ai-rlk5.onrender.com">Render Cloud (Live)</option>
+          </select>
+        </div>
+
+        <button class="primary-btn" id="saveSettingsBtn">Save Settings</button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>CyberShield AI • Real-Time Defense</span>
+      <span class="live-dot" id="backendHealthDot" title="Live Backend Status">API: Online</span>
+    </footer>
+
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

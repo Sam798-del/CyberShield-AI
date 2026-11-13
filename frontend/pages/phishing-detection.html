@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI — Phishing Detection Scanner</title>
+    <link rel="icon" type="image/png" href="../assets/icon-48.png">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <style>
+        .scanner-layout {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .sample-chips {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .sample-btn {
+            border: 1px solid rgba(111,129,201,.35);
+            background: rgba(91,95,210,.12);
+            color: #edf0ff;
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-size: 9px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sample-btn:hover {
+            background: rgba(91,95,210,.25);
+            border-color: #7b70ff;
+        }
+
+        .results-panel {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: rgba(7,22,51,.85);
+            border: 1px solid rgba(99,120,199,.44);
+            border-radius: 9px;
+        }
+
+        .threat-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(240,90,139,.15);
+            border: 1px solid rgba(240,90,139,.4);
+            color: #f05a8b;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 8px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 900px) {
+            .scanner-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body data-page-id="phishing-detection">
+
+    <div class="app-shell">
+        <div id="cs-sidebar-container"></div>
+
+        <main class="main">
+            <div id="cs-header-container"></div>
+
+            <div class="page">
+
+                <!-- PAGE HEADING -->
+                <div class="page-heading">
+                    <button class="icon-button" onclick="window.location.href='dashboard.html'" title="Back to Dashboard">
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </button>
+                    <div>
+                        <h1>Phishing Detection Scanner</h1>
+                        <p>Analyze emails, raw headers, and suspicious URLs to detect deceptive domain typosquatting, spoofing, and malware vectors.</p>
+                    </div>
+                </div>
+
+                <div class="scanner-layout">
+
+                    <!-- MAIN SCANNER INPUT & RESULT CARD -->
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <div class="title-icon">📧</div>
+                                <div>
+                                    <h2>Analyze Email or URL Threat</h2>
+                                    <p class="panel-subtitle">Paste raw email body, header metadata, or link below</p>
+                                </div>
+                            </div>
+                            <span class="ai-badge">✦ AI Heuristics Active</span>
+                        </div>
+
+                        <!-- SAMPLE QUICK LOADERS -->
+                        <div class="sample-chips">
+                            <span style="font-size: 9px; color: #8494be; align-self: center;">Quick Samples:</span>
+                            <button class="sample-btn" onclick="loadPhishSample('email')">🚨 Phishing Email</button>
+                            <button class="sample-btn" onclick="loadPhishSample('url')">⚠️ Deceptive URL Shortener</button>
+                            <button class="sample-btn" onclick="loadPhishSample('safe')">✅ Safe Notification</button>
+                        </div>
+
+                        <div class="form-group">
+                            <textarea id="phishText" rows="6" class="text-field" placeholder="Paste email subject, body text, raw headers, or URL here... (e.g. 'URGENT: Your bank account is locked! Verify immediately at http://paypa1-update.com')"></textarea>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="primary-button" style="flex: 1;" onclick="analyzePhishingThreat()"><span>▶ Scan Phishing Threat</span></button>
+                            <button class="btn btn-secondary" onclick="document.getElementById('phishText').value=''; document.getElementById('phishResult').style.display='none';">Clear Input</button>
+                        </div>
+
+                        <!-- DYNAMIC RESULTS DISPLAY -->
+                        <div class="results-panel" id="phishResult"></div>
+                    </section>
+
+                    <!-- THREAT TELEMETRY METRICS -->
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+
+                        <section class="panel">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <div class="title-icon">📊</div>
+                                    <div>
+                                        <h2>Threat Telemetry</h2>
+                                        <p class="panel-subtitle">Real-time scan stats & quarantine</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                                <div style="background: rgba(4,16,39,.6); border: 1px solid rgba(99,120,199,.3); padding: 10px; border-radius: 7px; text-align: center;">
+                                    <small style="color: #8494be; font-size: 8px;">Total Scans Executed</small>
+                                    <strong style="display: block; font-size: 18px; color: #edf0ff; margin-top: 2px;">42 Scans</strong>
+                                </div>
+                                <div style="background: rgba(4,16,39,.6); border: 1px solid rgba(99,120,199,.3); padding: 10px; border-radius: 7px; text-align: center;">
+                                    <small style="color: #8494be; font-size: 8px;">Threats Quarantined</small>
+                                    <strong style="display: block; font-size: 18px; color: #f05a8b; margin-top: 2px;">12 Blocked</strong>
+                                </div>
+                            </div>
+
+                            <div style="padding: 10px; background: rgba(49,213,174,.1); border: 1px solid rgba(49,213,174,.25); border-radius: 6px; font-size: 9px; color: #31d5ae;">
+                                ✓ Zero-Trust Phishing Telemetry Active · Local Heuristic Model v2.4
+                            </div>
+                        </section>
+
+                        <section class="panel">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <div class="title-icon">🛡️</div>
+                                    <div>
+                                        <h2>Detection Capabilities</h2>
+                                        <p class="panel-subtitle">Neural indicators evaluated</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display: grid; gap: 8px; font-size: 10px; color: #d0d6eb;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="color: #31d5ae;">✓</span> Typosquatting & Homograph Domains
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="color: #31d5ae;">✓</span> Urgent Call-to-Action NLP Flags
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="color: #31d5ae;">✓</span> Suspicious Masked Shorteners
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="color: #31d5ae;">✓</span> Sender Header Spoofing Audit
+                                </div>
+                            </div>
+                        </section>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/state.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/navigation.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            CyberShieldNav.init("phishing-detection");
+        });
+
+        function loadPhishSample(type) {
+            const field = document.getElementById("phishText");
+            if (type === 'email') {
+                field.value = "Subject: URGENT Account Access Restricted\nFrom: Security Team <support@paypa1-verification.net>\n\nDear Customer,\nYour account access has been restricted due to unauthorized login attempts. Click the secure link below to verify your identity:\nhttp://paypa1-verification.net/login?id=89234";
+            } else if (type === 'url') {
+                field.value = "http://bit.ly/secure-login-update-account-passcode-2026?token=x99a0s";
+            } else {
+                field.value = "Subject: Your CyberShield AI Weekly Security Report\nFrom: notifications@cybershield.ai\n\nHello Neeraja,\nYour weekly security summary is ready to view in your dashboard. Zero critical threats were detected during the past 7 days.";
+            }
+        }
+
+        async function analyzePhishingThreat() {
+            const input = document.getElementById("phishText").value.trim();
+            const resBox = document.getElementById("phishResult");
+
+            if (!input) {
+                if (window.CyberShieldUtils) CyberShieldUtils.showToast("Please enter email text or URL to scan.", "warning");
+                else alert("Please enter text to scan.");
+                return;
+            }
+
+            resBox.style.display = "block";
+            resBox.innerHTML = "<p style='color: #8494be; font-size: 10px;'>⏳ Running CyberShield AI Neural Phishing Evaluation...</p>";
+
+            const data = await CyberShieldAPI.scanPhishing(input);
+            
+            if (window.CyberShieldState) {
+                CyberShieldState.recordPhishingScan(data);
+            }
+
+            const isPhish = data.is_phishing;
+            resBox.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                    <h3 style="color: ${isPhish ? '#f05a8b' : '#31d5ae'}; font-size: 14px; font-weight: 800; margin: 0;">
+                        ${isPhish ? '🚨 PHISHING THREAT DETECTED' : '✅ SAFE / LOW RISK CONTENT'}
+                    </h3>
+                    <span class="badge ${isPhish ? 'badge-danger' : 'badge-success'}">
+                        Risk Score: ${data.risk_score}/100
+                    </span>
+                </div>
+                
+                <p style="font-size: 10px; color: #8494be; margin-bottom: 10px;">Threat Evaluation: <strong style="color: #edf0ff;">${data.risk_level}</strong></p>
+                
+                <div style="margin-bottom: 12px;">
+                    <strong style="color: #edf0ff; font-size: 10px;">Flagged Indicators:</strong>
+                    <div style="margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap;">
+                        ${data.indicators.map(ind => `<span class="threat-indicator">⚠ ${ind}</span>`).join('')}
+                    </div>
+                </div>
+
+                <div style="background: rgba(4,16,39,.6); padding: 12px; border-radius: 7px; border: 1px solid rgba(99,120,199,.3);">
+                    <strong style="color: #edf0ff; font-size: 10px;">Security Recommendations:</strong>
+                    <ul style="padding-left: 16px; font-size: 9.5px; margin-top: 6px; color: #d0d6eb; line-height: 1.6;">
+                        ${data.recommendations.map(r => `<li>${r}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+
+            if (window.CyberShieldUtils) {
+                CyberShieldUtils.showToast(isPhish ? "🚨 Phishing threat detected! Telemetry updated in Security Report." : "✓ Content clean! Scan recorded in Security Report.", isPhish ? "error" : "success");
+            }
+        }
+    </script>
+</body>
+</html>

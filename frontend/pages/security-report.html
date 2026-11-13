@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI — AI Security Audit Report</title>
+    <link rel="icon" type="image/png" href="../assets/icon-48.png">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <style>
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .score-panel {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .gauge-wrap {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 18px rgba(99,80,244,0.35));
+        }
+
+        .gauge-wrap svg {
+            width: 160px;
+            height: 160px;
+            display: block;
+        }
+
+        #trendChart {
+            width: 100%;
+            height: 120px;
+            display: block;
+        }
+
+        .gauge-num {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gauge-num .n {
+            font-size: 44px;
+            font-weight: 800;
+            line-height: 1;
+            color: #ffffff;
+        }
+
+        .row2-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .risk-bar {
+            height: 10px;
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            margin: 14px 0 16px;
+        }
+
+        .findings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .finding-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .finding-item:hover {
+            border-color: var(--royal-blue);
+            background: var(--bg-card-light);
+        }
+
+        .finding-item.resolved {
+            opacity: 0.6;
+        }
+
+        .finding-item.resolved b {
+            text-decoration: line-through;
+        }
+
+        .coverage-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border-soft);
+            font-size: 13px;
+        }
+
+        .coverage-row:last-child {
+            border-bottom: none;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12.5px;
+            color: var(--muted);
+            padding: 6px 0;
+            border-bottom: 1px dashed var(--border-soft);
+        }
+
+        .row3-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .priority-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+
+        .priority-item.resolved {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+
+        .pnum {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+        }
+
+        @media (max-width: 992px) {
+            .overview-grid, .row2-grid, .row3-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body data-page-id="security-report">
+
+    <div class="app-shell">
+        <div id="cs-sidebar-container"></div>
+
+        <main class="main-content">
+            <div id="cs-header-container"></div>
+
+            <div class="page-container">
+
+                <!-- REPORT HEADER -->
+                <div class="report-header">
+                    <div>
+                        <div class="badge badge-info" style="margin-bottom: 8px;">✦ AI GENERATED AUDIT TELEMETRY</div>
+                        <h1 class="page-title">AI Security <span>Report</span></h1>
+                        <p class="page-subtitle">Unified threat evaluation, risk breakdown, and interactive resolution workflow.</p>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="btn btn-primary" onclick="runFullReportAnalysis()">✨ Analyze & Run AI Security Audit</button>
+                        <button class="btn btn-secondary" onclick="window.print()">⬇ Export Report PDF</button>
+                    </div>
+                    <div style="font-size: 11.5px; color: var(--muted); margin-top: 6px; text-align: right;">Generated: <span id="scanDate"></span></div>
+                </div>
+
+                <!-- OVERVIEW GRID -->
+                <div class="overview-grid">
+                    <div class="cs-card score-panel">
+                        <div class="gauge-wrap">
+                            <svg width="160" height="160" viewBox="0 0 160 160">
+                                <circle cx="80" cy="80" r="66" fill="none" stroke="var(--border-soft)" stroke-width="12"/>
+                                <circle id="gaugeArc" cx="80" cy="80" r="66" fill="none" stroke="url(#g1)" stroke-width="12" stroke-linecap="round" transform="rotate(-90 80 80)"/>
+                                <defs>
+                                    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#6350f4"/>
+                                        <stop offset="100%" stop-color="#00f2fe"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="gauge-num">
+                                <div class="n" id="reportScoreNum">90</div>
+                                <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">/ 100</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                                <b style="font-size: 16px; color: white;">Overall Security Score</b>
+                                <span class="badge badge-success" id="reportStatusBadge">● Good Protection</span>
+                            </div>
+                            <div style="font-size: 13px; color: var(--muted); line-height: 1.5;" id="issueSummaryText">
+                                Your digital security is strong! Resolving identified findings will raise your score to 100.
+                            </div>
+                            <div style="color: var(--success); font-size: 12px; font-weight: 700; margin-top: 8px;" id="scoreDeltaText">▲ Active Defense Telemetry</div>
+                        </div>
+                    </div>
+
+                    <!-- SCORE TREND SVG -->
+                    <div class="cs-card">
+                        <div class="cs-card-header">
+                            <div class="cs-card-title"><span>📈</span> Security Score Trend</div>
+                            <span class="badge badge-info" id="trendTag">90 Score</span>
+                        </div>
+                        <svg id="trendChart" width="100%" height="110" viewBox="0 0 340 110" preserveAspectRatio="none"></svg>
+                    </div>
+                </div>
+
+                <!-- RISK BREAKDOWN & COVERAGE ROW -->
+                <div class="row2-grid">
+                    <div class="cs-card">
+                        <div class="cs-card-header">
+                            <div class="cs-card-title"><span>🛡️</span> Risk Breakdown</div>
+                        </div>
+                        <div class="risk-bar">
+                            <div style="background: var(--danger); width: 0%;" id="barCritical"></div>
+                            <div style="background: var(--warning); width: 25%;" id="barHigh"></div>
+                            <div style="background: #fbbf24; width: 25%;" id="barMed"></div>
+                            <div style="background: var(--success); width: 50%;" id="barLow"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted);">
+                            <span>Critical: <b id="cCritical" style="color:white;">0</b></span>
+                            <span>High: <b id="cHigh" style="color:white;">1</b></span>
+                            <span>Medium: <b id="cMedium" style="color:white;">1</b></span>
+                            <span>Low: <b id="cLow" style="color:white;">2</b></span>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <div class="cs-card-title" style="margin-bottom: 4px;"><span>🔎</span> Key Findings & Interactive Fixes</div>
+                            <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">Click any finding below to open step-by-step resolution workflow</div>
+                            <div class="findings-list" id="findingsList"></div>
+                        </div>
+                    </div>
+
+                    <!-- PROTECTION COVERAGE -->
+                    <div class="cs-card">
+                        <div class="cs-card-header">
+                            <div class="cs-card-title"><span>🛡️</span> Protection Coverage Status</div>
+                        </div>
+                        <div class="coverage-row">
+                            <span style="color: var(--muted);">🪪 Identity Vault Monitoring</span>
+                            <span class="badge badge-success">● Active</span>
+                        </div>
+                        <div class="coverage-row" onclick="openFixModal('outlook')" style="cursor: pointer;">
+                            <span style="color: var(--muted);">🔑 Password Health</span>
+                            <span class="badge badge-warning" id="covPasswordLabel">● Issue Detected</span>
+                        </div>
+                        <div class="coverage-row">
+                            <span style="color: var(--muted);">📧 Phishing Detection</span>
+                            <span class="badge badge-success">● Active</span>
+                        </div>
+                        <div class="coverage-row" onclick="openFixModal('cyberbully')" style="cursor: pointer;">
+                            <span style="color: var(--muted);">💬 Cyberbullying Analyzer</span>
+                            <span class="badge badge-warning" id="covBullyLabel">● Alert Flagged</span>
+                        </div>
+                        <div class="coverage-row" onclick="openFixModal('2fa')" style="cursor: pointer;">
+                            <span style="color: var(--muted);">🔒 Hardware / App 2FA</span>
+                            <span class="badge badge-danger" id="cov2faLabel">● Not Enabled</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 MODULE METRICS CARDS -->
+                <div class="metrics-grid">
+                    <div class="cs-card" style="border: 1px dashed rgba(99, 80, 244, 0.45); background: rgba(99, 80, 244, 0.05);">
+                        <div class="cs-card-title" style="margin-bottom: 12px; color: #c7d2fe;">
+                            <span>🪪</span> Digital Identity
+                            <span class="badge" style="background: rgba(99, 80, 244, 0.2); color: #c7d2fe; border: 1px solid rgba(99, 80, 244, 0.4); font-size: 8px; margin-left: 6px;">Reserved Space</span>
+                        </div>
+                        <div class="metric-row"><span>Status</span><b style="color:#a5b4fc;">Pending Integration</b></div>
+                        <div class="metric-row"><span>Vault Hook</span><b style="color:var(--muted);">Space Allocated</b></div>
+                        <div class="metric-row"><span>Telemetry Bridge</span><b style="color:var(--success);" id="vaultStatusText">Ready</b></div>
+                    </div>
+
+                    <div class="cs-card" onclick="openFixModal('weakpass')" style="cursor: pointer;">
+                        <div class="cs-card-title" style="margin-bottom: 12px;"><span>🔑</span> Password Health</div>
+                        <div class="metric-row"><span>Crack Time</span><b style="color:white;" id="pwCrackText">~200+ yrs</b></div>
+                        <div class="metric-row"><span>Reused Passwords</span><b style="color:var(--warning);" id="pwReusedText">1 Found</b></div>
+                        <div class="metric-row"><span>Password Score</span><b style="color:var(--warning);" id="pwScoreText">72/100</b></div>
+                    </div>
+
+                    <div class="cs-card" onclick="openFixModal('phishlink')" style="cursor: pointer;">
+                        <div class="cs-card-title" style="margin-bottom: 12px;"><span>📧</span> Phishing Protection</div>
+                        <div class="metric-row"><span>Scans Executed</span><b style="color:white;" id="phishScansText">42</b></div>
+                        <div class="metric-row"><span>Threats Blocked</span><b style="color:var(--danger);" id="phishBlockedText">2 Links</b></div>
+                        <div class="metric-row"><span>Flagged Link</span><b style="color:var(--warning);" id="phishFlagText">bit.ly/xyz</b></div>
+                    </div>
+
+                    <div class="cs-card" onclick="openFixModal('cyberbully')" style="cursor: pointer;">
+                        <div class="cs-card-title" style="margin-bottom: 12px;"><span>💬</span> Cyberbullying</div>
+                        <div class="metric-row"><span>Messages Analyzed</span><b style="color:white;" id="bullyScansText">12</b></div>
+                        <div class="metric-row"><span>Harassment Flagged</span><b style="color:var(--danger);" id="bullyFlagText">1 Incident</b></div>
+                        <div class="metric-row"><span>Toxicity Status</span><b style="color:var(--danger);" id="bullyStatusText">High Severity</b></div>
+                    </div>
+                </div>
+
+                <!-- AI ANALYSIS & PRIORITY ACTIONS -->
+                <div class="row3-grid">
+                    <div class="cs-card">
+                        <div class="cs-card-header">
+                            <div class="cs-card-title"><span>🤖</span> AI Executive Synthesis</div>
+                        </div>
+                        <p style="font-size: 13.5px; color: var(--muted); line-height: 1.6;" id="aiSynthesisText">
+                            Your digital identity vault is in a <b>secure state</b> with zero breaches found across 6 accounts. Your primary area for score optimization is <b>Password Health</b> and <b>Hardware 2FA</b>. Resolving flagged items will optimize your security score.
+                        </p>
+                    </div>
+
+                    <div class="cs-card">
+                        <div class="cs-card-header">
+                            <div class="cs-card-title"><span>⚙️</span> Priority Action Items</div>
+                        </div>
+                        <div id="priorityList"></div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- RESOLUTION MODAL -->
+    <div class="modal-overlay" id="fixModal">
+        <div class="modal-container">
+            <button class="modal-close" onclick="closeFixModal()">✕</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script src="../js/state.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/navigation.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        document.getElementById("scanDate").textContent = new Date().toLocaleString("en-US", { month: "short", day: "2-digit", year: "numeric", hour: "numeric", minute: "2-digit" });
+
+        const ISSUES = {
+            outlook: {
+                title: "Weak Outlook Account Password",
+                sev: "high",
+                badgeClass: "badge-warning",
+                desc: "Your Outlook account password has low entropy and shares patterns with breached password databases.",
+                steps: [
+                    "Open Outlook → Security Settings",
+                    "Generate a unique 16+ character passphrase",
+                    "Click 'Mark as Fixed' below to resolve this finding in CyberShield AI"
+                ],
+                resolvedMsg: "Outlook password updated to high-entropy unique passphrase."
+            },
+            weakpass: {
+                title: "Reused Password Across Monitored Services",
+                sev: "high",
+                badgeClass: "badge-warning",
+                desc: "1 account uses a password shared with external services.",
+                steps: [
+                    "Identify shared credentials across services",
+                    "Replace shared passwords with unique passphrases",
+                    "Click 'Mark as Fixed' to update your Password Health score"
+                ],
+                resolvedMsg: "Reused credentials updated and eliminated."
+            },
+            phishlink: {
+                title: "Suspicious Hyperlink (bit.ly/xyz) Blocked",
+                sev: "medium",
+                badgeClass: "badge-warning",
+                desc: "The URL matched deceptive phishing patterns and was quarantined.",
+                steps: [
+                    "Do not click or open masked URL shorteners from unrecognized senders",
+                    "Confirm block in CyberShield AI telemetry",
+                    "Click 'Mark as Fixed' to complete quarantine"
+                ],
+                resolvedMsg: "Phishing link quarantined and reported."
+            },
+            cyberbully: {
+                title: "High-Severity Harmful Message Incident",
+                sev: "high",
+                badgeClass: "badge-danger",
+                desc: "Cyberbullying detector flagged targeted abuse message directed at user.",
+                steps: [
+                    "Export screenshot/chat log evidence",
+                    "Block sender and report to platform moderators",
+                    "Click 'Mark as Fixed' to resolve incident ticket"
+                ],
+                resolvedMsg: "Harassment incident documented and resolved."
+            },
+            "2fa": {
+                title: "Two-Factor Authentication (2FA) Not Enabled",
+                sev: "medium",
+                badgeClass: "badge-warning",
+                desc: "2FA adds an essential second check when signing in.",
+                steps: [
+                    "Open Account Settings → Security",
+                    "Bind an Authenticator app (TOTP) or FIDO2 hardware key",
+                    "Click 'Mark as Fixed' to apply protection points"
+                ],
+                resolvedMsg: "2FA protection activated."
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderReport();
+        });
+
+        window.addEventListener("cybershield-state-changed", () => {
+            renderReport();
+        });
+
+        window.addEventListener("storage", () => {
+            renderReport();
+        });
+
+        // Real-Time Extension Telemetry Listener
+        window.addEventListener("message", (event) => {
+            if (event.data && event.data.type === "CYBERSHIELD_EXTENSION_INCIDENT" && event.data.incident) {
+                if (window.CyberShieldState && typeof window.CyberShieldState.recordExtensionIncident === "function") {
+                    window.CyberShieldState.recordExtensionIncident(event.data.incident);
+                }
+                if (window.CyberShieldUtils && typeof window.CyberShieldUtils.showToast === "function") {
+                    CyberShieldUtils.showToast(`🛡️ Live Audit Telemetry: ${event.data.incident.title}`, "info");
+                }
+                renderReport();
+            }
+        });
+
+        function renderReport() {
+            const state = CyberShieldState.getState();
+            const score = state.securityReport ? state.securityReport.score : 90;
+            const fixed = state.securityReport ? state.securityReport.fixedIssues : {};
+            const incidents = state.incidents || [];
+            const pw = state.passwordSecurity || {};
+            const phish = state.phishing || {};
+            const bully = state.cyberbullying || {};
+            const leak = state.emailFootprint || {};
+
+            // 1. Overall Security Score & Arc
+            document.getElementById("reportScoreNum").textContent = score;
+            document.getElementById("trendTag").textContent = score + " Score";
+
+            const statusBadge = document.getElementById("reportStatusBadge");
+            const issueSummary = document.getElementById("issueSummaryText");
+            if (statusBadge) {
+                if (score >= 90) {
+                    statusBadge.className = "badge badge-success";
+                    statusBadge.textContent = "● Optimal Protection";
+                    if (issueSummary) issueSummary.textContent = "Your digital security is in top tier. All core threat vectors are actively guarded.";
+                } else if (score >= 70) {
+                    statusBadge.className = "badge badge-warning";
+                    statusBadge.textContent = "● Good, Action Recommended";
+                    if (issueSummary) issueSummary.textContent = "Moderate risks detected. Resolving the active findings below will raise your score to 100.";
+                } else {
+                    statusBadge.className = "badge badge-danger";
+                    statusBadge.textContent = "● Critical Attention Required";
+                    if (issueSummary) issueSummary.textContent = "High vulnerability exposure detected across monitored services. Immediate action advised.";
+                }
+            }
+
+            const r = 66, c = 2 * Math.PI * r;
+            const offset = c - (score / 100) * c;
+            const arc = document.getElementById("gaugeArc");
+            if (arc) {
+                arc.style.strokeDasharray = `${c}`;
+                arc.style.strokeDashoffset = `${offset}`;
+                arc.style.stroke = score < 70 ? "var(--danger)" : (score < 85 ? "var(--warning)" : "var(--cyber-cyan)");
+            }
+
+            renderTrendChart(score);
+
+            // 2. DYNAMIC RISK BREAKDOWN
+            const unresolvedIncidents = incidents.filter(i => i.status !== "Resolved" && i.status !== "Prevented");
+            let critCount = (pw.breached ? 1 : 0) + unresolvedIncidents.filter(i => i.severity === "Critical").length;
+            let highCount = (!fixed.outlook ? 1 : 0) + (!fixed.weakpass && pw.weakCount > 0 ? 1 : 0) + unresolvedIncidents.filter(i => i.severity === "High").length;
+            let medCount = (!fixed["2fa"] ? 1 : 0) + unresolvedIncidents.filter(i => i.severity === "Medium").length;
+            let lowCount = Math.max(1, 5 - critCount - highCount);
+
+            const totalRisks = critCount + highCount + medCount + lowCount || 1;
+            const elCrit = document.getElementById("cCritical");
+            const elHigh = document.getElementById("cHigh");
+            const elMed = document.getElementById("cMedium");
+            const elLow = document.getElementById("cLow");
+            if (elCrit) elCrit.textContent = critCount;
+            if (elHigh) elHigh.textContent = highCount;
+            if (elMed) elMed.textContent = medCount;
+            if (elLow) elLow.textContent = lowCount;
+
+            const bCrit = document.getElementById("barCritical");
+            const bHigh = document.getElementById("barHigh");
+            const bMed = document.getElementById("barMed");
+            const bLow = document.getElementById("barLow");
+            if (bCrit) bCrit.style.width = `${(critCount / totalRisks) * 100}%`;
+            if (bHigh) bHigh.style.width = `${(highCount / totalRisks) * 100}%`;
+            if (bMed) bMed.style.width = `${(medCount / totalRisks) * 100}%`;
+            if (bLow) bLow.style.width = `${(lowCount / totalRisks) * 100}%`;
+
+            // 3. DYNAMIC FINDINGS LIST (Combines Live Incidents + Core Issues)
+            const findingsList = document.getElementById("findingsList");
+            let findingsHTML = "";
+
+            // A. Live detected incidents from real-time scans
+            if (incidents.length > 0) {
+                findingsHTML += incidents.slice(0, 3).map(inc => {
+                    const isResolved = inc.status === "Resolved" || inc.status === "Prevented";
+                    const sevClass = inc.severity === "Critical" || inc.severity === "High" ? "badge-danger" : "badge-warning";
+                    return `
+                        <div class="finding-item ${isResolved ? 'resolved' : ''}" onclick="showIncidentDetail('${CyberShieldUtils.escapeHtml(inc.id || '')}', '${CyberShieldUtils.escapeHtml(inc.title || '')}', '${CyberShieldUtils.escapeHtml(inc.module || '')}', '${CyberShieldUtils.escapeHtml(inc.target || '')}', '${inc.severity}', '${inc.link || ''}')" style="cursor:pointer;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="badge ${isResolved ? 'badge-success' : sevClass}">${isResolved ? '✓ Resolved' : inc.severity.toUpperCase()}</span>
+                                <div>
+                                    <b style="color: white; font-size: 13.5px;">${CyberShieldUtils.escapeHtml(inc.title)}</b>
+                                    <div style="font-size: 11px; color: var(--muted);">${inc.module} • ${CyberShieldUtils.escapeHtml(inc.target || '')}</div>
+                                </div>
+                            </div>
+                            <span style="color: var(--blue-light); font-weight: 700; font-size: 12px;">${isResolved ? 'Resolved' : 'Review & Fix →'}</span>
+                        </div>
+                    `;
+                }).join("");
+            }
+
+            // B. Core System Audit Findings
+            const issueKeys = Object.keys(ISSUES);
+            findingsHTML += issueKeys.map(key => {
+                const item = ISSUES[key];
+                const isFixed = !!fixed[key];
+                return `
+                    <div class="finding-item ${isFixed ? 'resolved' : ''}" onclick="openFixModal('${key}')">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="badge ${isFixed ? 'badge-success' : item.badgeClass}">${isFixed ? '✓ Fixed' : item.sev.toUpperCase()}</span>
+                            <b style="color: white; font-size: 13.5px;">${item.title}</b>
+                        </div>
+                        <span style="color: var(--blue-light); font-weight: 700; font-size: 12px;">${isFixed ? 'Resolved' : 'Take Action →'}</span>
+                    </div>
+                `;
+            }).join("");
+            findingsList.innerHTML = findingsHTML;
+
+            // 4. COVERAGE LABELS SYNC
+            const pwGood = fixed.outlook && fixed.weakpass || (pw.score >= 75 && !pw.breached);
+            document.getElementById("covPasswordLabel").className = pwGood ? "badge badge-success" : "badge badge-warning";
+            document.getElementById("covPasswordLabel").textContent = pwGood ? "● Active" : "● Issue Detected";
+
+            const bullyGood = fixed.cyberbully || (bully.flaggedCount === 0);
+            document.getElementById("covBullyLabel").className = bullyGood ? "badge badge-success" : "badge badge-danger";
+            document.getElementById("covBullyLabel").textContent = bullyGood ? "● Resolved" : "● Alert Flagged";
+
+            document.getElementById("cov2faLabel").className = fixed["2fa"] ? "badge badge-success" : "badge badge-warning";
+            document.getElementById("cov2faLabel").textContent = fixed["2fa"] ? "● Enabled" : "● Not Enabled";
+
+            // 5. METRICS CARDS LIVE SYNC
+            const pwScore = pw.score !== undefined ? pw.score : (fixed.weakpass ? 96 : 72);
+            document.getElementById("pwScoreText").textContent = pwScore + "/100";
+            document.getElementById("pwScoreText").style.color = pwScore >= 75 ? "var(--success)" : (pwScore >= 50 ? "var(--warning)" : "var(--danger)");
+
+            const pwCrack = document.getElementById("pwCrackText");
+            if (pwCrack) pwCrack.textContent = pw.crackTime || "~200+ yrs";
+
+            document.getElementById("pwReusedText").textContent = pw.breached ? "Breached!" : (pw.weakCount > 0 && !fixed.weakpass ? "1 Weak" : "0 Found");
+            document.getElementById("pwReusedText").style.color = (pw.breached || pw.weakCount > 0 && !fixed.weakpass) ? "var(--danger)" : "var(--success)";
+
+            // Phishing metrics
+            const elPhishScans = document.getElementById("phishScansText");
+            if (elPhishScans) elPhishScans.textContent = `${phish.scansCount || 42} URLs`;
+
+            const elPhishBlocked = document.getElementById("phishBlockedText");
+            if (elPhishBlocked) elPhishBlocked.textContent = `${phish.threatsBlocked || 2} Links`;
+
+            const lastPhish = phish.lastScan;
+            const isPhishBad = lastPhish && (lastPhish.is_phishing || lastPhish.risk_score >= 50) && !fixed.phishlink;
+            document.getElementById("phishFlagText").textContent = fixed.phishlink ? "Quarantined" : (lastPhish ? (lastPhish.target || "Scanned Link") : "bit.ly/xyz");
+            document.getElementById("phishFlagText").style.color = isPhishBad ? "var(--warning)" : "var(--success)";
+
+            // Cyberbullying metrics
+            const elBullyScans = document.getElementById("bullyScansText");
+            if (elBullyScans) elBullyScans.textContent = `${bully.scansCount || 12} Analyzed`;
+
+            const bullyCount = bully.flaggedCount || (fixed.cyberbully ? 0 : 1);
+            document.getElementById("bullyFlagText").textContent = fixed.cyberbully ? "0 Active" : `${bullyCount} Incident${bullyCount > 1 ? 's' : ''}`;
+            document.getElementById("bullyFlagText").style.color = fixed.cyberbully ? "var(--success)" : "var(--danger)";
+            document.getElementById("bullyStatusText").textContent = fixed.cyberbully ? "Resolved" : (bullyCount > 0 ? "High Severity" : "Monitored Safe");
+            document.getElementById("bullyStatusText").style.color = fixed.cyberbully ? "var(--success)" : "var(--danger)";
+
+            // 6. AI EXECUTIVE SYNTHESIS
+            const aiSynthesis = document.getElementById("aiSynthesisText");
+            if (aiSynthesis) {
+                const breachInfo = leak.breachesFound > 0 ? `<strong>${leak.breachesFound} public breach records</strong> detected for <code>${leak.emailScanned || 'target'}</code>.` : `zero public breaches detected.`;
+                aiSynthesis.innerHTML = `
+                    Real-time synthesis: <strong>Security Analyzer</strong> evaluates password health at <b>${pwScore}/100 (${pw.healthLabel || 'Active'})</b> with ${breachInfo}
+                    <strong>Phishing Detection</strong> has processed <b>${phish.scansCount || 42} URLs</b> (${phish.threatsBlocked || 2} threats quarantined).
+                    <strong>Cyberbullying Defense</strong> has monitored <b>${bully.scansCount || 12} messages</b> (${bullyCount} flagged).
+                    <em>Digital Identity space is cleanly reserved for module integration.</em>
+                `;
+            }
+
+            // 7. PRIORITIES
+            const priorityList = document.getElementById("priorityList");
+            priorityList.innerHTML = `
+                <div class="priority-item ${fixed.outlook ? 'resolved' : ''}" onclick="openFixModal('outlook')">
+                    <span class="pnum">${fixed.outlook ? '✓' : '1'}</span>
+                    <span>Change weak Outlook password</span>
+                </div>
+                <div class="priority-item ${fixed.cyberbully ? 'resolved' : ''}" onclick="openFixModal('cyberbully')">
+                    <span class="pnum">${fixed.cyberbully ? '✓' : '2'}</span>
+                    <span>Handle flagged cyberbullying incident</span>
+                </div>
+                <div class="priority-item ${fixed['2fa'] ? 'resolved' : ''}" onclick="openFixModal('2fa')">
+                    <span class="pnum">${fixed['2fa'] ? '✓' : '3'}</span>
+                    <span>Enable Two-Factor Authentication</span>
+                </div>
+            `;
+        }
+
+        function renderTrendChart(currentScore) {
+            const points = [72, 78, 84, 88, currentScore];
+            const dates = ['15 Sep', '18 Sep', '21 Sep', '24 Sep', 'Today'];
+            const svg = document.getElementById("trendChart");
+            if (!svg) return;
+            const w = 340, h = 110, padX = 22, padY = 22;
+            const stepX = (w - padX * 2) / (points.length - 1);
+            const toY = v => (h - padY) - ((v - 50) / 50) * (h - padY * 2);
+
+            const pathStr = points.map((v, i) => `${i === 0 ? 'M' : 'L'} ${padX + i * stepX} ${toY(v)}`).join(' ');
+            const areaStr = pathStr + ` L ${padX + (points.length - 1) * stepX} ${h - 16} L ${padX} ${h - 16} Z`;
+
+            svg.innerHTML = `
+                <defs>
+                    <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#6350f4" stop-opacity="0.45"/>
+                        <stop offset="100%" stop-color="#00f2fe" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                <line x1="${padX}" y1="${toY(60)}" x2="${w - padX}" y2="${toY(60)}" stroke="rgba(111,129,201,0.15)" stroke-dasharray="3,3"/>
+                <line x1="${padX}" y1="${toY(80)}" x2="${w - padX}" y2="${toY(80)}" stroke="rgba(111,129,201,0.15)" stroke-dasharray="3,3"/>
+                <line x1="${padX}" y1="${toY(100)}" x2="${w - padX}" y2="${toY(100)}" stroke="rgba(111,129,201,0.15)" stroke-dasharray="3,3"/>
+                
+                <path d="${areaStr}" fill="url(#areaGrad)"/>
+                <path d="${pathStr}" fill="none" stroke="#7b70ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                
+                ${points.map((v, i) => `
+                    <circle cx="${padX + i * stepX}" cy="${toY(v)}" r="4.5" fill="#071a3a" stroke="#00f2fe" stroke-width="2.5"/>
+                    <text x="${padX + i * stepX}" y="${toY(v) - 8}" fill="#edf0ff" font-size="9" font-weight="800" text-anchor="middle">${v}</text>
+                    <text x="${padX + i * stepX}" y="${h - 2}" fill="#8494be" font-size="8" text-anchor="middle">${dates[i]}</text>
+                `).join('')}
+            `;
+        }
+
+        function openFixModal(id) {
+            const issue = ISSUES[id];
+            if (!issue) return;
+            const state = CyberShieldState.getState();
+            const isFixed = !!(state.securityReport && state.securityReport.fixedIssues[id]);
+
+            const modalContent = document.getElementById("modalContent");
+            modalContent.innerHTML = `
+                <div style="margin-bottom: 16px;">
+                    <span class="badge ${isFixed ? 'badge-success' : issue.badgeClass}">${isFixed ? '✓ Fixed' : issue.sev.toUpperCase() + ' SEVERITY'}</span>
+                    <h2 style="font-size: 20px; font-weight: 800; margin: 8px 0 4px; color: white;">${issue.title}</h2>
+                    <p style="color: var(--muted); font-size: 13px;">${issue.desc}</p>
+                </div>
+                
+                ${isFixed ? `
+                    <div style="padding: 14px; background: var(--success-bg); border: 1px solid var(--success); border-radius: 10px; color: var(--success); font-size: 13px; font-weight: 700; margin-bottom: 20px;">
+                        ✓ ${issue.resolvedMsg}
+                    </div>
+                ` : `
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="font-size: 13.5px; font-weight: 700; margin-bottom: 8px; color: white;">Recommended Action Steps:</h4>
+                        <ol style="padding-left: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
+                            ${issue.steps.map(s => `<li>${s}</li>`).join('')}
+                        </ol>
+                    </div>
+                `}
+
+                <div style="display: flex; gap: 12px;">
+                    ${isFixed ? `
+                        <button class="btn btn-secondary" style="width: 100%;" onclick="closeFixModal()">Close</button>
+                    ` : `
+                        <button class="btn btn-primary" style="flex: 1;" onclick="applyFix('${id}')">Mark as Fixed & Update Score ✓</button>
+                        <button class="btn btn-secondary" onclick="closeFixModal()">Cancel</button>
+                    `}
+                </div>
+            `;
+            document.getElementById("fixModal").classList.add("active");
+        }
+
+        function closeFixModal() {
+            document.getElementById("fixModal").classList.remove("active");
+        }
+
+        function showIncidentDetail(id, title, module, target, severity, link) {
+            const modalContent = document.getElementById("modalContent");
+            const isDanger = severity === "Critical" || severity === "High";
+            modalContent.innerHTML = `
+                <div style="margin-bottom: 16px;">
+                    <span class="badge ${isDanger ? 'badge-danger' : 'badge-warning'}">${severity.toUpperCase()} ALERT</span>
+                    <h2 style="font-size: 20px; font-weight: 800; margin: 8px 0 4px; color: white;">${CyberShieldUtils.escapeHtml(title)}</h2>
+                    <p style="color: var(--muted); font-size: 13px;">Logged by <strong>${CyberShieldUtils.escapeHtml(module)}</strong> for target <code>${CyberShieldUtils.escapeHtml(target)}</code>.</p>
+                </div>
+                <div style="margin-bottom: 20px; background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 8px; padding: 12px;">
+                    <div style="font-size: 12px; color: #cbd5e1; margin-bottom: 6px;"><strong>Threat Status:</strong> Quarantined & Monitored</div>
+                    <div style="font-size: 12px; color: var(--muted); line-height: 1.5;">This incident was intercepted by CyberShield Zero-Trust defense heuristics. Review the originating vector or confirm resolution below.</div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    ${link ? `<a href="${link}" class="btn btn-primary" style="flex:1; text-align:center;">Open in ${CyberShieldUtils.escapeHtml(module)} ↗</a>` : ''}
+                    <button class="btn btn-secondary" onclick="resolveIncident('${id}')">Mark as Resolved ✓</button>
+                    <button class="btn btn-secondary" onclick="closeFixModal()">Close</button>
+                </div>
+            `;
+            document.getElementById("fixModal").classList.add("active");
+        }
+
+        function resolveIncident(id) {
+            const state = CyberShieldState.getState();
+            if (state.incidents) {
+                const targetInc = state.incidents.find(i => i.id === id);
+                if (targetInc) {
+                    targetInc.status = "Resolved";
+                    CyberShieldState.recalculateScore();
+                    CyberShieldState.saveState();
+                }
+            }
+            closeFixModal();
+            CyberShieldUtils.showToast("✓ Threat incident marked as resolved!");
+            renderReport();
+        }
+
+        function applyFix(id) {
+            CyberShieldState.resolveIssue(id);
+            closeFixModal();
+            CyberShieldUtils.showToast("✓ Issue marked as fixed! Security score updated.");
+        }
+
+        function runFullReportAnalysis() {
+            if (window.CyberShieldUtils) {
+                CyberShieldUtils.showToast("⏳ Running deep AI Security Audit evaluation...", "info");
+            }
+            const btn = document.querySelector('button[onclick="runFullReportAnalysis()"]');
+            if (btn) btn.disabled = true;
+
+            setTimeout(() => {
+                CyberShieldState.recalculateScore();
+                CyberShieldState.saveState();
+                renderReport();
+                if (btn) btn.disabled = false;
+                if (window.CyberShieldUtils) {
+                    CyberShieldUtils.showToast("✨ AI Security Audit complete! All module telemetry updated.", "success");
+                }
+            }, 600);
+        }
+    </script>
+</body>
+</html>

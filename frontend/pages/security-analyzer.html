@@ -1,0 +1,1583 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CyberShield AI — Security Analyzer</title>
+  <link rel="icon" type="image/png" href="../assets/icon-48.png">
+  <style>
+    :root {
+      --bg: #071027;
+      --panel: #0b2145;
+      --panel-2: #071a3a;
+      --line: rgba(93,118,205,.35);
+      --text: #edf0ff;
+      --muted: #8494be;
+      --purple: #6350f4;
+      --safe: #31d5ae;
+      --warn: #f2c14d;
+      --risk: #f05a8b;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-width: 320px; min-height: 100%; background: var(--bg); color: var(--text); }
+    body {
+      background:
+        radial-gradient(circle at 72% -12%, rgba(87,75,255,.16), transparent 32rem),
+        radial-gradient(circle at 6% 70%, rgba(21,202,210,.05), transparent 24rem),
+        var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .app-shell { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 226px; flex: 0 0 226px; padding: 21px 13px 17px; display: flex; flex-direction: column;
+      border-right: 1px solid rgba(111,129,201,.18);
+      background: linear-gradient(180deg, rgba(10,20,48,.97), rgba(6,15,35,.98));
+    }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 0 9px 22px; cursor: pointer; }
+    .brand svg { width: 28px; height: 33px; color: #7b70ff; filter: drop-shadow(0 4px 12px rgba(94,90,255,.28)); }
+    .brand-name { font-size: 14px; font-weight: 800; letter-spacing: -.03em; }
+    .brand-tagline { font-size: 7px; color: #7d8bb8; margin-top: 2px; }
+    .nav-label { padding: 13px 10px 8px; color: #526188; font-size: 9px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    .nav { display: grid; gap: 4px; }
+    .nav-item {
+      border: 0; background: transparent; color: #8492b9; width: 100%; padding: 10px; border-radius: 8px;
+      display: flex; align-items: center; gap: 11px; font-size: 11px; text-align: left;
+    }
+    .nav-item:hover { color: #fff; background: rgba(91,95,210,.13); }
+    .nav-item.active { color: #fff; background: linear-gradient(100deg,#4841da,#634ceb); box-shadow: 0 9px 19px rgba(71,63,226,.22); }
+    .sidebar-spacer { flex: 1; }
+    .sidebar-promo {
+      margin: 10px 1px 0; min-height: 137px; border: 1px solid rgba(100,105,236,.25); border-radius: 12px;
+      padding: 17px 11px 11px; background: radial-gradient(circle at 50% 22%,rgba(95,82,255,.2),transparent 50%),rgba(14,28,63,.75);
+      text-align: center;
+    }
+    .sidebar-promo > svg { color: #6662ff; width: 31px; height: 38px; margin-bottom: 4px; }
+    .sidebar-promo strong { display: block; font-size: 11px; line-height: 1.35; }
+    .sidebar-promo span { display: block; color: #7181ad; font-size: 8px; margin-top: 4px; }
+    .main { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 54px; padding: 0 29px; display: flex; align-items: center; justify-content: flex-end; border-bottom: 1px solid rgba(111,129,201,.18); }
+    .top-actions { display: flex; align-items: center; gap: 17px; }
+    .icon-button { border: 0; color: #bdc6e5; background: transparent; padding: 6px; display: grid; place-items: center; border-radius: 7px; }
+    .icon-button:hover { color: #fff; background: rgba(116,124,215,.15); }
+    .avatar { width: 25px; height: 25px; border: 1px solid rgba(255,255,255,.25); border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg,#604bff,#8068fb); color: #fff; font-size: 10px; font-weight: 800; cursor: pointer; }
+    .page { width: 100%; max-width: 934px; margin: 0 auto; padding: 23px 28px 46px; }
+    .page-heading { display: flex; align-items: flex-start; gap: 13px; margin-bottom: 17px; }
+    .page-heading h1 { margin: 0; font-size: 17px; letter-spacing: -.03em; }
+    .page-heading p { margin: 3px 0 0; color: #8090bb; font-size: 10px; }
+    .mode-switch { display: grid; grid-template-columns: 1fr 1fr; background: rgba(10,26,57,.8); border: 1px solid rgba(97,110,195,.35); border-radius: 8px; padding: 3px; margin-bottom: 15px; }
+    .mode-button { border: 0; color: #9caad3; background: transparent; border-radius: 6px; min-height: 31px; display: flex; align-items: center; justify-content: center; gap: 9px; font-size: 10px; font-weight: 700; }
+    .mode-button.active { color: #fff; background: linear-gradient(100deg,#4e48e8,#6150f4); box-shadow: 0 5px 13px rgba(68,61,221,.2); }
+    .panel { border: 1px solid var(--line); border-radius: 9px; background: linear-gradient(135deg,rgba(11,31,65,.95),rgba(7,23,51,.92)); box-shadow: 0 18px 40px rgba(0,0,0,.2); }
+    .panel-header { padding: 13px 14px 11px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .panel-title { display: flex; align-items: flex-start; gap: 10px; }
+    .title-icon { width: 20px; height: 20px; display: grid; place-items: center; color: #7f72ff; }
+    .panel h2 { margin: 0; font-size: 13px; }
+    .panel-subtitle { margin: 3px 0 0; font-size: 9px; color: #8695bd; }
+    .ai-badge { display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(117,104,255,.6); color: #b9b2ff; background: rgba(79,71,200,.16); border-radius: 12px; padding: 4px 7px; font-size: 8px; font-weight: 700; }
+    .input-row { display: flex; gap: 8px; padding: 0 14px 13px; }
+    .field-wrap { min-width: 0; flex: 1; position: relative; }
+    .text-field { width: 100%; color: #edf0ff; background: rgba(4,16,39,.8); border: 1px solid rgba(99,120,199,.44); border-radius: 7px; outline: none; padding: 10px 36px 10px 12px; font-size: 10px; }
+    .text-field:focus { border-color: #7569ff; box-shadow: 0 0 0 3px rgba(103,93,255,.14); }
+    .field-action { position: absolute; right: 5px; top: 5px; height: 26px; width: 26px; }
+    .primary-button { border: 0; color: #fff; background: linear-gradient(110deg,#5b4cf1,#7760fb); border-radius: 7px; padding: 0 15px; min-width: 83px; font-size: 10px; font-weight: 800; box-shadow: 0 7px 17px rgba(83,69,230,.24); }
+    .primary-button:hover { filter: brightness(1.12); transform: translateY(-1px); }
+    .primary-button span { display: inline-flex; gap: 6px; align-items: center; }
+    .password-analysis { display: grid; grid-template-columns: 1.12fr .88fr; gap: 7px; padding: 0 14px 10px; }
+    .score-card, .crack-card { border: 1px solid rgba(79,112,193,.31); border-radius: 8px; background: rgba(7,22,51,.62); min-height: 101px; }
+    .score-card { display: flex; align-items: center; padding: 12px; gap: 13px; }
+    .score-ring { width: 110px; height: 110px; flex: 0 0 auto; border-radius: 50%; display: grid; place-items: center; position: relative; }
+    .score-ring::before { content: ""; position: absolute; inset: 10px; background: #0d234d; border-radius: 50%; }
+    .score-value { position: relative; z-index: 1; display: flex; align-items: baseline; gap: 2px; }
+    .score-value strong { font-size: 32px; line-height: 1; font-weight: 800; }
+    .score-value small { font-size: 11px; color: #8d9ac3; }
+    .score-detail h3 { margin: 0; color: #ff638d; font-size: 16px; font-weight: 800; }
+    .score-detail p { margin: 4px 0 7px; color: #a3acd0; font-size: 10px; }
+    .meter { width: 82px; height: 5px; border-radius: 9px; background: #213661; overflow: hidden; }
+    .meter span { display: block; height: 100%; border-radius: inherit; }
+    .crack-card { padding: 12px; }
+    .crack-label { display: flex; align-items: center; gap: 5px; font-size: 8px; color: #9da9ce; }
+    .crack-time { font-size: 11px; font-weight: 800; margin: 10px 0 5px; }
+    .crack-note { color: #9ba7c9; font-size: 8px; line-height: 1.4; }
+    .risk-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 7px; padding: 0 14px 13px; }
+    .risk-card { border: 1px solid rgba(79,112,193,.31); border-radius: 8px; background: rgba(7,22,51,.62); padding: 11px; }
+    .risk-card h3 { display: flex; justify-content: space-between; margin: 0 0 9px; font-size: 10px; }
+    .risk-card h3 span { border: 1px solid rgba(224,83,131,.6); padding: 3px 5px; border-radius: 5px; color: #f16b92; font-size: 7px; }
+    .risk-list { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+    .risk-list li { display: flex; gap: 7px; align-items: flex-start; color: #c0c8e1; font-size: 8px; line-height: 1.35; }
+    .risk-list svg { width: 12px; height: 12px; flex: 0 0 auto; color: #f45985; }
+    .fix-list svg { color: #2bd6a8; }
+    .subpanel-heading { display: flex; align-items: center; gap: 10px; padding: 13px 14px 9px; }
+    .subpanel-heading > svg { color: #8a7dff; }
+    .subpanel-heading h3 { margin: 0; font-size: 12px; }
+    .subpanel-heading p { margin: 2px 0 0; color: #7f8eb7; font-size: 8px; }
+    .reuses-panel, .generate-panel { margin-top: 7px; overflow: hidden; }
+    .table-wrap { padding: 0 10px 10px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 455px; font-size: 9px; }
+    th { text-align: left; color: #8492bb; background: rgba(42,65,116,.32); padding: 7px 9px; font-weight: 500; }
+    td { color: #d0d6eb; border-top: 1px solid rgba(74,99,172,.19); padding: 7px 9px; }
+    .account, .breakdown-service { display: flex; align-items: center; gap: 8px; }
+    .service-logo { width: 16px; height: 16px; border-radius: 4px; display: inline-grid; place-items: center; flex: 0 0 auto; color: #fff; font-size: 8px; font-weight: 800; }
+    .service-logo-gmail { background: #d94b57; }.service-logo-instagram { background: linear-gradient(135deg,#f5bd43,#e34a79 52%,#7749bb); }.service-logo-linkedin { background: #2479b5; }.service-logo-facebook { background: #2766bf; }.service-logo-spotify { background: #179b62; }.service-logo-youtube { background: #db3841; }.service-logo-amazon { background: #d88925; }.service-logo-adobe { background: #fa0f00; }.service-logo-dropbox { background: #0061ff; }.service-logo-generic { background: #6350f4; }
+    .status-pill { display: inline-flex; border: 1px solid; border-radius: 5px; padding: 3px 6px; font-size: 7px; }
+    .status-pill.danger { color: #f46c91; border-color: #a33f63; background: rgba(186,47,93,.14); }.status-pill.safe { color: #32d4ad; border-color: #177e6d; background: rgba(28,173,132,.13); }.status-pill.warn { color: #f4c457; border-color: #9e7730; background: rgba(204,150,33,.13); }.status-pill.unknown { color: #a2b1d1; border-color: #3e547f; background: rgba(66,92,137,.13); }
+    .table-action { border: 0; background: transparent; color: #a9b5d7; padding: 2px; }
+    .generate-row { display: flex; gap: 8px; padding: 2px 14px 10px; }
+    .generate-input { flex: 1; min-width: 0; border: 1px solid rgba(99,120,199,.44); background: rgba(4,16,39,.8); border-radius: 7px; display: flex; align-items: center; justify-content: space-between; padding-left: 11px; color: #dce2fa; font-family: ui-monospace, monospace; font-size: 10px; font-weight: 600; }
+    .copy-button { border: 0; background: transparent; color: #aa9fff; padding: 8px; }
+    .feature-list { display: flex; flex-wrap: wrap; gap: 15px; padding: 0 14px 12px; color: #91a0c6; font-size: 8px; }
+    .combo-tabs { display: flex; gap: 5px; padding: 0 14px 8px; overflow-x: auto; }
+    .combo-pill { border: 1px solid rgba(99,120,199,.35); background: rgba(4,16,39,.6); color: #8ba0d0; padding: 4px 8px; border-radius: 5px; font-size: 8px; font-weight: 600; }
+    .combo-pill.active { background: #6350f4; color: #fff; border-color: #7b6bff; }
+    .apply-btn { border: 1px solid #31d5ae; background: rgba(49,213,174,.12); color: #31d5ae; border-radius: 6px; padding: 0 10px; font-size: 9px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+    .apply-btn:hover { background: #31d5ae; color: #05162b; }
+    .email-view { display: grid; gap: 7px; }
+    .footprint-card { padding-bottom: 13px; }
+    .footprint-stage { min-height: 240px; position: relative; border-top: 1px solid rgba(69,101,181,.18); border-bottom: 1px solid rgba(69,101,181,.18); overflow: hidden; background: radial-gradient(circle at 50% 49%,rgba(74,74,217,.16),transparent 23%),radial-gradient(circle at 50% 48%,transparent 0 16%,rgba(76,101,197,.07) 16.2% 16.4%,transparent 16.6% 28%,rgba(76,101,197,.05) 28.2% 28.4%,transparent 28.6%); }
+    .footprint-stage::before, .footprint-stage::after { content: ""; position: absolute; width: 205px; height: 1px; top: 50%; left: calc(50% - 102px); background: repeating-linear-gradient(90deg,rgba(99,130,225,.62) 0 2px,transparent 2px 5px); transform: rotate(24deg); }
+    .footprint-stage::after { background: repeating-linear-gradient(90deg,rgba(215,76,143,.62) 0 2px,transparent 2px 5px); transform: rotate(-26deg); }
+    .footprint-summary { position: absolute; left: 13px; top: 13px; display: flex; align-items: center; gap: 7px; z-index: 4; }
+    .summary-icon { width: 23px; height: 23px; border: 1px solid rgba(126,95,255,.6); border-radius: 7px; display: grid; place-items: center; color: #a68dff; background: rgba(94,67,230,.17); }
+    .footprint-summary strong, .footprint-summary span { display: block; }.footprint-summary strong { font-size: 10px; }.footprint-summary span { color: #8494be; font-size: 7px; margin-top: 2px; }
+    .footprint-donut { position: absolute; right: 164px; top: 13px; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--safe) 0 43%,var(--warn) 43% 71%,var(--risk) 71%); z-index: 4; }
+    .footprint-donut::before { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: #0c2350; }
+    .donut-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 1px; }.footprint-donut strong { font-size: 14px; line-height: 1; }.footprint-donut span { color: #aab6d3; font-size: 6px; }
+    .footprint-legend { position: absolute; right: 12px; top: 12px; display: grid; gap: 5px; font-size: 8px; color: #afbad7; z-index: 4; }.footprint-legend span { display: flex; align-items: center; gap: 5px; }.legend-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }.dot-safe { background: var(--safe); }.dot-warn { background: var(--warn); }.dot-risk { background: var(--risk); }
+    .hub { position: absolute; left: 50%; top: 50%; width: 66px; height: 66px; transform: translate(-50%,-50%); border: 2px solid #685cf4; background: rgba(24,29,103,.86); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 8px 4px; z-index: 2; box-shadow: 0 0 0 8px rgba(90,81,220,.06); text-align: center; }.hub svg { color: #a494ff; }.hub span { max-width: 58px; color: #e0e5ff; font-size: 5.5px; line-height: 1.15; overflow-wrap: anywhere; }
+    .service-node { position: absolute; z-index: 3; min-width: 78px; padding: 6px 9px 5px; border: 1px solid; border-radius: 17px; display: flex; align-items: center; justify-content: center; gap: 6px; background: rgba(6,23,54,.94); font-size: 8px; }.service-node strong,.service-node small { display: block; }.service-node strong { font-size: 9px; }.service-node small { font-size: 7px; margin-top: 1px; }.service-node .service-logo { width: 17px; height: 17px; border-radius: 50%; }.service-node.safe { border-color: #16cfa7; color: #27e1b4; }.service-node.warn { border-color: #f0b83f; color: #ffc84d; }.service-node.risk { border-color: #ed4c84; color: #ff6e99; }
+    .node-gmail { left: 5%; top: 27%; }.node-instagram { right: 4%; top: 27%; }.node-linkedin { left: 4%; top: 51%; }.node-facebook { right: 3%; top: 51%; }.node-spotify { left: 9%; bottom: 17%; }.node-youtube { right: 7%; bottom: 17%; }.node-amazon { left: 39%; bottom: 5%; }
+    .risk-section { padding: 12px 13px 13px; }.risk-section-title { display: flex; align-items: center; gap: 7px; font-size: 10px; color: #dfd9ff; margin-bottom: 9px; }
+    .risk-highlight { border: 1px solid rgba(197,72,139,.58); border-radius: 7px; padding: 9px; display: grid; grid-template-columns: auto 1fr auto; gap: 9px; align-items: center; background: rgba(115,30,91,.13); margin-bottom: 8px; }.risk-highlight.resolved { border-color: rgba(49,207,169,.5); background: rgba(22,133,111,.12); }.risk-service-avatar { width: 25px; height: 25px; border-radius: 6px; display: grid; place-items: center; overflow: hidden; }.risk-service-avatar .service-logo { width: 100%; height: 100%; border-radius: 6px; }.risk-text { min-width: 0; }.risk-text strong { display: block; font-size: 10px; }.risk-text p { margin: 3px 0 0; color: #8796bd; font-size: 8px; line-height: 1.4; }.small-button { border: 0; color: #fff; background: #6355ee; border-radius: 5px; font-size: 8px; font-weight: 800; padding: 8px 10px; }.fixed-badge { display: inline-flex; align-items: center; gap: 4px; color: #43e0bb; font-size: 8px; font-weight: 800; }.risk-meta { grid-column: 2 / span 2; color: #7181ad; font-size: 7px; margin-top: -2px; }.risk-meta span { color: #91a0c6; margin-right: 12px; }
+    .action-steps-box { background: rgba(4,16,39,.6); border: 1px solid rgba(99,120,199,.25); border-radius: 7px; padding: 10px; margin-top: 8px; }
+    .action-steps-box h4 { margin: 0 0 6px; font-size: 9px; color: #b9b2ff; display: flex; align-items: center; gap: 6px; }
+    .real-solution-grid { display: grid; gap: 6px; font-size: 8px; line-height: 1.4; color: #a9badc; }
+    .real-solution-item { display: flex; align-items: flex-start; gap: 6px; background: rgba(11,31,65,.5); padding: 6px 8px; border-radius: 5px; border-left: 2px solid #6350f4; }
+    .real-solution-item.danger { border-left-color: #f05a8b; }
+    .real-solution-item.safe { border-left-color: #31d5ae; }
+    .direct-link-btn { display: inline-flex; align-items: center; gap: 4px; color: #69a7ff; text-decoration: none; font-size: 8px; font-weight: 700; margin-top: 3px; }
+    .direct-link-btn:hover { text-decoration: underline; color: #9ac4ff; }
+    .reuse-summary-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 14px 6px; flex-wrap: wrap; }
+    .reuse-stat-box { display: flex; align-items: center; gap: 6px; font-size: 8px; color: #a3b3d9; }
+    .reuse-stat-box strong { font-size: 10px; color: #fff; }
+    .reuse-toggle-btn { border: 1px solid rgba(99,120,199,.4); background: rgba(6,23,54,.7); color: #8ea8db; padding: 3px 7px; border-radius: 4px; font-size: 7px; cursor: pointer; font-weight: 700; transition: .15s; }
+    .reuse-toggle-btn.reused { border-color: #f05a8b; background: rgba(240,90,139,.15); color: #ff8cae; }
+    .reuse-toggle-btn.unique { border-color: #31d5ae; background: rgba(49,213,174,.15); color: #31d5ae; }
+    .unique-gen-btn { border: 1px solid rgba(99,80,244,.4); background: rgba(99,80,244,.15); color: #c0b4ff; padding: 3px 7px; border-radius: 4px; font-size: 7px; cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+    .unique-gen-btn:hover { background: #6350f4; color: #fff; }
+    .add-account-row { display: flex; gap: 6px; padding: 4px 14px 10px; }
+    .add-account-input { flex: 1; border: 1px solid rgba(99,120,199,.35); background: rgba(4,16,39,.7); border-radius: 5px; color: #edf0ff; padding: 5px 8px; font-size: 8px; outline: none; }
+    .add-account-btn { border: 0; background: linear-gradient(100deg,#4841da,#634ceb); color: #fff; padding: 5px 10px; border-radius: 5px; font-size: 8px; font-weight: 700; cursor: pointer; }
+    .danger-app-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; flex: 1; }
+    .danger-tab { border: 1px solid rgba(99,120,199,.35); background: rgba(6,23,54,.8); color: #9bb0db; padding: 5px 9px; border-radius: 6px; font-size: 8px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; }
+    .danger-tab.active { background: linear-gradient(100deg,#4841da,#634ceb); color: #fff; border-color: #7b6bff; box-shadow: 0 4px 12px rgba(99,76,235,.25); }
+    .danger-tab.resolved { border-color: rgba(49,213,174,.4); background: rgba(22,133,111,.15); color: #31d5ae; }
+    .danger-card-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(99,120,199,.2); }
+    .danger-card-title { display: flex; align-items: center; gap: 8px; }
+    .danger-card-title strong { font-size: 11px; color: #fff; }
+    .danger-stepper-controls { display: flex; align-items: center; gap: 8px; margin-top: 10px; justify-content: space-between; flex-wrap: wrap; }
+    .danger-nav-btn { border: 1px solid rgba(99,120,199,.35); background: rgba(14,28,63,.8); color: #c4d3f5; padding: 6px 11px; border-radius: 5px; font-size: 8px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+    .danger-nav-btn:hover { background: rgba(99,120,199,.2); color: #fff; }
+    .danger-nav-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .danger-progress-track { width: 100%; height: 4px; background: #162649; border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+    .danger-progress-fill { height: 100%; background: linear-gradient(90deg,#6350f4,#31d5ae); transition: width .3s; }
+    .breakdown { margin-top: 8px; border: 1px solid rgba(76,109,189,.27); border-radius: 7px; overflow: hidden; }.breakdown-summary { padding: 9px 10px; display: flex; justify-content: space-between; color: #bcc6e3; font-size: 9px; cursor: pointer; }.breakdown table { min-width: 0; font-size: 7px; }.breakdown th,.breakdown td { padding: 6px 9px; }.breakdown-service { gap: 5px; }.breakdown-service .service-logo { width: 14px; height: 14px; }
+    .scan-status { margin: 0 14px 10px; padding: 8px 10px; border-radius: 6px; color: #9cebd6; background: rgba(25,177,145,.1); border: 1px solid rgba(35,191,160,.25); font-size: 8px; }
+    .fix-modal-backdrop { position: fixed; inset: 0; z-index: 25; display: grid; place-items: center; padding: 20px; background: rgba(2,8,24,.78); backdrop-filter: blur(5px); }
+    .fix-modal { width: min(480px,100%); max-height: calc(100vh - 40px); overflow: auto; border: 1px solid rgba(116,103,245,.65); border-radius: 12px; padding: 18px; background: linear-gradient(145deg,#112b5b,#0a1d43); box-shadow: 0 24px 70px rgba(0,0,0,.6); }
+    .fix-modal-heading { display: flex; justify-content: space-between; gap: 12px; }
+    .fix-modal-heading > div { display: flex; gap: 9px; align-items: flex-start; }
+    .fix-modal-heading > div > svg { color: #ff79a0; flex: 0 0 auto; width: 22px; height: 22px; }
+    .fix-modal-heading strong { display: block; font-size: 13px; color: #fff; }
+    .fix-modal-heading p { margin: 4px 0 0; color: #9daacf; font-size: 9px; }
+    .fix-steps { display: grid; gap: 8px; list-style: none; padding: 0; margin: 14px 0 12px; }
+    .fix-step { display: flex; gap: 9px; padding: 9px 11px; border: 1px solid rgba(85,116,195,.35); border-radius: 8px; background: rgba(5,18,48,.55); }
+    .fix-step-number { width: 20px; height: 20px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 50%; color: #fff; background: #6554ef; font-size: 9px; font-weight: 800; }
+    .fix-step strong { display: block; font-size: 9px; color: #edf0ff; }
+    .fix-step p { margin: 3px 0 0; color: #aeb9da; font-size: 8px; line-height: 1.5; }
+    .fix-modal-note { display: flex; gap: 7px; margin: 0 0 13px; color: #92a4ce; font-size: 8px; line-height: 1.45; }
+    .modal-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; }
+    .fix-button { border: 0; border-radius: 5px; padding: 9px 13px; color: #061b29; background: #31d5ae; font-size: 9px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; }
+    .fix-button:hover { filter: brightness(1.1); }
+    .portal-link-btn { color: #8ea8ff; border: 1px solid rgba(142,168,255,.4); background: rgba(99,120,255,.1); padding: 8px 12px; border-radius: 5px; font-size: 8px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+    .portal-link-btn:hover { background: rgba(99,120,255,.2); color: #fff; }
+    .notification { position: fixed; right: 24px; bottom: 21px; z-index: 30; width: min(320px,calc(100vw - 32px)); padding: 12px 36px 12px 13px; border: 1px solid rgba(111,126,221,.48); border-radius: 8px; background: #101e46; box-shadow: 0 15px 35px rgba(0,0,0,.33); font-size: 10px; }
+    .notification strong { display: block; font-size: 10px; margin-bottom: 3px; }
+    .notification p { margin: 0; color: #a8b4db; line-height: 1.4; }
+    .notification .icon-button { position: absolute; right: 7px; top: 7px; }
+    .badge-live { display:inline-block; width:6px; height:6px; border-radius:50%; background:#31d5ae; box-shadow:0 0 8px #31d5ae; margin-right:4px; animation:pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+    @media (max-width: 760px) { .app-shell { display: block; }.sidebar { width: 100%; min-height: 0; padding: 13px 13px 10px; border-right: 0; border-bottom: 1px solid rgba(111,129,201,.18); }.brand { padding: 0 5px 12px; }.nav-label,.sidebar-spacer,.sidebar-promo { display: none; }.nav { display: flex; gap: 4px; overflow-x: auto; }.nav-item { width: auto; flex: 0 0 auto; padding: 8px 10px; font-size: 9px; }.topbar { height: 45px; padding: 0 16px; }.page { padding: 18px 13px 35px; }.password-analysis,.risk-grid { grid-template-columns: 1fr; }.footprint-stage { min-height: 286px; }.service-node { transform: scale(.9); }.footprint-donut { right: 12px; }.footprint-legend { top: auto; right: 10px; bottom: 10px; } }
+    @media (max-width: 420px) { .nav-item { padding: 8px; }.nav-item span { display: none; }.nav-item.active span { display: inline; }.input-row { flex-direction: column; }.primary-button { min-height: 35px; }.risk-highlight { grid-template-columns: auto 1fr; }.risk-highlight .small-button { grid-column: 2; justify-self: start; }.risk-meta { grid-column: 2; }.generate-row { flex-wrap: wrap; } }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="../js/state.js"></script>
+  <script src="../js/utils.js"></script>
+  <script>
+    // Auto-detect API location: works on Render/production (HTTPS or empty port), port 5000, and standalone port 5050
+    const API_BASE = (window.location.protocol === "https:" || window.location.port === "5000" || window.location.port === "5050" || window.location.port === "")
+      ? ""
+      : "http://localhost:5050";
+
+    const icons = {
+      shield: '<svg viewBox="0 0 24 24"><path d="M12 3 20 6v5c0 5-3.3 8.7-8 10-4.7-1.3-8-5-8-10V6l8-3Z"/></svg>',
+      bell: '<svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>',
+      lock: '<svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',
+      mail: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+      search: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>',
+      sparkle: '<svg viewBox="0 0 24 24"><path d="m12 3 1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3ZM19 16l.7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7L19 16Z"/></svg>',
+      eye: '<svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg>',
+      eyeOff: '<svg viewBox="0 0 24 24"><path d="m3 3 18 18M10.6 6.2A10.8 10.8 0 0 1 12 6c6.5 0 10 6 10 6a17.7 17.7 0 0 1-3.2 3.8M6.2 6.8C3.5 8.6 2 12 2 12s3.5 6 10 6c1.5 0 2.8-.3 4-.8"/></svg>',
+      check: '<svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>',
+      alert: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>',
+      clock: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+      link: '<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.3l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1M14 11a5 5 0 0 0-7.5-.3l-2 2a5 5 0 0 0 7.1 7.1l1.1-1.1"/></svg>',
+      copy: '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+      refresh: '<svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14-5L4 8M4 4v4h4M4 13a8 8 0 0 0 14 5l2-2m0 4v-4h-4"/></svg>',
+      arrow: '<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+      close: '<svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg>',
+      database: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v7c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12v7c0 1.7 3.6 3 8 3s8-1.3 8-3v-7"/></svg>',
+      user: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>',
+      grid: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg>',
+      fingerprint: '<svg viewBox="0 0 24 24"><path d="M12 11a2 2 0 0 1 2 2c0 4-1 6-2 8M8 13c0-2.2 1.8-4 4-4s4 1.8 4 4c0 3.1-.6 5.4-1.3 7M4 13a8 8 0 0 1 16 0c0 3.2-.6 5.7-1.4 8M12 5a8 8 0 0 0-8 8"/></svg>',
+      triangle: '<svg viewBox="0 0 24 24"><path d="m12 3 10 18H2L12 3Z"/><path d="M12 9v4M12 17h.01"/></svg>',
+      external: '<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>'
+    };
+
+    const navItems = [
+      ['Dashboard','grid'], ['Digital Identity','fingerprint'], ['Security Analyzer','shield'],
+      ['Phishing Detection','triangle'], ['Cyberbullying Detection','shield'], ['AI Security Report','database'], ['Profile / Settings','user']
+    ];
+
+    // Real remediation catalog for known compromised services & exposed data
+    const SERVICE_REMEDIATIONS = {
+      instagram: {
+        name: 'Instagram',
+        portal: 'https://www.instagram.com/accounts/password/change/',
+        portalName: 'Instagram Accounts Center',
+        steps: [
+          { title: 'Rotate Instagram Password', desc: 'Open Accounts Center → Password and security → Change password. Use 16+ characters with mixed case, digits, and symbols.' },
+          { title: 'Enable Two-Factor Authentication', desc: 'Turn on Two-Factor Authentication using an Authenticator App (Google Authenticator / Duo) instead of SMS.' },
+          { title: 'Review Active Logged-In Sessions', desc: 'Select "Where you’re logged in" and immediately terminate all unrecognized active device sessions.' },
+          { title: 'Revoke Third-Party Connected Apps', desc: 'Open "Apps and websites" and remove unauthorized third-party apps with access to your account.' }
+        ]
+      },
+      linkedin: {
+        name: 'LinkedIn',
+        portal: 'https://www.linkedin.com/psettings/change-password',
+        portalName: 'LinkedIn Sign in & Security',
+        steps: [
+          { title: 'Change LinkedIn Master Password', desc: 'Navigate to Settings & Privacy → Sign in & security → Change password. Eliminate any password reuse.' },
+          { title: 'Activate Two-Step Verification', desc: 'Enable Authenticator App 2FA and securely download your offline backup recovery codes.' },
+          { title: 'Purge Where You Are Signed In', desc: 'Audit "Where you’re signed in" and sign out of all previous work and mobile browser sessions.' },
+          { title: 'Enable Profile Visibility Shield', desc: 'Hide email address visibility from public search to stop targeted social engineering.' }
+        ]
+      },
+      adobe: {
+        name: 'Adobe',
+        portal: 'https://account.adobe.com/security',
+        portalName: 'Adobe Account Privacy & Security',
+        steps: [
+          { title: 'Update Adobe Creative Cloud Password', desc: 'Sign in to Adobe Account Security and create a fresh high-entropy password.' },
+          { title: 'Setup Adobe Account Access App / 2FA', desc: 'Enable multi-factor authentication or the Adobe Account Access notification approval.' },
+          { title: 'Check Stored Payment Methods', desc: 'Review active billing and credit cards on file for unauthorized stock/subscription purchases.' },
+          { title: 'Revoke Shared Cloud Storage Tokens', desc: 'Review Creative Cloud shared asset permissions and revoke legacy API tokens.' }
+        ]
+      },
+      gmail: {
+        name: 'Google / Gmail',
+        portal: 'https://myaccount.google.com/security',
+        portalName: 'Google Account Security Checkup',
+        steps: [
+          { title: 'Run Google Security Checkup', desc: 'Execute the official Google Security Checkup to scan all connected apps, devices, and passwords.' },
+          { title: 'Change Primary Google Password', desc: 'Create a unique passphrase and eliminate reuse across all linked secondary accounts.' },
+          { title: 'Deploy FIDO2 Passkeys or TOTP', desc: 'Register hardware security keys or authenticator apps for phishing-resistant logins.' },
+          { title: 'Audit Third-Party App Permissions', desc: 'Remove outdated apps with full access to Gmail, Drive, or Google Contacts.' }
+        ]
+      },
+      dropbox: {
+        name: 'Dropbox',
+        portal: 'https://www.dropbox.com/account/security',
+        portalName: 'Dropbox Security Settings',
+        steps: [
+          { title: 'Change Dropbox Password', desc: 'Update master credentials in Dropbox Security settings.' },
+          { title: 'Configure 2-Step Verification', desc: 'Turn on TOTP two-step authentication and record emergency backup codes.' },
+          { title: 'Audit Linked Desktop & Mobile Devices', desc: 'Unlink any old phones, tablets, or laptops from file sync.' },
+          { title: 'Inspect Public Shared Links', desc: 'Audit shared folders and disable public web links to sensitive documents.' }
+        ]
+      },
+      neogen: {
+        name: 'Neogen',
+        portal: 'https://www.neogen.com',
+        portalName: 'Neogen Portal & Corporate Account',
+        steps: [
+          { title: 'Rotate Corporate & Customer Portal Passwords', desc: 'Change passwords on Neogen corporate accounts and all shared vendor login portals.' },
+          { title: 'Watch for Targeted Phishing (Spear Phishing)', desc: 'Attackers have names, phone numbers, and physical addresses. Verify any unexpected supplier invoices or calls.' },
+          { title: 'Place Carrier Port-Freeze on Phone Number', desc: 'Contact your mobile phone carrier and request a PIN lock to prevent unauthorized SIM-swapping.' },
+          { title: 'Alert IT / Security Operations Team', desc: 'Notify corporate cybersecurity admins if company email credentials were included in the leak.' }
+        ]
+      }
+    };
+
+    function getRemediationFor(serviceName, dataExposed=[]) {
+      const key = (serviceName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      for (const k of Object.keys(SERVICE_REMEDIATIONS)) {
+        if (key.includes(k) || k.includes(key)) {
+          return SERVICE_REMEDIATIONS[k];
+        }
+      }
+      // Dynamic tailored response based on actual exposed data
+      const hasPassword = dataExposed.some(d => /pass/i.test(d));
+      const hasPhone = dataExposed.some(d => /phone|mobile/i.test(d));
+      const hasAddress = dataExposed.some(d => /address|location|physical/i.test(d));
+      
+      const dynamicSteps = [
+        { title: `Change Password on ${serviceName}`, desc: hasPassword ? 'Passwords were confirmed exposed in this breach. Immediately rotate your credentials and change passwords on any services where you reused this password.' : `Update your password on ${serviceName} to a unique 16+ character passphrase.` },
+        { title: 'Enable Phishing-Resistant 2FA', desc: 'Turn on two-factor authentication using an authenticator app (TOTP) or FIDO2 hardware key.' },
+        { title: hasPhone ? 'Guard Against Phone & SIM-Swap Attacks' : 'Review Active Sessions & Device Logins', desc: hasPhone ? 'Your phone number was exposed. Beware of spoofed support calls, SMS verification phishing, and place a transfer-freeze PIN with your telecom provider.' : 'Navigate to account security settings and sign out of all active web and mobile sessions.' },
+        { title: hasAddress ? 'Watch for Identity & Physical Impersonation' : 'Monitor Account For Suspicious Activity', desc: hasAddress ? 'Physical addresses or identity data were compromised. Watch for spear phishing letters and monitor credit reports.' : 'Inspect recent login history, connected apps, and transaction receipts for anomalies.' }
+      ];
+
+      return {
+        name: serviceName || 'Compromised Service',
+        portal: `https://www.google.com/search?q=${encodeURIComponent(serviceName + ' change password security settings')}`,
+        portalName: `${serviceName} Security Settings`,
+        steps: dynamicSteps
+      };
+    }
+
+    let defaultEmail = 'neeraja.shinde@cybershield.ai';
+    if (window.CyberShieldState) {
+      const csState = window.CyberShieldState.getState();
+      if (csState.user && csState.user.email) {
+        defaultEmail = csState.user.email;
+      }
+    }
+
+    const state = {
+      mode: 'password',
+      activeNav: 'Security Analyzer',
+      password: 'Neeraja@2007',
+      showPassword: false,
+      score: 42,
+      label: 'medium',
+      entropyBits: 52.4,
+      crackTime: 'about 14 days',
+      breached: false,
+      breachCount: 0,
+      issues: ['Contains personal structure', 'Common symbol-number suffix pattern'],
+      tips: ['Use 12+ characters', 'Avoid names and predictable patterns'],
+      email: defaultEmail,
+      scanned: false,
+      fixedServices: {},
+      modalService: null,
+      selectedDangerAppIndex: 0,
+      selectedComboIdx: 0,
+      combos: [],
+      notice: null,
+      loading: false,
+      breachList: [],
+      monitoredAccounts: [
+        { name: 'Gmail', reused: true, uniquePass: false },
+        { name: 'Instagram', reused: true, uniquePass: false },
+        { name: 'LinkedIn', reused: false, uniquePass: true },
+        { name: 'Adobe', reused: true, uniquePass: false },
+        { name: 'Amazon', reused: false, uniquePass: true },
+        { name: 'Spotify', reused: false, uniquePass: false },
+        { name: 'Netflix', reused: true, uniquePass: false }
+      ],
+      newAccountName: '',
+      leakFound: false,
+      leakAdvice: '',
+      leakSource: 'XposedOrNot',
+      scanError: null,
+      lastApiDebug: null
+    };
+
+    function esc(value) { return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function logo(name) {
+      const n = (name || '').toLowerCase();
+      const initial = name ? name[0].toUpperCase() : '?';
+      const knownClass = ['gmail','instagram','linkedin','facebook','spotify','youtube','amazon','adobe','dropbox'].find(s => n.includes(s));
+      return '<span class="service-logo ' + (knownClass ? 'service-logo-' + knownClass : 'service-logo-generic') + '">' + ({gmail:'G',instagram:'◎',linkedin:'in',facebook:'f',spotify:'●',youtube:'▶',amazon:'a',adobe:'A',dropbox:'D'}[knownClass] || initial) + '</span>';
+    }
+
+    function notice(title, message, tone='') {
+      state.notice = {title, message, tone};
+      render();
+      clearTimeout(notice.timer);
+      notice.timer = setTimeout(() => { state.notice = null; render(); }, 4500);
+    }
+
+    // Smart High-Strength Combinations Formed STRICTLY Around User's Letters & Numbers
+    function generateSmartCombinations(input) {
+      const base = (input || '').trim() || 'Shield@2026';
+      
+      const letters = base.match(/[a-zA-Z]/g) || [];
+      const digits = base.match(/\d+/g) || ['2026'];
+      const rawDigits = base.match(/\d/g) || ['2','0','2','6'];
+      const symbols = base.match(/[^a-zA-Z0-9\s]/g) || ['!'];
+
+      const words = base.match(/[a-zA-Z]+/g) || ['Shield'];
+      const mainWord = words[0] || 'Shield';
+      const capitalizedWord = mainWord.charAt(0).toUpperCase() + mainWord.slice(1);
+      const lowerWord = mainWord.toLowerCase();
+      const numberBlock = digits.join('') || '2026';
+      const symbolChar = symbols[0] || '!';
+      const extraSym = symbolChar === '!' ? '#' : (symbolChar === '@' ? '!' : '*');
+
+      // 1. Weaved Interleaf
+      let interleaved = '';
+      if (letters.length > 0 && rawDigits.length > 0) {
+        const maxLen = Math.max(letters.length, rawDigits.length);
+        for (let i = 0; i < maxLen; i++) {
+          if (i < letters.length) {
+            interleaved += (i === 0 ? letters[i].toUpperCase() : letters[i].toLowerCase());
+          }
+          if (i < rawDigits.length) {
+            interleaved += rawDigits[i];
+          }
+        }
+        interleaved += symbolChar;
+        if (interleaved.length < 12) interleaved += extraSym;
+      } else {
+        interleaved = `${capitalizedWord}1${symbolChar}${extraSym}`;
+      }
+
+      // 2. Inverted Numbers-First
+      let inverted = `${numberBlock}${symbolChar}${capitalizedWord}`;
+      if (inverted.length < 12) inverted += extraSym;
+
+      // 3. Shielded Sandwich
+      const sandwich = `${symbolChar}${capitalizedWord}.${numberBlock}${extraSym}`;
+
+      // 4. Fortified Vault Combination
+      const vaultComb = `${capitalizedWord}-Vault#${numberBlock}!`;
+
+      const combos = [
+        {
+          name: 'Weaved Interleaf',
+          desc: 'Alternates your letters and digits to shatter dictionary patterns',
+          val: interleaved
+        },
+        {
+          name: 'Inverted Reorder',
+          desc: 'Puts numbers first + symbol divider for high sequence disruption',
+          val: inverted
+        },
+        {
+          name: 'Shielded Sandwich',
+          desc: 'Encloses your base in symbols with dot anchor separation',
+          val: sandwich
+        },
+        {
+          name: 'Fortified Vault Anchor',
+          desc: 'High-entropy passphrase rooted in your core keyword',
+          val: vaultComb
+        }
+      ];
+
+      return combos;
+    }
+
+    let passwordDebounceTimer = null;
+
+    function calculateLivePasswordHealth(val) {
+      if (!val) {
+        state.score = 0;
+        state.label = 'weak';
+        state.entropyBits = 0;
+        state.crackTime = '< 1 sec';
+        state.issues = ['Password is empty'];
+        state.tips = ['Type at least 12 characters with digits and symbols.'];
+        return;
+      }
+      const length = val.length;
+      const hasUpper = /[A-Z]/.test(val);
+      const hasLower = /[a-z]/.test(val);
+      const hasDigits = /\d/.test(val);
+      const hasSymbols = /[^a-zA-Z0-9\s]/.test(val);
+      const varietyCount = [hasUpper, hasLower, hasDigits, hasSymbols].filter(Boolean).length;
+      const charset = (hasUpper ? 26 : 0) + (hasLower ? 26 : 0) + (hasDigits ? 10 : 0) + (hasSymbols ? 33 : 0);
+      const entropy = Math.round(length * (charset > 0 ? Math.log2(charset) : 1) * 10) / 10;
+      state.entropyBits = entropy;
+
+      let score = 0;
+      score += Math.min(48, length * 4);
+      score += varietyCount * 13;
+      if (/password|1234|admin|qwerty|welcome/i.test(val)) score -= 25;
+      if (length < 8) score -= 20;
+
+      score = Math.max(5, Math.min(100, Math.round(score)));
+      state.score = score;
+      state.label = score >= 75 ? 'strong' : (score >= 45 ? 'medium' : 'weak');
+
+      if (score >= 75) state.crackTime = '~200+ years';
+      else if (score >= 60) state.crackTime = '~3 years';
+      else if (score >= 45) state.crackTime = '~2 weeks';
+      else if (score >= 30) state.crackTime = '~3 days';
+      else state.crackTime = '< 1 hour';
+
+      const issues = [];
+      const tips = [];
+      if (length < 12) { issues.push('Length below 12 characters'); tips.push('Increase length to 14+ characters'); }
+      if (!hasSymbols) { issues.push('Missing special symbols (@, #, $, !)'); tips.push('Add special symbols'); }
+      if (!hasDigits) { issues.push('Missing numeric digits'); tips.push('Include numbers'); }
+      if (!hasUpper) { issues.push('No uppercase letters'); tips.push('Add uppercase characters'); }
+      state.issues = issues.length > 0 ? issues : ['None detected (Clean pattern)'];
+      state.tips = tips.length > 0 ? tips : ['Excellent entropy resilience', 'High resistance to brute-force attacks'];
+
+      if (window.CyberShieldState) {
+        window.CyberShieldState.recordPasswordScan({
+          scoreNum: state.score,
+          label: state.label.toUpperCase(),
+          crackTime: state.crackTime
+        });
+      }
+    }
+
+    function onPasswordInputChange(val) {
+      state.password = val;
+      calculateLivePasswordHealth(val);
+      updateCombinations();
+      render();
+
+      clearTimeout(passwordDebounceTimer);
+      passwordDebounceTimer = setTimeout(() => {
+        if (state.password && state.password.length >= 3) {
+          checkPasswordApiSilently();
+        }
+      }, 400);
+    }
+
+    async function checkPasswordApiSilently() {
+      try {
+        const res = await fetch(API_BASE + '/api/analyzer/password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: state.password })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          state.score = data.score;
+          state.label = data.label;
+          state.entropyBits = data.entropy_bits;
+          state.crackTime = data.estimated_crack_time;
+          state.breached = data.breached;
+          state.breachCount = data.breach_count;
+          if (data.issues && data.issues.length) state.issues = data.issues;
+          if (data.tips && data.tips.length) state.tips = data.tips;
+          if (window.CyberShieldState) {
+            window.CyberShieldState.recordPasswordScan({
+              scoreNum: state.score,
+              label: state.label.toUpperCase(),
+              crackTime: state.crackTime
+            });
+          }
+          render();
+        }
+      } catch (e) {}
+    }
+
+    function updateCombinations() {
+      state.combos = generateSmartCombinations(state.password);
+      if (state.selectedComboIdx >= state.combos.length) {
+        state.selectedComboIdx = 0;
+      }
+    }
+
+    function applySelectedCombo() {
+      if (!state.combos[state.selectedComboIdx]) return;
+      const chosen = state.combos[state.selectedComboIdx].val;
+      state.password = chosen;
+      calculateLivePasswordHealth(chosen);
+      updateCombinations();
+      render();
+      analyzePassword();
+      notice('Password Applied', `Applied combo "${chosen}" to input and evaluated live!`, 'success');
+    }
+
+    // Credential Exposure & Reuse Logic
+    function getAccountExposure(acc) {
+      if (acc.uniquePass) {
+        return { level: 'Safe', color: '#31d5ae', pillClass: 'safe', reason: 'Unique password deployed. Isolated from credential stuffing.' };
+      }
+      if (!acc.reused) {
+        return { level: 'Low Risk', color: '#31d5ae', pillClass: 'safe', reason: 'Not using this password. Unaffected by this password exposure.' };
+      }
+      // If reused:
+      if (state.breached) {
+        return { level: 'Critical Threat', color: '#f05a8b', pillClass: 'danger', reason: `Password found in ${state.breachCount.toLocaleString()} breaches! Credential-stuffing attacks can breach this account.` };
+      }
+      const isKnownBreach = (state.breachList || []).some(b => (b.name || '').toLowerCase().includes(acc.name.toLowerCase()));
+      if (isKnownBreach) {
+        return { level: 'Critical Risk', color: '#f05a8b', pillClass: 'danger', reason: `${acc.name} was compromised in known breach dumps with reused password.` };
+      }
+      if (state.score < 40) {
+        return { level: 'High Risk', color: '#f05a8b', pillClass: 'danger', reason: `Weak password (${state.score}/100) reused here. Highly susceptible to dictionary attacks.` };
+      }
+      if (state.score < 70) {
+        return { level: 'Moderate', color: '#f4c457', pillClass: 'warn', reason: 'Fair password reused. If one site leaks it, this account can be compromised.' };
+      }
+      return { level: 'Reuse Caution', color: '#f4c457', pillClass: 'warn', reason: 'Password is strong, but password reuse creates cross-service vulnerability.' };
+    }
+
+    function toggleAccountReuse(name) {
+      const acc = state.monitoredAccounts.find(a => a.name === name);
+      if (acc) {
+        acc.reused = !acc.reused;
+        if (acc.reused) acc.uniquePass = false;
+        render();
+        notice('Reuse Updated', `${name} is now marked as ${acc.reused ? 'Reusing this password' : 'Not reusing this password'}.`);
+      }
+    }
+
+    function generateUniqueForAccount(name) {
+      const acc = state.monitoredAccounts.find(a => a.name === name);
+      if (acc) {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*';
+        const arr = new Uint32Array(20);
+        crypto.getRandomValues(arr);
+        const uniqueVal = Array.from(arr, v => chars[v % chars.length]).join('');
+        acc.uniquePass = true;
+        acc.reused = false;
+        render();
+        copyValue(uniqueVal);
+        notice('Unique Password Generated', `Unique 20-char password for ${name} copied to clipboard! Marked protected.`, 'success');
+      }
+    }
+
+    function addNewAccount() {
+      const name = (state.newAccountName || '').trim();
+      if (!name) return;
+      if (state.monitoredAccounts.some(a => a.name.toLowerCase() === name.toLowerCase())) {
+        notice('Account Exists', `${name} is already in the check list.`, 'error');
+        return;
+      }
+      state.monitoredAccounts.push({ name: name, reused: true, uniquePass: false });
+      state.newAccountName = '';
+      render();
+      notice('Account Added', `${name} added to Credential Exposure & Reuse check.`, 'success');
+    }
+
+    // Live API integration for Password Analysis
+    async function analyzePassword() {
+      if (!state.password) {
+        notice('Input needed', 'Please enter a password to analyze.', 'error');
+        return;
+      }
+      state.loading = true;
+      updateCombinations();
+      render();
+      try {
+        const res = await fetch(API_BASE + '/api/analyzer/password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: state.password })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          state.score = data.score;
+          state.label = data.label;
+          state.entropyBits = data.entropy_bits;
+          state.crackTime = data.estimated_crack_time;
+          state.breached = data.breached;
+          state.breachCount = data.breach_count;
+          state.issues = data.issues || [];
+          state.tips = data.tips || [];
+          if (window.CyberShieldState) {
+            window.CyberShieldState.recordPasswordScan({
+              scoreNum: state.score,
+              label: state.label.toUpperCase(),
+              crackTime: state.crackTime
+            });
+          }
+          notice(
+            state.label === 'strong' ? 'Strong Password' : state.label === 'medium' ? 'Fair Password' : 'Weak Password Detected',
+            state.breached ? `Found in ${state.breachCount.toLocaleString()} known breaches! Update immediately.` : `Entropy: ${state.entropyBits} bits. Estimated crack time: ${state.crackTime}`,
+            state.label === 'strong' ? 'success' : 'error'
+          );
+        } else {
+          throw new Error('API returned status ' + res.status);
+        }
+      } catch (err) {
+        console.warn('Backend unavailable, running local security heuristics:', err);
+        const val = state.password;
+        const lengthScore = Math.min(val.length * 3.5, 45);
+        const variety = [/[A-Z]/,/[a-z]/,/[0-9]/,/[^A-Za-z0-9]/].filter(r=>r.test(val)).length * 12;
+        const penalty = (/password|123|qwerty/i.test(val)?25:0) + (val.length < 8 ? 25 : 0);
+        state.score = Math.max(0, Math.min(100, Math.round(lengthScore + variety - penalty)));
+        state.label = state.score >= 70 ? 'strong' : state.score >= 40 ? 'medium' : 'weak';
+        state.crackTime = state.score >= 70 ? 'Several years' : state.score >= 40 ? 'About 3 days' : 'Less than 1 hour';
+        notice('Password Analyzed', `Score calculated: ${state.score}/100 (${state.label})`, state.label === 'strong' ? 'success' : 'error');
+      }
+      state.loading = false;
+      render();
+    }
+
+    // Live API integration for Email / Domain Leak Scan with Chrome Extension Bridge
+    async function scanTarget(customTarget, explicitType) {
+      if (customTarget !== undefined) {
+        state.email = customTarget;
+      }
+      let target = (state.email || '').trim();
+      if (!target) {
+        notice('Target needed', 'Enter an email address or domain (e.g. adobe.com) before scanning.', 'error');
+        return;
+      }
+
+      // Determine scan type: domain vs email
+      let scanType = explicitType || state.scanType;
+      if (!scanType) {
+        scanType = target.includes('@') ? 'email' : 'domain';
+      }
+      state.scanType = scanType;
+
+      if (scanType === 'domain') {
+        target = target.replace(/^https?:\/\//i, '').replace(/\/.*$/, '').replace(/:\d+$/, '');
+        state.email = target;
+      }
+
+      state.loading = true;
+      state.scanned = true;
+      state.scanError = null;
+      state.fixedServices = {};
+      state.selectedDangerAppIndex = 0;
+      render();
+
+      try {
+        console.log(`[CyberShield] Scanning ${scanType}:`, target, '→', API_BASE + '/api/analyzer/leak');
+        const res = await fetch(API_BASE + '/api/analyzer/leak', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: scanType, value: target })
+        });
+        console.log('[CyberShield] HTTP status:', res.status, res.ok);
+        if (res.ok) {
+          const data = await res.json();
+          console.log('[CyberShield] API response:', JSON.stringify(data).slice(0, 300));
+          if (data.error) {
+            state.scanError = data.error;
+            state.leakFound = false;
+            state.breachCount = 0;
+            state.breachList = [];
+            state.leakAdvice = data.advice || data.error;
+            notice('Scan Notice', data.error, 'error');
+            state.loading = false;
+            render();
+            return;
+          }
+          state.scanError = null;
+          state.leakFound = !!data.found;
+          state.breachCount = data.breach_count || 0;
+          state.breachList = data.breaches || [];
+          state.leakAdvice = data.advice;
+          state.leakSource = data.source || 'XposedOrNot';
+          state.lastApiDebug = `API returned: found=${data.found}, breach_count=${data.breach_count}, breaches=${(data.breaches||[]).length}`;
+
+          // Synchronize accounts in the password tab with breached services found
+          if (state.leakFound && state.breachList.length > 0) {
+            state.breachList.slice(0, 8).forEach(b => {
+              if (!state.monitoredAccounts.some(a => a.name.toLowerCase() === b.name.toLowerCase())) {
+                state.monitoredAccounts.unshift({ name: b.name, reused: true, uniquePass: false });
+              }
+            });
+          }
+
+          // Propagate breach telemetry to shared CyberShieldState (AI Report & Dashboard)
+          if (window.CyberShieldState) {
+            window.CyberShieldState.recordLeakScan({
+              target: target,
+              type: scanType,
+              found: state.leakFound,
+              breachCount: state.breachCount,
+              breaches: state.breachList,
+              advice: state.leakAdvice
+            });
+          }
+
+          const targetLabel = scanType === 'domain' ? `Domain ${target}` : target;
+          notice(
+            data.found ? `✅ ${data.breach_count} Breaches Found for ${targetLabel}` : `✓ Clean Footprint for ${targetLabel}`,
+            data.found ? `Confirmed in XposedOrNot: ${(data.breaches||[]).slice(0,3).map(b=>b.name).join(', ')}${(data.breaches||[]).length > 3 ? ` +${(data.breaches||[]).length-3} more` : ''}` : data.advice,
+            data.found ? 'error' : 'success'
+          );
+        } else {
+          throw new Error('API returned status ' + res.status);
+        }
+      } catch (err) {
+        console.warn('Backend unavailable:', err);
+        state.scanError = 'Unable to connect to Security Analyzer service. Verify backend is active on port 5000/5050.';
+        notice('Scan Interrupted', state.scanError, 'error');
+      }
+      state.loading = false;
+      render();
+    }
+
+    // Alias for backward compatibility
+    function scanEmail(customEmail, explicitType) {
+      return scanTarget(customEmail, explicitType);
+    }
+
+    // Real-Time Chrome Extension Tab Sync
+    function fetchActiveChromeTab() {
+      notice('Connecting to Chrome...', 'Requesting real-time active tab from CyberShield Extension...', '');
+      let responded = false;
+
+      // Post message to content script bridge
+      window.postMessage({ type: "CYBERSHIELD_REQ_ACTIVE_TAB" }, "*");
+
+      const listener = (event) => {
+        if (event.data && event.data.type === "CYBERSHIELD_RESP_ACTIVE_TAB") {
+          responded = true;
+          window.removeEventListener("message", listener);
+          const tab = event.data.data;
+          if (tab && (tab.domain || tab.url)) {
+            const domain = tab.domain || (new URL(tab.url).hostname);
+            state.mode = 'email';
+            state.scanType = 'domain';
+            state.email = domain;
+            render();
+            notice('Chrome Tab Synced', `Fetched active domain from Chrome: ${domain}`, 'success');
+            scanTarget(domain, 'domain');
+          } else {
+            notice('Chrome Tab Info', 'No active website domain found on current tab.', 'error');
+          }
+        }
+      };
+      window.addEventListener("message", listener);
+
+      setTimeout(() => {
+        if (!responded) {
+          window.removeEventListener("message", listener);
+          // Check storage or inform user
+          notice('Extension Bridge Notice', 'To fetch real-time tabs, make sure the CyberShield AI extension is loaded in Chrome.', 'warn');
+        }
+      }, 1200);
+    }
+
+    function copyValue(value) {
+      navigator.clipboard?.writeText(value).then(() => notice('Copied', 'Password copied to clipboard.', 'success')).catch(() => notice('Copy failed', 'Select the text manually.', 'error'));
+    }
+
+    function openFixModal(serviceName, dataExposed=[]) {
+      state.modalService = {
+        name: serviceName,
+        dataExposed: dataExposed,
+        remediation: getRemediationFor(serviceName, dataExposed)
+      };
+      render();
+    }
+
+    function markServiceResolved(serviceName) {
+      state.fixedServices[serviceName] = true;
+      state.modalService = null;
+      if (window.CyberShieldState) {
+        window.CyberShieldState.resolveIssue('weakpass');
+        window.CyberShieldState.resolveIssue('outlook');
+      }
+      render();
+      notice('Risk Resolved', `Security measures applied and confirmed for ${serviceName}.`, 'success');
+    }
+
+    function markCurrentAppResolved(serviceName) {
+      state.fixedServices[serviceName] = true;
+      const displayBreaches = state.breachList.length > 0 ? state.breachList : [
+        { name: 'Instagram' }, { name: 'LinkedIn' }, { name: 'Adobe' }
+      ];
+      // Automatically advance to the next unresolved app if available
+      const nextUnresolvedIdx = displayBreaches.findIndex((b, idx) => idx > state.selectedDangerAppIndex && !state.fixedServices[b.name]);
+      if (nextUnresolvedIdx !== -1) {
+        state.selectedDangerAppIndex = nextUnresolvedIdx;
+      }
+      if (window.CyberShieldState) {
+        window.CyberShieldState.resolveIssue('weakpass');
+        window.CyberShieldState.resolveIssue('outlook');
+      }
+      render();
+      notice('App Secured', `${serviceName} marked resolved! Ready to secure next app.`, 'success');
+    }
+
+    function selectAppByName(serviceName) {
+      const displayBreaches = state.breachList.length > 0 ? state.breachList : [
+        { name: 'Instagram' }, { name: 'LinkedIn' }, { name: 'Adobe' }
+      ];
+      const matchIdx = displayBreaches.findIndex(b => (b.name || '').toLowerCase() === serviceName.toLowerCase());
+      if (matchIdx !== -1) {
+        state.selectedDangerAppIndex = matchIdx;
+        render();
+        notice('App Selected', `Viewing step-by-step security solution for ${serviceName}.`);
+      }
+    }
+
+    function passwordView() {
+      const tone = state.label === 'strong' ? 'Strong' : state.label === 'medium' ? 'Fair' : 'Weak';
+      const color = state.label === 'strong' ? '#2bd6a8' : state.label === 'medium' ? '#f2c14d' : '#ee4e81';
+      const currentCombo = state.combos[state.selectedComboIdx] || { val: state.password + '#8xKp$9', name: 'Fortified' };
+
+      return `
+        <div class="password-view">
+          <section class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <div class="title-icon">${icons.lock}</div>
+                <div>
+                  <h2>Password Security & Breach Analysis</h2>
+                  <p class="panel-subtitle"><span class="badge-live"></span>Live Real-Time Analysis: Entropy, Have I Been Pwned k-anonymity check, pattern detection.</p>
+                </div>
+              </div>
+              <span class="ai-badge">${icons.sparkle} Real-Time Analyzer</span>
+            </div>
+            <form class="input-row" onsubmit="event.preventDefault(); analyzePassword()">
+              <div class="field-wrap">
+                <input id="password-input" class="text-field" type="${state.showPassword ? 'text' : 'password'}" value="${esc(state.password)}" oninput="onPasswordInputChange(this.value)" placeholder="Enter password to evaluate in real-time...">
+                <button type="button" class="icon-button field-action" onclick="state.showPassword=!state.showPassword;render()">
+                  ${state.showPassword ? icons.eyeOff : icons.eye}
+                </button>
+              </div>
+              <button class="primary-button" type="submit" ${state.loading ? 'disabled' : ''}>
+                <span>${icons.sparkle} ${state.loading ? 'Analyzing...' : 'Analyze'}</span>
+              </button>
+            </form>
+
+            <div class="password-analysis">
+              <div class="score-card">
+                <div class="score-ring" style="background:conic-gradient(${color} 0 ${state.score}%,#273e73 ${state.score}% 100%)">
+                  <div class="score-value"><strong>${state.score}</strong><small>/100</small></div>
+                </div>
+                <div class="score-detail">
+                  <h3 style="color:${color}">${tone}</h3>
+                  <p>${state.breached ? `<span style="color:#f45985;font-weight:bold">⚠️ Pwned in ${state.breachCount.toLocaleString()} breaches!</span>` : (state.score >= 70 ? 'Your password is high entropy and secure.' : 'Your password has identifiable patterns.')}</p>
+                  <div class="meter"><span style="width:${state.score}%;background:${color}"></span></div>
+                  <div style="font-size:8px;color:#8d9ac3;margin-top:6px;">Entropy: <strong>${state.entropyBits || 0} bits</strong></div>
+                </div>
+              </div>
+              <div class="crack-card">
+                <div class="crack-label">${icons.clock} Estimated Crack Time</div>
+                <div class="crack-time" style="color:${color}">${esc(state.crackTime)}</div>
+                <div class="crack-note">${state.score >= 70 ? 'Strong combinations resist brute force and dictionary attacks.' : 'Attackers using hashcat or cloud GPUs can crack this rapidly.'}</div>
+              </div>
+            </div>
+
+            <div class="risk-grid">
+              <div class="risk-card">
+                <h3>Detected Vulnerabilities <span>${state.issues.length} Identified</span></h3>
+                <ul class="risk-list">
+                  ${state.issues.length > 0 ? state.issues.map(i => `<li>${icons.alert} ${esc(i)}</li>`).join('') : '<li style="color:#2bd6a8">' + icons.check + ' No known vulnerabilities detected</li>'}
+                </ul>
+              </div>
+              <div class="risk-card">
+                <h3>Recommended Action Items</h3>
+                <ul class="risk-list fix-list">
+                  ${state.tips.map(t => `<li>${icons.check} ${esc(t)}</li>`).join('')}
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- Interactive Credential Exposure & Reuse Check -->
+          <section class="panel reuses-panel">
+            <div class="subpanel-heading">${icons.link}
+              <div>
+                <h3>Credential Exposure & Cross-Service Reuse Check</h3>
+                <p>Live analysis of credential-stuffing vulnerability across accounts sharing this password.</p>
+              </div>
+            </div>
+
+            <!-- Reuse Summary Bar -->
+            <div class="reuse-summary-bar">
+              <div class="reuse-stat-box">
+                Monitored Accounts: <strong>${state.monitoredAccounts.length}</strong>
+              </div>
+              <div class="reuse-stat-box">
+                Accounts Reusing This Password: <strong style="color:${state.monitoredAccounts.filter(a => a.reused).length > 0 ? '#f05a8b' : '#31d5ae'};">${state.monitoredAccounts.filter(a => a.reused).length}</strong>
+              </div>
+              <div class="reuse-stat-box">
+                Stuffing Risk: <strong style="color:${state.breached ? '#f05a8b' : (state.score < 50 ? '#f4c457' : '#31d5ae')};">${state.breached ? 'CRITICAL (Breached Password)' : (state.score < 50 ? 'ELEVATED' : 'LOW')}</strong>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Account / Platform</th>
+                    <th>Password Usage</th>
+                    <th>Exposure Threat Level</th>
+                    <th>Threat Diagnostics</th>
+                    <th>Security Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${state.monitoredAccounts.map(acc => {
+                    const exp = getAccountExposure(acc);
+                    return `
+                      <tr>
+                        <td>
+                          <div class="account">${logo(acc.name)} <strong>${esc(acc.name)}</strong></div>
+                        </td>
+                        <td>
+                          <button class="reuse-toggle-btn ${acc.reused ? 'reused' : 'unique'}" onclick="toggleAccountReuse('${esc(acc.name)}')" title="Click to toggle whether this account shares this password">
+                            ${acc.reused ? '⚠️ Shares This Password' : '✓ Isolated / Unique'}
+                          </button>
+                        </td>
+                        <td>
+                          <span class="status-pill ${exp.pillClass}">${esc(exp.level)}</span>
+                        </td>
+                        <td style="color:#a9badc;font-size:8px;max-width:260px;line-height:1.35;">
+                          ${esc(exp.reason)}
+                        </td>
+                        <td>
+                          <button class="unique-gen-btn" onclick="generateUniqueForAccount('${esc(acc.name)}')" title="Generate unique 20-character password and copy">
+                            ${icons.sparkle} Generate Unique
+                          </button>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Add new account to monitor -->
+            <div class="add-account-row">
+              <input class="add-account-input" type="text" placeholder="Add another account or website (e.g. GitHub, Netflix, Work Portal)..." value="${esc(state.newAccountName)}" oninput="state.newAccountName=this.value" onkeydown="if(event.key==='Enter'){addNewAccount()}">
+              <button class="add-account-btn" onclick="addNewAccount()">+ Add Account</button>
+            </div>
+          </section>
+
+          <!-- Smart Combination Generator Based on User Input -->
+          <section class="panel generate-panel">
+            <div class="subpanel-heading">${icons.sparkle}
+              <div>
+                <h3>Smart Password Combination Generator</h3>
+                <p>Derived directly from your input above (<strong>${esc(state.password)}</strong>) — transformed into high-entropy, breach-resistant variations.</p>
+              </div>
+            </div>
+
+            <div class="combo-tabs">
+              ${state.combos.map((c, i) => `
+                <button class="combo-pill ${state.selectedComboIdx === i ? 'active' : ''}" onclick="state.selectedComboIdx=${i};render()">
+                  ${esc(c.name)}
+                </button>
+              `).join('')}
+            </div>
+
+            <div class="generate-row">
+              <div class="generate-input">
+                <span>${esc(currentCombo.val)}</span>
+                <button class="copy-button" onclick="copyValue('${esc(currentCombo.val)}')" title="Copy to clipboard">${icons.copy}</button>
+              </div>
+              <button class="apply-btn" onclick="applySelectedCombo()" title="Test this combination in the analyzer">
+                ${icons.check} Apply to Analyzer
+              </button>
+              <button class="primary-button generate-action" onclick="state.selectedComboIdx=(state.selectedComboIdx+1)%state.combos.length;render()">
+                <span>${icons.refresh} Next Combo</span>
+              </button>
+            </div>
+
+            <div class="feature-list">
+              <span>${icons.check} <strong>Strategy:</strong> ${esc(currentCombo.desc)}</span>
+              <span>${icons.check} 16+ Characters</span>
+              <span>${icons.check} Derived from "${esc(state.password)}"</span>
+              <span>${icons.check} Resistant to rainbow tables</span>
+            </div>
+          </section>
+        </div>`;
+    }
+
+    function emailView() {
+      const liveCount = (state.breachList || []).length;
+      const hasError = !!state.scanError;
+      const isClean = state.scanned && !hasError && (!state.leakFound || liveCount === 0);
+      const displayBreaches = state.breachList || [];
+
+      const dangerApps = displayBreaches;
+      const totalDangerCount = dangerApps.length;
+      const resolvedCount = dangerApps.filter(a => !!state.fixedServices[a.name]).length;
+      
+      if (state.selectedDangerAppIndex >= totalDangerCount) {
+        state.selectedDangerAppIndex = 0;
+      }
+      const currentApp = dangerApps[state.selectedDangerAppIndex] || (dangerApps.length > 0 ? dangerApps[0] : null);
+      const isCurrentFixed = currentApp ? !!state.fixedServices[currentApp.name] : false;
+      const currentRemediation = currentApp ? getRemediationFor(currentApp.name, currentApp.data_exposed || []) : null;
+
+      // Dynamically position radial nodes around the central hub based on the scanned email
+      let radialNodesHTML = '';
+      if (liveCount > 0) {
+        const radialItems = displayBreaches.slice(0, 7);
+        radialNodesHTML = radialItems.map((b, i) => {
+          const total = radialItems.length;
+          const angle = (i / total) * 2 * Math.PI - Math.PI / 2;
+          const left = 50 + 38 * Math.cos(angle);
+          const top = 50 + 38 * Math.sin(angle);
+          const isResolved = !!state.fixedServices[b.name];
+          const isSelected = state.selectedDangerAppIndex === i;
+          return `
+            <div class="service-node ${isResolved ? 'safe' : 'risk'}"
+                 style="left:${left}%; top:${top}%; transform:translate(-50%, -50%); cursor:pointer; ${isSelected ? 'outline:2px solid #7b6bff; box-shadow:0 0 14px rgba(123,107,255,.6);' : ''}"
+                 onclick="state.selectedDangerAppIndex=${i};render();">
+              ${logo(b.name)}
+              <div>
+                <strong>${esc(b.name)}</strong>
+                <small>${isResolved ? '✓ Resolved' : 'Compromised'}</small>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else if (hasError) {
+        const errNodes = [
+          { name: 'API Quota', status: 'Cooldown' },
+          { name: 'Lookup Status', status: 'Paused' },
+          { name: 'Cooldown', status: '~10s' },
+          { name: 'Scan Action', status: 'Retry Below' }
+        ];
+        radialNodesHTML = errNodes.map((n, i) => {
+          const angle = (i / 4) * 2 * Math.PI - Math.PI / 2;
+          const left = 50 + 38 * Math.cos(angle);
+          const top = 50 + 38 * Math.sin(angle);
+          return `
+            <div class="service-node warn" style="left:${left}%; top:${top}%; transform:translate(-50%, -50%); border-color:rgba(255,160,50,.5);">
+              <span class="service-logo" style="background:#b37d14;">⏳</span>
+              <div>
+                <strong>${esc(n.name)}</strong>
+                <small style="color:#f2c14d">${esc(n.status)}</small>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        const cleanNodes = [
+          { name: 'Breach Dumps', status: '0 Found' },
+          { name: 'Password Leaks', status: 'Clean' },
+          { name: 'Dark Web Lists', status: 'Clean' },
+          { name: 'Domain Health', status: 'Verified' }
+        ];
+        radialNodesHTML = cleanNodes.map((n, i) => {
+          const angle = (i / 4) * 2 * Math.PI - Math.PI / 2;
+          const left = 50 + 38 * Math.cos(angle);
+          const top = 50 + 38 * Math.sin(angle);
+          return `
+            <div class="service-node safe" style="left:${left}%; top:${top}%; transform:translate(-50%, -50%);">
+              <span class="service-logo" style="background:#177e6d;">✓</span>
+              <div>
+                <strong>${esc(n.name)}</strong>
+                <small style="color:#31d5ae">${esc(n.status)}</small>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      const modal = state.modalService ? (() => {
+        const s = state.modalService;
+        const rem = s.remediation;
+        const isFixed = !!state.fixedServices[s.name];
+        return `
+          <div class="fix-modal-backdrop" onclick="state.modalService=null;render()">
+            <section class="fix-modal" onclick="event.stopPropagation()">
+              <div class="fix-modal-heading">
+                <div>
+                  ${icons.alert}
+                  <div>
+                    <strong>Real Incident Response: Secure ${esc(s.name)}</strong>
+                    <p>Official remediation protocol for ${esc(state.email)} on ${esc(s.name)}.</p>
+                  </div>
+                </div>
+                <button class="icon-button" onclick="state.modalService=null;render()">${icons.close}</button>
+              </div>
+
+              <div style="margin: 10px 0; padding: 8px 10px; background: rgba(240,90,139,.1); border: 1px solid rgba(240,90,139,.3); border-radius: 6px; font-size: 8px; color: #ff9cb7;">
+                <strong>Exposed Data Classes:</strong> ${esc((s.dataExposed || []).join(', ') || 'Email addresses, Credentials')}
+              </div>
+
+              <ol class="fix-steps">
+                ${rem.steps.map((st, i) => `
+                  <li class="fix-step">
+                    <span class="fix-step-number">${i + 1}</span>
+                    <div>
+                      <strong>${esc(st.title)}</strong>
+                      <p>${esc(st.desc)}</p>
+                    </div>
+                  </li>
+                `).join('')}
+              </ol>
+
+              <div class="fix-modal-note">
+                ${icons.check}<span>Perform the steps in the official portal, then confirm resolution below.</span>
+              </div>
+
+              <div class="modal-actions">
+                <a href="${esc(rem.portal)}" target="_blank" rel="noopener noreferrer" class="portal-link-btn">
+                  ${icons.external} Open Official ${esc(rem.portalName || s.name)} ↗
+                </a>
+                <button class="fix-button" onclick="markServiceResolved('${esc(s.name)}')">
+                  ${icons.check} ${isFixed ? 'Already Resolved' : 'Confirm Risk Resolved'}
+                </button>
+              </div>
+            </section>
+          </div>`;
+      })() : '';
+
+      return `
+        <div class="email-view">
+          <section class="panel footprint-card">
+            <div class="panel-header">
+              <div class="panel-title">
+                <div class="title-icon">${icons.mail}</div>
+                <div>
+                  <h2>Email & Domain Security Footprint & Leak Scanner</h2>
+                  <p class="panel-subtitle"><span class="badge-live"></span>Real-time analysis powered by live XposedOrNot breach API & Chrome Extension Telemetry.</p>
+                </div>
+              </div>
+            </div>
+
+            <form class="input-row" onsubmit="event.preventDefault(); scanTarget()">
+              <div class="field-wrap">
+                <input id="email-input" class="text-field" type="text" value="${esc(state.email)}" oninput="state.email=this.value" placeholder="Enter email (user@domain.com) or website domain (adobe.com)...">
+              </div>
+              <button class="primary-button" type="submit" ${state.loading ? 'disabled' : ''}>
+                <span>${icons.search} ${state.loading ? 'Scanning...' : 'Scan Footprint'}</span>
+              </button>
+            </form>
+
+            <!-- Quick Switcher and Chrome Extension Real-Time Fetch -->
+            <div style="display:flex; gap:6px; padding: 0 14px 10px; align-items:center; flex-wrap:wrap;">
+              <button type="button" class="combo-pill" style="background:linear-gradient(110deg,#4841da,#634ceb); color:#fff; border-color:#7b6bff; font-weight:800; box-shadow:0 2px 8px rgba(72,65,218,.35);" onclick="fetchActiveChromeTab()">
+                ⚡ Fetch Active Chrome Tab
+              </button>
+              <span style="font-size:7px; color:#8494be; text-transform:uppercase; font-weight:800; margin-left:4px;">Quick Test:</span>
+              <button type="button" class="combo-pill" onclick="scanTarget('adobe.com', 'domain')">🌐 Domain (adobe.com)</button>
+              <button type="button" class="combo-pill" onclick="scanTarget('canva.com', 'domain')">🌐 Domain (canva.com)</button>
+              <button type="button" class="combo-pill" onclick="scanTarget('test@example.com', 'email')">🧪 Breached (test@example.com)</button>
+              <button type="button" class="combo-pill" onclick="scanTarget('clean.user2026@cybershield.ai', 'email')">✓ Clean (clean.user2026@cybershield.ai)</button>
+            </div>
+
+            ${!state.scanned ? `
+              <div style="margin:4px 14px 8px; padding:10px 12px; background:rgba(99,80,244,.08); border:1px solid rgba(99,80,244,.25); border-radius:6px; font-size:8px; color:#a9badc; line-height:1.6;">
+                ${icons.search} <strong style="color:#c5cfff;">Enter your email above and click Scan Footprint</strong> — or use a Quick Test button to see real breach data from XposedOrNot.
+              </div>
+            ` : ''}
+
+            ${state.scanned ? `
+              <div class="scan-status" style="${hasError ? 'color:#ffb84d;background:rgba(255,140,0,.12);border-color:rgba(255,160,50,.35);' : isClean ? 'color:#9cebd6;background:rgba(25,177,145,.1);border-color:rgba(35,191,160,.25);' : 'color:#ff9cb7;background:rgba(240,90,139,.1);border-color:rgba(240,90,139,.3);'}">
+                ${hasError ? icons.alert : isClean ? icons.check : icons.alert} ${hasError ? 'Threat Intelligence Notice: ' + esc(state.scanError) : `Live XposedOrNot scan complete for <strong>${esc(state.email)}</strong>: ${liveCount} breach record(s) detected.`}
+                ${state.lastApiDebug ? `<span style="display:block;margin-top:4px;font-size:7px;opacity:.7;">${esc(state.lastApiDebug)}</span>` : ''}
+              </div>
+            ` : ''}
+
+            <!-- RADIAL DIGITAL FOOTPRINT STAGE: DYNAMIC ACCORDING TO EMAIL -->
+            <div class="footprint-stage">
+              <div class="footprint-summary">
+                <div class="summary-icon">${icons.mail}</div>
+                <div>
+                  <strong>Digital Footprint Map</strong>
+                  <span>${hasError ? 'API Rate-Limited / Cooldown' : liveCount > 0 ? liveCount + ' Breaches Detected' : 'All Monitored Vectors Clean'} for ${esc(state.email)}</span>
+                </div>
+              </div>
+
+              <!-- Donut chart adapts according to email -->
+              <div class="footprint-donut" style="${hasError ? 'background:conic-gradient(var(--warn) 0 100%, var(--warn) 100%);' : isClean ? 'background:conic-gradient(var(--safe) 0 100%, var(--safe) 100%);' : 'background:conic-gradient(var(--safe) 0 30%,var(--warn) 30% 60%,var(--risk) 60%);'}">
+                <div class="donut-content">
+                  <strong style="color:${hasError ? '#f2c14d' : isClean ? 'var(--safe)' : '#ff6e99'};">${hasError ? '⏳' : liveCount}</strong>
+                  <span>${hasError ? 'Cooldown' : isClean ? 'Breaches' : 'Records'}</span>
+                </div>
+              </div>
+
+              <div class="footprint-legend">
+                <span><i class="legend-dot dot-safe"></i> Safe (${isClean ? 4 : resolvedCount})</span>
+                <span><i class="legend-dot dot-warn"></i> Review (${hasError ? 1 : 0})</span>
+                <span><i class="legend-dot dot-risk"></i> In Danger (${isClean || hasError ? 0 : (totalDangerCount - resolvedCount)})</span>
+              </div>
+
+              <div class="hub">${icons.mail}<span>${esc(state.email)}</span></div>
+
+              ${radialNodesHTML}
+            </div>
+
+            <!-- ONE-BY-ONE APP SOLUTION WORKFLOW (OR CLEAN BANNER IF CLEAN EMAIL) -->
+            <div class="risk-section">
+              ${hasError ? `
+                <div class="action-steps-box" style="border-color:rgba(255,160,50,.5);background:rgba(255,140,0,.1);text-align:center;padding:20px 14px;border-radius:8px;">
+                  <div style="font-size:24px;margin-bottom:6px;">⏳</div>
+                  <h3 style="color:#ffb84d;margin:0 0 5px;font-size:12px;">Public Threat Database Rate-Limited / Cooling Down</h3>
+                  <p style="color:#e0e8ff;font-size:9px;max-width:520px;margin:0 auto 12px;line-height:1.5;">
+                    ${esc(state.scanError)}
+                    <br>XposedOrNot has a public free rate limit (~1-2 requests/sec). If you previously saw breaches for this email, they exist in the database! Please wait 10 seconds and click below to re-query.
+                  </p>
+                  <button class="primary-button" style="margin:0 auto;padding:6px 14px;font-size:9px;" onclick="scanEmail()">
+                    <span>${icons.search} Retry Live Scan</span>
+                  </button>
+                </div>
+              ` : isClean ? `
+                <div class="action-steps-box" style="border-color:rgba(49,213,174,.4);background:rgba(22,133,111,.12);text-align:center;padding:22px 14px;border-radius:8px;">
+                  <div style="font-size:26px;margin-bottom:6px;">🛡️</div>
+                  <h3 style="color:#31d5ae;margin:0 0 5px;font-size:13px;">No Known Breaches Detected for ${esc(state.email)}</h3>
+                  <p style="color:#a9badc;font-size:9px;max-width:540px;margin:0 auto 12px;line-height:1.5;">
+                    ${esc(state.leakAdvice || 'All public breach archives and leak databases in XposedOrNot were searched. This email address has no known compromised records.')}
+                  </p>
+                  <div style="display:inline-flex;gap:14px;font-size:8px;color:#31d5ae;font-weight:700;flex-wrap:wrap;justify-content:center;">
+                    <span>✓ Zero Leaked Password Dumps</span>
+                    <span>✓ Zero PII Disclosures</span>
+                    <span>✓ 100% Monitored Vectors Clean</span>
+                  </div>
+                </div>
+              ` : (currentApp ? `
+                <div class="danger-nav-bar">
+                  <div class="risk-section-title" style="margin-bottom:0;">
+                    ${icons.alert} <strong>In-Danger Services (${totalDangerCount} Total) — One-by-One Remediation Guide</strong>
+                  </div>
+                  <div style="font-size:8px;color:#a9badc;">
+                    Progress: <strong>${resolvedCount}/${totalDangerCount} Secured</strong>
+                  </div>
+                </div>
+
+                <!-- Progress bar -->
+                <div class="danger-progress-track">
+                  <div class="danger-progress-fill" style="width:${totalDangerCount > 0 ? Math.round((resolvedCount/totalDangerCount)*100) : 0}%;"></div>
+                </div>
+
+                <!-- App selector tabs -->
+                <div class="danger-app-tabs">
+                  ${dangerApps.map((app, idx) => {
+                    const resolved = !!state.fixedServices[app.name];
+                    const isActive = state.selectedDangerAppIndex === idx;
+                    return `
+                      <button class="danger-tab ${isActive ? 'active' : ''} ${resolved ? 'resolved' : ''}" onclick="state.selectedDangerAppIndex=${idx};render()">
+                        ${logo(app.name)}
+                        <span>${esc(app.name)}</span>
+                        <small style="opacity:.8;">${resolved ? '✓' : '⚠️'}</small>
+                      </button>
+                    `;
+                  }).join('')}
+                </div>
+
+                <!-- CURRENT APP CARD (ONE APP SOLUTION AT A TIME) -->
+                <div class="risk-highlight ${isCurrentFixed ? 'resolved' : ''}" style="margin-top:8px;">
+                  <div class="risk-service-avatar">${logo(currentApp.name)}</div>
+                  <div class="risk-text">
+                    <div class="danger-card-header">
+                      <div class="danger-card-title">
+                        <strong>App ${state.selectedDangerAppIndex + 1} of ${totalDangerCount}: ${esc(currentApp.name)}</strong>
+                        <span class="status-pill ${isCurrentFixed ? 'safe' : 'danger'}">${isCurrentFixed ? '✓ Risk Resolved' : 'Compromised in Breach'}</span>
+                      </div>
+                      <a href="${esc(currentRemediation.portal)}" target="_blank" rel="noopener noreferrer" class="portal-link-btn" style="padding:4px 8px;font-size:7px;">
+                        ${icons.external} Open Official ${esc(currentRemediation.portalName)} ↗
+                      </a>
+                    </div>
+
+                    <p style="margin:4px 0;">
+                      ${isCurrentFixed ? '<span style="color:#31d5ae;font-weight:bold;">All remediation steps confirmed for ' + esc(currentApp.name) + '.</span>' : '<strong>Exposed Data Classes:</strong> ' + esc((currentApp.data_exposed || []).join(', ') || 'Passwords, Email addresses, Account data')}
+                    </p>
+
+                    <div style="font-size:8px;color:#8796bd;margin-top:3px;">
+                      Breach incident recorded on: <strong>${esc(currentApp.date || 'Verified Archive')}</strong> • Source: <strong>${esc(state.leakSource)}</strong>
+                    </div>
+                  </div>
+
+                  ${isCurrentFixed ? '<div class="fixed-badge">' + icons.check + ' Resolved</div>' : `<button class="small-button" onclick="openFixModal('${esc(currentApp.name)}', ${JSON.stringify(currentApp.data_exposed || []).replace(/"/g, '&quot;')})">Detailed Steps</button>`}
+                </div>
+
+                <!-- Tailored Real Solution Steps for this specific app -->
+                <div class="action-steps-box">
+                  <h4>${icons.shield} Real Recovery Protocol for ${esc(currentApp.name)}</h4>
+                  <div class="real-solution-grid">
+                    ${currentRemediation.steps.map((st, i) => `
+                      <div class="real-solution-item ${i === 0 ? 'danger' : (i === 3 ? 'safe' : '')}">
+                        <div>
+                          <strong>Step ${i + 1}: ${esc(st.title)}</strong><br>
+                          <span>${esc(st.desc)}</span>
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+
+                  <!-- Navigation between apps -->
+                  <div class="danger-stepper-controls">
+                    <button class="danger-nav-btn" onclick="state.selectedDangerAppIndex=Math.max(0, state.selectedDangerAppIndex-1);render()" ${state.selectedDangerAppIndex === 0 ? 'disabled' : ''}>
+                      ${icons.arrow} Previous App
+                    </button>
+
+                    <div style="display:flex;gap:6px;">
+                      <button class="fix-button" onclick="markCurrentAppResolved('${esc(currentApp.name)}')">
+                        ${icons.check} ${isCurrentFixed ? 'Marked as Resolved' : 'Mark ' + esc(currentApp.name) + ' Resolved'}
+                      </button>
+                    </div>
+
+                    <button class="danger-nav-btn" onclick="state.selectedDangerAppIndex=Math.min(${totalDangerCount - 1}, state.selectedDangerAppIndex+1);render()" ${state.selectedDangerAppIndex >= totalDangerCount - 1 ? 'disabled' : ''}>
+                      Next In-Danger App ${icons.arrow}
+                    </button>
+                  </div>
+                </div>
+              ` : '')}
+
+              ${modal}
+
+              <!-- Live Breach Breakdown Table -->
+              <details class="breakdown" open style="margin-top:12px;">
+                <summary class="breakdown-summary">All Discovered Breaches for ${esc(state.email)} (${liveCount}) ${icons.arrow}</summary>
+                <table>
+                  <thead>
+                    <tr><th>App / Website</th><th>Status</th><th>Breach Date</th><th>Exposed Information</th><th>One-by-One Action</th></tr>
+                  </thead>
+                  <tbody>
+                    ${liveCount > 0 ? displayBreaches.map((b, idx) => {
+                      const resolved = !!state.fixedServices[b.name];
+                      const isSelected = state.selectedDangerAppIndex === idx;
+                      return `
+                        <tr style="${isSelected ? 'background:rgba(99,80,244,.12);' : ''}">
+                          <td><div class="breakdown-service">${logo(b.name)} <strong>${esc(b.name)}</strong></div></td>
+                          <td><span class="status-pill ${resolved ? 'safe' : 'danger'}">${resolved ? 'Resolved' : 'Compromised'}</span></td>
+                          <td>${esc(b.date)}</td>
+                          <td>${esc((b.data_exposed || []).join(', ') || 'Email, Passwords')}</td>
+                          <td>
+                            <button style="border:1px solid ${isSelected ? '#7b6bff' : 'rgba(99,80,244,.4)'};background:${isSelected ? '#6350f4' : 'rgba(99,80,244,.15)'};color:#fff;padding:3px 7px;border-radius:4px;font-size:7px;cursor:pointer;" onclick="state.selectedDangerAppIndex=${idx};render();">
+                              ${isSelected ? '● Viewing Solution' : 'View Solution'}
+                            </button>
+                          </td>
+                        </tr>
+                      `;
+                    }).join('') : `
+                      <tr>
+                        <td colspan="5" style="text-align:center;padding:16px;color:#31d5ae;font-size:9px;font-weight:700;">
+                          ✓ No breach records found for ${esc(state.email)}. All monitored services are clean.
+                        </td>
+                      </tr>
+                    `}
+                  </tbody>
+                </table>
+              </details>
+            </div>
+          </section>
+        </div>`;
+    }
+
+    function render() {
+      const activeEl = document.activeElement;
+      const isPwdInput = activeEl && activeEl.id === 'password-input';
+      const cursorPos = isPwdInput ? activeEl.selectionStart : null;
+      const isEmailInput = activeEl && activeEl.id === 'email-input';
+      const emailCursorPos = isEmailInput ? activeEl.selectionStart : null;
+
+      document.getElementById('app').innerHTML = `
+        <div class="app-shell">
+          <aside class="sidebar">
+            <div class="brand" onclick="selectNav('Dashboard')">
+              <img src="../assets/icon-48.png" alt="CyberShield Logo" style="width:34px; height:34px; object-fit:contain; border-radius:8px; margin-right:8px; box-shadow:0 0 12px rgba(65, 105, 225, 0.35);">
+              <div><div class="brand-name">CyberShield AI</div><div class="brand-tagline">Think. Detect. Stay Safe.</div></div>
+            </div>
+            <div class="nav-label">Workspace</div>
+            <nav class="nav">
+              ${navItems.map(([label,icon]) => `
+                <button class="nav-item ${state.activeNav === label ? 'active' : ''}" onclick="selectNav('${label.replace(/'/g,"\\'")}')">
+                  ${icons[icon]}<span>${label}</span>
+                </button>
+              `).join('')}
+            </nav>
+            <div class="sidebar-spacer"></div>
+            <div class="sidebar-promo"><img src="../assets/icon-48.png" alt="CyberShield Logo" style="width:28px; height:28px; object-fit:contain; border-radius:6px; margin-bottom:6px;"><strong>Stronger<br>Passwords. Safer You.</strong><span>Protected by CyberShield AI</span></div>
+          </aside>
+          <main class="main">
+            <header class="topbar">
+              <div class="top-actions">
+                <button class="icon-button" onclick="notice('System Status','Security Analyzer API online on port 5050')">${icons.bell}</button>
+                <button class="avatar" onclick="selectNav('Profile / Settings')">NS</button>
+              </div>
+            </header>
+            <div class="page">
+              <div class="page-heading">
+                <button class="icon-button" onclick="selectNav('Dashboard')">${icons.arrow}</button>
+                <div>
+                  <h1>Security Analyzer</h1>
+                  <p>Real-time password security scoring, Have I Been Pwned checks, and XposedOrNot breach footprint mapping.</p>
+                </div>
+              </div>
+              <div class="mode-switch">
+                <button class="mode-button ${state.mode === 'password' ? 'active' : ''}" onclick="state.mode='password';render()">
+                  ${icons.lock} Password Security
+                </button>
+                <button class="mode-button ${state.mode === 'email' ? 'active' : ''}" onclick="state.mode='email';render()">
+                  ${icons.database} Email Security Footprint
+                </button>
+              </div>
+              ${state.mode === 'password' ? passwordView() : emailView()}
+            </div>
+          </main>
+          ${state.notice ? `
+            <div class="notification ${state.notice.tone}">
+              <button class="icon-button" onclick="state.notice=null;render()">${icons.close}</button>
+              <strong>${esc(state.notice.title)}</strong>
+              <p>${esc(state.notice.message)}</p>
+            </div>
+          ` : ''}
+        </div>`;
+
+      // Restore active element focus and cursor position smoothly
+      if (isPwdInput) {
+        const newPwdInput = document.getElementById('password-input');
+        if (newPwdInput) {
+          newPwdInput.focus();
+          if (cursorPos !== null) {
+            try { newPwdInput.setSelectionRange(cursorPos, cursorPos); } catch(e) {}
+          }
+        }
+      } else if (isEmailInput) {
+        const newEmailInput = document.getElementById('email-input');
+        if (newEmailInput) {
+          newEmailInput.focus();
+          if (emailCursorPos !== null) {
+            try { newEmailInput.setSelectionRange(emailCursorPos, emailCursorPos); } catch(e) {}
+          }
+        }
+      }
+    }
+
+    function selectNav(label) {
+      const pageMap = {
+        'Dashboard': 'dashboard.html',
+        'Digital Identity': 'digital-identity.html',
+        'Security Analyzer': 'security-analyzer.html',
+        'Phishing Detection': 'phishing-detection.html',
+        'Cyberbullying Detection': 'cyberbullying-detection.html',
+        'AI Security Report': 'security-report.html',
+        'Profile / Settings': 'settings.html'
+      };
+      if (pageMap[label] && label !== 'Security Analyzer') {
+        window.location.href = pageMap[label];
+      } else {
+        state.activeNav = label;
+        render();
+      }
+    }
+
+    // Initial render & Chrome Extension Deep-Linking Handler
+    updateCombinations();
+    render();
+
+    // Check for query parameters passed from Chrome Extension
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('domain')) {
+      const targetDomain = urlParams.get('domain');
+      state.mode = 'email';
+      state.scanType = 'domain';
+      state.email = targetDomain;
+      render();
+      setTimeout(() => scanTarget(targetDomain, 'domain'), 150);
+    } else if (urlParams.has('email')) {
+      const targetEmail = urlParams.get('email');
+      state.mode = 'email';
+      state.scanType = 'email';
+      state.email = targetEmail;
+      render();
+      setTimeout(() => scanTarget(targetEmail, 'email'), 150);
+    } else {
+      analyzePassword();
+    }
+  </script>
+</body>
+</html>

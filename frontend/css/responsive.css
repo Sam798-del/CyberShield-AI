@@ -1,0 +1,81 @@
+/* =========================================================
+   CYBERSHIELD AI — RESPONSIVE DESIGN STYLES
+   ========================================================= */
+
+@media (max-width: 760px) {
+    .app-shell {
+        display: block;
+    }
+    
+    #cs-sidebar-container {
+        width: 100%;
+        flex: none;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 13px 13px 10px;
+        border-right: 0;
+        border-bottom: 1px solid rgba(111,129,201,.18);
+    }
+
+    .brand {
+        padding: 0 5px 12px;
+    }
+
+    .nav-label, .sidebar-spacer, .sidebar-promo {
+        display: none;
+    }
+
+    .nav {
+        display: flex;
+        gap: 4px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .nav-item {
+        width: auto;
+        flex: 0 0 auto;
+        padding: 8px 10px;
+        font-size: 9px;
+    }
+
+    .topbar {
+        height: 45px;
+        padding: 0 16px;
+    }
+
+    .page, .page-container {
+        padding: 18px 13px 35px;
+    }
+
+    .password-analysis, .risk-grid, .middle-grid, .bottom-grid, .gauges-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 420px) {
+    .nav-item {
+        padding: 8px;
+    }
+
+    .nav-item span {
+        display: none;
+    }
+
+    .nav-item.active span {
+        display: inline;
+    }
+
+    .input-row {
+        flex-direction: column;
+    }
+
+    .primary-button, .btn {
+        min-height: 35px;
+        width: 100%;
+    }
+}
