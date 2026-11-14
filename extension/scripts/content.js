@@ -60,6 +60,8 @@
     });
   } catch (e) {}
 
+  let pageHasThreat = false;
+  let pageThreatReason = "";
   let config = { autoScan: true, toxicBlur: true, passwordTips: true, outboundBlocker: true };
 
   // 1. Always render corner protection badge immediately
@@ -231,9 +233,6 @@
     banner.querySelector("#csAcknowledgeBreach")?.addEventListener("click", close);
   }
 
-  let pageHasThreat = false;
-  let pageThreatReason = "";
-
   // 4. In-Page Visual Badge (Safe = "Secure" / Danger = "Threat Alert")
   function renderPageBadge(riskLevel, score) {
     if (document.getElementById("cybershield-corner-badge")) return;
@@ -243,7 +242,7 @@
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", () => renderPageBadge(riskLevel, score), { once: true });
       } else {
-        setTimeout(() => renderPageBadge(riskLevel, score), 100);
+        setTimeout(() => renderPageBadge(riskLevel, score), 50);
       }
       return;
     }
@@ -257,27 +256,27 @@
     badge.id = "cybershield-corner-badge";
     badge.title = `CyberShield AI: ${badgeText} (${score || 0}/100)`;
     badge.style.cssText = `
-      position: fixed !important;
-      bottom: 20px !important;
-      right: 20px !important;
-      background: #0f172a !important;
-      color: #f1f5f9 !important;
-      border: 1px solid ${badgeColor} !important;
-      padding: 6px 14px !important;
-      border-radius: 20px !important;
-      font-size: 11px !important;
-      font-weight: 700 !important;
-      display: flex !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      align-items: center !important;
-      gap: 6px !important;
-      z-index: 2147483647 !important;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.6) !important;
-      cursor: pointer !important;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
-      pointer-events: auto !important;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0f172a;
+      color: #f1f5f9;
+      border: 1.5px solid ${badgeColor};
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      visibility: visible;
+      opacity: 1;
+      align-items: center;
+      gap: 6px;
+      z-index: 2147483647;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      pointer-events: auto;
     `;
     badge.innerHTML = `<span id="cs-badge-dot" style="color:${badgeColor}; font-size:12px;">●</span> <span id="cs-badge-text">${badgeText}</span>`;
     badge.onclick = () => {
@@ -304,7 +303,7 @@
     const badgeColor = isDanger ? "#ef4444" : (isWarning ? "#f59e0b" : "#10b981");
     const badgeText = isDanger ? "Threat Alert" : (isWarning ? "Caution" : "Secure");
 
-    badge.style.border = `1px solid ${badgeColor} !important`;
+    badge.style.borderColor = badgeColor;
     dot.style.color = badgeColor;
     text.innerText = badgeText;
     badge.title = `CyberShield AI: ${badgeText} (${score || 0}/100)`;
