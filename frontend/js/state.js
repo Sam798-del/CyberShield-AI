@@ -170,6 +170,13 @@ class StateManager {
         this.saveState();
     }
 
+    login(userData) {
+        if (userData) {
+            this.updateUser(userData);
+        }
+        return this.state.user;
+    }
+
     verifyIdentity() {
         this.state.user.identityVerified = true;
         this.state.identity.verified = true;

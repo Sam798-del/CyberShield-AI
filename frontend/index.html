@@ -145,14 +145,7 @@
 
         <div class="nav-links">
             <a href="index.html" class="active">🏠 Home</a>
-            <a href="pages/dashboard.html">📊 Dashboard</a>
-            <a href="pages/digital-identity.html">🔑 Identity Vault</a>
-            <a href="pages/security-analyzer.html">🔍 Security Analyzer</a>
-            <a href="pages/phishing-detection.html">📧 Phishing</a>
-            <a href="pages/cyberbullying-detection.html">💬 Cyberbullying</a>
-            <a href="pages/security-report.html">📈 Audit Report</a>
-            <a href="pages/settings.html">⚙️ Settings</a>
-            <a href="pages/login.html" class="btn btn-primary btn-sm" style="color: white; margin-left: 10px;">🔐 Sign In</a>
+            <a href="pages/login.html" class="btn btn-primary btn-sm" style="color: white; margin-left: 10px; padding: 8px 18px; font-weight: 700;">🔐 Sign In / Sign Up</a>
         </div>
     </nav>
 
@@ -165,15 +158,14 @@
             <p>Empowering users with real-time phishing detection, cyberbullying & toxicity analysis, zero-trust digital identity protection, domain security diagnostics, and interactive threat guidance.</p>
 
             <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
-                <a href="pages/login.html" class="btn btn-primary" style="padding: 12px 28px; font-size: 15px;">🔐 Get Started (Sign In / Sign Up)</a>
-                <a href="pages/dashboard.html" class="btn btn-secondary" style="padding: 12px 28px; font-size: 15px;">📊 Open Security Dashboard</a>
+                <a href="pages/login.html" class="btn btn-primary" style="padding: 14px 34px; font-size: 16px; font-weight: 700;">🔐 Get Started (Sign In / Sign Up) →</a>
             </div>
         </section>
 
         <!-- STATS GRID -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-number">7</div>
+                <div class="stat-number">8</div>
                 <div class="stat-label">Core Modules</div>
             </div>
             <div class="stat-card">
@@ -190,93 +182,85 @@
             </div>
         </div>
 
-        <!-- MODULES GRID -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="font-size: 22px; font-weight: 800;">CyberShield AI Application Modules</h2>
-            <span style="color: var(--muted); font-size: 13px;">Select any feature to launch full module</span>
+        <!-- MODULES GRID (PURE FEATURE DESCRIPTIONS) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+            <h2 style="font-size: 22px; font-weight: 800;">CyberShield AI Protection Capabilities</h2>
+            <span style="color: var(--muted); font-size: 13px;">Overview and detailed architecture of each security engine</span>
         </div>
 
         <div class="modules-grid">
 
-            <a href="pages/login.html" class="module-card">
-                <div>
-                    <span style="font-size: 32px;">🔐</span>
-                    <div style="margin-top: 10px;" class="badge badge-info">AUTHENTICATION</div>
-                    <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">Sign In & Account Registration</h3>
-                    <p style="color: var(--muted); font-size: 13px;">Secure login, password verification rules, 6-digit OTP email code verification, and zero-trust authentication.</p>
-                </div>
-                <div style="color: var(--blue-light); font-weight: 700; font-size: 13px; margin-top: 16px;">Sign In / Sign Up →</div>
-            </a>
-
-            <a href="pages/dashboard.html" class="module-card">
+            <div class="module-card">
                 <div>
                     <span style="font-size: 32px;">📊</span>
                     <div style="margin-top: 10px;" class="badge badge-info">COMMAND CENTER</div>
                     <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">Security Command Dashboard</h3>
-                    <p style="color: var(--muted); font-size: 13px;">Centralized overall security score, active threat gauges, password health summary, and recent incident logs.</p>
+                    <p style="color: var(--muted); font-size: 13.5px; line-height: 1.6;">Aggregates real-time telemetry across all defense engines into a unified 0–100 cyber defense posture score, live attack vector radar, and one-click incident mitigation.</p>
                 </div>
-                <div style="color: var(--blue-light); font-weight: 700; font-size: 13px; margin-top: 16px;">Open Dashboard →</div>
-            </a>
+            </div>
 
-            <a href="pages/digital-identity.html" class="module-card">
+            <div class="module-card">
                 <div>
                     <span style="font-size: 32px;">🔑</span>
                     <div style="margin-top: 10px;" class="badge badge-info">IDENTITY PROTECTION</div>
-                    <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">Digital Identity & Vault</h3>
-                    <p style="color: var(--muted); font-size: 13px;">Digital ID credential verification, privacy control switches, QR verification, and identity trust score.</p>
+                    <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">Zero-Trust Digital Identity</h3>
+                    <p style="color: var(--muted); font-size: 13.5px; line-height: 1.6;">Monitors credential dumps and dark web exposure for your emails, phone numbers, and enterprise accounts, with cryptographic ID verification and exposure risk rankings.</p>
                 </div>
-                <div style="color: var(--blue-light); font-weight: 700; font-size: 13px; margin-top: 16px;">Manage Digital Identity →</div>
-            </a>
+            </div>
 
-            <a href="pages/security-analyzer.html" class="module-card">
+            <div class="module-card">
                 <div>
                     <span style="font-size: 32px;">🔍</span>
                     <div style="margin-top: 10px;" class="badge badge-info">DIAGNOSTIC SCANNER</div>
-                    <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">Security Analyzer</h3>
-                    <p style="color: var(--muted); font-size: 13px;">Password entropy diagnostic test and email security footprint scanner for domain leak verification.</p>
+                    <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">Security Analyzer & Password Vault</h3>
+                    <p style="color: var(--muted); font-size: 13.5px; line-height: 1.6;">Calculates live Shannon entropy, simulated crack time, and HaveIBeenPwned k-anonymity breach audits, dynamically generating high-strength variations and account recovery guides.</p>
                 </div>
-                <div style="color: var(--blue-light); font-weight: 700; font-size: 13px; margin-top: 16px;">Run Security Analyzer →</div>
-            </a>
+            </div>
 
-            <a href="pages/phishing-detection.html" class="module-card">
+            <div class="module-card">
                 <div>
                     <span style="font-size: 32px;">📧</span>
-                    <div style="margin-top: 10px;" class="badge badge-info">STANDALONE SCANNER</div>
-                    <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">Phishing Detection Scanner</h3>
-                    <p style="color: var(--muted); font-size: 13px;">Analyze emails, raw headers, and URLs to detect deceptive domains, spoofing, and malware vectors.</p>
+                    <div style="margin-top: 10px;" class="badge badge-info">ACTIVE WEB SHIELD</div>
+                    <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">Phishing Detection & URL Scanner</h3>
+                    <p style="color: var(--muted); font-size: 13.5px; line-height: 1.6;">Inspects suspicious links, raw email headers, and domains for punycode homoglyphs, deceptive TLDs, urgent social engineering triggers, and malicious redirection chains.</p>
                 </div>
-                <div style="color: var(--blue-light); font-weight: 700; font-size: 13px; margin-top: 16px;">Scan Phishing Threat →</div>
-            </a>
+            </div>
 
-            <a href="pages/cyberbullying-detection.html" class="module-card">
+            <div class="module-card">
                 <div>
                     <span style="font-size: 32px;">💬</span>
-                    <div style="margin-top: 10px;" class="badge badge-info">STANDALONE ANALYZER</div>
-                    <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">Cyberbullying & Toxicity Analyzer</h3>
-                    <p style="color: var(--muted); font-size: 13px;">Evaluate chat messages, emails, and social posts for harassment, hate speech, threats, and profanity.</p>
+                    <div style="margin-top: 10px;" class="badge badge-info">NLP CONTENT DEFENSE</div>
+                    <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">Cyberbullying & Toxicity Defense</h3>
+                    <p style="color: var(--muted); font-size: 13.5px; line-height: 1.6;">Evaluates text for harassment, threats, body shaming, and defamation with in-page toxic comment blurring, a pre-submission outbound blocker, and Indian IT Act & IPC citations.</p>
                 </div>
-                <div style="color: var(--blue-light); font-weight: 700; font-size: 13px; margin-top: 16px;">Evaluate Toxicity →</div>
-            </a>
+            </div>
 
-            <a href="pages/security-report.html" class="module-card">
+            <div class="module-card">
                 <div>
                     <span style="font-size: 32px;">📈</span>
                     <div style="margin-top: 10px;" class="badge badge-info">AUDIT TELEMETRY</div>
-                    <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">AI Security Audit Report</h3>
-                    <p style="color: var(--muted); font-size: 13px;">Comprehensive security score breakdown, risk findings, and interactive Take Action / Mark as Fixed workflows.</p>
+                    <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">AI Security Report & Audit Export</h3>
+                    <p style="color: var(--muted); font-size: 13.5px; line-height: 1.6;">Synthesizes intercepted vectors into an executive security risk grade (A+ to F), chronological forensic timeline, category vulnerability scores, and exportable audit reports.</p>
                 </div>
-                <div style="color: var(--blue-light); font-weight: 700; font-size: 13px; margin-top: 16px;">View Audit Report →</div>
-            </a>
+            </div>
 
-            <a href="pages/settings.html" class="module-card">
+            <div class="module-card">
+                <div>
+                    <span style="font-size: 32px;">🛡️</span>
+                    <div style="margin-top: 10px;" class="badge badge-info">BROWSER DEFENSE</div>
+                    <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">Chrome Extension Real-Time Guard</h3>
+                    <p style="color: var(--muted); font-size: 13.5px; line-height: 1.6;">Brings real-time protection to your live browser with corner safety pills, in-page breach warning popups on compromised sites, and live telemetry synchronization with the dashboard.</p>
+                </div>
+            </div>
+
+            <div class="module-card">
                 <div>
                     <span style="font-size: 32px;">⚙️</span>
                     <div style="margin-top: 10px;" class="badge badge-info">CONFIGURATIONS</div>
-                    <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">Profile & Settings</h3>
-                    <p style="color: var(--muted); font-size: 13px;">Manage administrator credentials, threat sensitivity thresholds, AI model selection, and zero-trust privacy controls.</p>
+                    <h3 style="font-size: 18px; font-weight: 700; margin: 10px 0 6px; color: white;">Profile & Security Settings</h3>
+                    <p style="color: var(--muted); font-size: 13.5px; line-height: 1.6;">Granular administrator configuration for AI model sensitivity, automated threat isolation, two-factor authentication credentials, and zero-trust telemetry privacy.</p>
                 </div>
-                <div style="color: var(--blue-light); font-weight: 700; font-size: 13px; margin-top: 16px;">Configure Settings →</div>
-            </a>
+            </div>
 
         </div>
 

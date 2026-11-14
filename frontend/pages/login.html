@@ -170,7 +170,7 @@
                     </div>
 
                     <!-- QUICK DEMO SIGN IN BUTTON -->
-                    <button class="btn btn-secondary" style="width: 100%; margin-bottom: 16px; padding: 10px;" onclick="quickDemoLogin()">
+                    <button type="button" class="btn btn-secondary" style="width: 100%; margin-bottom: 16px; padding: 12px; font-weight: 700; cursor: pointer;" onclick="quickDemoLogin()">
                         ⚡ One-Click Demo Sign In as Neeraja Shinde
                     </button>
 
@@ -272,13 +272,22 @@
         }
 
         function quickDemoLogin() {
-            if (window.CyberShieldState) {
-                CyberShieldState.login({
-                    name: "Neeraja Shinde",
-                    email: "neeraja.shinde@cybershield.ai",
-                    phone: "+91 98765 43210",
-                    avatarInitials: "NS"
-                });
+            try {
+                if (window.CyberShieldState) {
+                    const demoUser = {
+                        name: "Neeraja Shinde",
+                        email: "neeraja.shinde@cybershield.ai",
+                        phone: "+91 98765 43210",
+                        avatarInitials: "NS"
+                    };
+                    if (typeof CyberShieldState.login === "function") {
+                        CyberShieldState.login(demoUser);
+                    } else if (typeof CyberShieldState.updateUser === "function") {
+                        CyberShieldState.updateUser(demoUser);
+                    }
+                }
+            } catch (err) {
+                console.warn("Could not save demo user state:", err);
             }
             window.location.href = "dashboard.html";
         }
@@ -316,13 +325,22 @@
             const parts = name.split(" ");
             const initials = (parts[0][0] + (parts[1] ? parts[1][0] : "")).toUpperCase();
 
-            if (window.CyberShieldState) {
-                CyberShieldState.login({
-                    name: name,
-                    email: email,
-                    phone: document.getElementById("phone").value || "+91 98765 43210",
-                    avatarInitials: initials
-                });
+            try {
+                if (window.CyberShieldState) {
+                    const userPayload = {
+                        name: name,
+                        email: email,
+                        phone: document.getElementById("phone").value || "+91 98765 43210",
+                        avatarInitials: initials
+                    };
+                    if (typeof CyberShieldState.login === "function") {
+                        CyberShieldState.login(userPayload);
+                    } else if (typeof CyberShieldState.updateUser === "function") {
+                        CyberShieldState.updateUser(userPayload);
+                    }
+                }
+            } catch (err) {
+                console.warn("Could not save user state:", err);
             }
 
             if (mode === "signup") {
