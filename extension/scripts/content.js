@@ -342,75 +342,51 @@
   }
 
   function scanPageForToxicContent() {
-    const toxicPatterns = [
+    // Exact cyberbullying phrase matchers (using regex with word boundaries to avoid false positives on names/words)
+    const toxicRegexes = [
       // 1. Extreme Threats & Violence
-      "kill yourself", "kill you", "should kill you", "i will kill you", "kill you with",
-      "i will find you", "go die", "should die", "hope you die", "deserve to die", "you die", "die slut",
-      "worthless piece of trash", "destroy you", "beat you", "hurt you", "slit your", "burn you", "murder", "end your life",
-      // 2. Insults & Humiliation
-      "idiot", "loser", "shut up", "ugly", "hate you", "pathetic", "dumbest",
-      "complete joke", "nobody takes you seriously", "embarrassing", "laughs at you behind",
-      "stop talking", "waste of space", "brainless", "incompetent", "clown",
+      /\b(kill\s+yourself|kill\s+you|should\s+kill\s+you|i\s+will\s+kill\s+you|i\s+will\s+find\s+you|go\s+die|should\s+die|hope\s+you\s+die|deserve\s+to\s+die|you\s+die|die\s+slut|worthless\s+piece\s+of\s+trash|destroy\s+you|beat\s+you|slit\s+your|burn\s+you|end\s+your\s+life)\b/i,
+      // 2. Insults, Silencing & Intellectual Humiliation
+      /\b(shut\s+up|shut\s+your\s+mouth|nobody\s+cares\s*(about\s*)?(your\s+opinion|what\s+you\s+say|what\s+you\s+think|u|you)?|nobody\s+asked\s+(you|for\s+your\s+opinion)|complete\s+joke|nobody\s+takes\s+you\s+seriously|waste\s+of\s+space|brainless|pathetic\s+loser|you\s+are\s+(an?\s+)?(idiot|loser|ugly|pathetic|moron|clown))\b/i,
       // 3. Social Exclusion & Ostracization
-      "don't invite her", "don't invite him", "don't invite them", "nobody wants her around",
-      "nobody wants him around", "nobody wants you around", "nobody wants you here",
-      "no one wants you around", "no one wants you here", "no one likes you", "nobody likes you",
-      "make a group without", "ignore all his messages", "ignore all her messages",
-      "ignore all their messages", "unfollow this person", "they don't belong here",
-      "you don't belong here", "nobody asked you", "leave this group", "get out of here",
-      // 4. Body Shaming & Appearance Ridicule
-      "looking like that", "look ridiculous", "look disgusting", "hide your face",
-      "wear clothes like that", "your appearance is the reason", "you look horrible",
-      "lose some weight", "so fat", "ugly face", "gross body",
-      // 5. Digital Intimidation, Harassment & Stalking
-      "keep messaging you until", "to your reputation", "make your life miserable",
-      "delete your account", "can't escape", "disappear from this platform",
-      "i'll make your life miserable", "i will make your life miserable",
-      "watch your back", "track your ip", "you will pay for this", "ruin your life",
-      "ruin your future", "hunt you down", "stalk",
+      /\b(don'?t\s+invite\s+(her|him|them)|nobody\s+wants\s+(her|him|you|them)\s+(around|here)|no\s*one\s+wants\s+you\s+(around|here)|no\s*one\s+likes\s+you|nobody\s+likes\s+you|make\s+a\s+group\s+without|ignore\s+all\s+(his|her|their)\s+messages|unfollow\s+this\s+person|they\s+don'?t\s+belong\s+here|you\s+don'?t\s+belong\s+here|leave\s+this\s+group)\b/i,
+      // 4. Body Shaming & Aesthetic Ridicule
+      /\b(looking\s+like\s+that|look\s+ridiculous|look\s+disgusting|hide\s+your\s+face|wear\s+clothes\s+like\s+that|your\s+appearance\s+is\s+the\s+reason|you\s+look\s+horrible|lose\s+some\s+weight|ugly\s+face|gross\s+body)\b/i,
+      // 5. Digital Intimidation & Stalking
+      /\b(keep\s+messaging\s+you\s+until|to\s+your\s+reputation|make\s+your\s+life\s+miserable|delete\s+your\s+account|can'?t\s+escape|watch\s+your\s+back|track\s+your\s+ip|you\s+will\s+pay\s+for\s+this|ruin\s+your\s+life|ruin\s+your\s+future)\b/i,
       // 6. Defamation, Rumours & Doxing
-      "spread this rumour", "spread this rumor", "embarrassing picture",
-      "fake account just to expose", "fake account to expose", "expose you",
-      "everyone should see this embarrassing", "share this post so everyone can laugh",
-      "leak your private", "dox you"
+      /\b(spread\s+this\s+rumou?r|embarrassing\s+picture|fake\s+account\s+(just\s+)?to\s+expose|expose\s+you|share\s+this\s+post\s+so\s+everyone\s+can\s+laugh|leak\s+your\s+private|dox\s+you)\b/i
     ];
 
-    // Method A: Check leaf block/inline elements
-    const elements = document.querySelectorAll("p, span, div, li, blockquote, td");
+    // Method A: Check comment text containers (e.g. #content-text on YouTube, .comment-body, p, blockquote)
+    const elements = document.querySelectorAll("yt-attributed-string#content-text, #content-text, p, blockquote, .comment-text, .user-comment, .comment-body, td");
     elements.forEach((el) => {
-      if (el.id === "cybershield-corner-badge" || el.closest("#cybershield-corner-badge")) return;
-      if (el.children.length === 0 || (el.children.length === 1 && (el.firstElementChild.tagName === "EM" || el.firstElementChild.tagName === "STRONG"))) {
-        const text = (el.innerText || el.textContent || "").toLowerCase();
-        if (text.length >= 6) {
-          let found = false;
-          for (const pattern of toxicPatterns) {
-            if (text.includes(pattern)) {
-              applyToxicBlur(el);
-              found = true;
-              break;
-            }
-          }
-          if (!found && text.length <= 400 && typeof evaluateToxicitySync === "function") {
-            try {
-              const evalRes = evaluateToxicitySync(text);
-              if (evalRes && evalRes.isToxic) {
-                applyToxicBlur(el);
-              }
-            } catch (e) {}
+      if (isProtectedElement(el)) return;
+      
+      const text = (el.innerText || el.textContent || "").trim();
+      if (text.length >= 6) {
+        for (const reg of toxicRegexes) {
+          if (reg.test(text)) {
+            applyToxicBlur(el);
+            break;
           }
         }
       }
     });
 
-    // Method B: Selective TreeWalker for plain text nodes
+    // Method B: Selective TreeWalker ONLY for actual comment text, never for author/buttons
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     let node;
     while ((node = walker.nextNode())) {
-      if (node.nodeValue && node.nodeValue.length > 8 && node.parentElement && node.parentElement.tagName !== "SCRIPT" && node.parentElement.tagName !== "STYLE") {
-        const valLower = node.nodeValue.toLowerCase();
-        for (const pattern of toxicPatterns) {
-          if (valLower.includes(pattern)) {
-            applyToxicBlur(node.parentElement);
+      const parent = node.parentElement;
+      if (!parent || isProtectedElement(parent)) continue;
+
+      const val = (node.nodeValue || "").trim();
+      if (val.length >= 8) {
+        for (const reg of toxicRegexes) {
+          if (reg.test(val)) {
+            // Only blur the immediate text container, never an entire card
+            applyToxicBlur(parent);
             break;
           }
         }
@@ -418,8 +394,46 @@
     }
   }
 
+  function isProtectedElement(el) {
+    if (!el || !el.tagName) return true;
+    
+    // A. NEVER BLUR USER INPUTS, COMPOSERS, TEXTAREAS, OR POPUP MODALS
+    if (
+      el.tagName === "INPUT" ||
+      el.tagName === "TEXTAREA" ||
+      el.isContentEditable ||
+      el.getAttribute("contenteditable") === "true" ||
+      el.getAttribute("role") === "textbox" ||
+      el.id === "contenteditable-root" ||
+      el.id === "cybershield-outbound-blocker-modal" ||
+      el.id === "cs-live-think-pill" ||
+      el.closest('input, textarea, [contenteditable="true"], [role="textbox"], form, #contenteditable-root, ytd-commentbox, #comment-dialog, #cybershield-outbound-blocker-modal, #cs-live-think-pill')
+    ) {
+      return true;
+    }
+
+    // B. NEVER BLUR USERNAMES, CHANNELS, AVATARS, TIMESTAMPS, BUTTONS, OR LINKS
+    const tag = el.tagName.toLowerCase();
+    if (tag === "a" || tag === "button" || tag === "time" || tag === "img" || tag === "svg" || tag === "yt-icon") {
+      return true;
+    }
+
+    const idStr = (el.id || "").toLowerCase();
+    const classStr = (typeof el.className === "string" ? el.className : "").toLowerCase();
+    if (
+      idStr.includes("author") || idStr.includes("username") || idStr.includes("avatar") || idStr.includes("header") || idStr.includes("channel") ||
+      classStr.includes("author") || classStr.includes("username") || classStr.includes("avatar") || classStr.includes("channel") ||
+      el.closest('a, button, time, #author-text, #header-author, [id*="author"], [class*="author"], [class*="user-name"], [class*="username"], [class*="avatar"], .ytd-channel-name, ytd-author-comment-badge-renderer, ytd-comment-view-model #header-author')
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
   function applyToxicBlur(element) {
-    if (element.hasAttribute("data-cybershield-blurred")) return;
+    if (!element || element.hasAttribute("data-cybershield-blurred")) return;
+    if (isProtectedElement(element)) return;
     element.setAttribute("data-cybershield-blurred", "true");
     element.style.filter = "blur(6px)";
     element.style.transition = "filter 0.3s ease, background-color 0.3s ease";
@@ -777,7 +791,7 @@
         patterns: [
           "stupid", "idiot", "loser", "ugly", "fat", "dumb", "dumbest", "hate you",
           "freak", "trash", "worthless", "pathetic", "complete joke", "nobody takes you seriously",
-          "embarrassing", "laughs at you behind", "stop talking", "waste of space"
+          "embarrassing", "laughs at you behind", "stop talking", "waste of space", "shut up", "shut your mouth", "nobody cares", "nobody cares about your opinion", "nobody asked for your opinion"
         ]
       },
       profanity: {
@@ -827,6 +841,7 @@
       { cat: "Insults & Intellectual Humiliation", weight: 50, regex: /\b(you(\'re|\s+are)|u\s+r)\s+(literally\s+)?(a\s+|an\s+|the\s+)?(dumbest|stupidest|biggest\s+loser|complete\s+joke|joke|laughing\s+stock|waste\s+of\s+space|brainless|moron|idiot|imbecile|retard|failure|clown|freak|loser)\b/i, label: "direct insult" },
       { cat: "Insults & Intellectual Humiliation", weight: 45, regex: /\b(nobody|no\s*one)\s+takes\s+you\s+seriously\b/i, label: "intellectual ridicule" },
       { cat: "Insults & Intellectual Humiliation", weight: 40, regex: /\b(your\s+)?opinions?\s+(are|is)\s+(embarrassing|pathetic|garbage|worthless)\b/i, label: "opinion humiliation" },
+      { cat: "Insults & Intellectual Humiliation", weight: 55, regex: /\b(shut\s+up|shut\s+your\s+mouth|nobody\s+cares\s*(about\s*)?(your\s+opinion|what\s+you\s+say|what\s+you\s+think|u|you)?|nobody\s+asked\s+(you|for\s+your\s+opinion))\b/i, label: "aggressive silencing / contempt" },
       { cat: "Profanity & Misogynistic Slurs", weight: 55, regex: /\b(slut|whore|bitch|cunt|skank|hoe|motherfucker|asshole|bastard|dipshit|douchebag)\b/i, label: "abusive profanity / misogynistic slur" }
     ];
 
@@ -1057,6 +1072,13 @@
 
   // Helper to find associated text input/composer when a Send or Post button is clicked across any website
   function findAssociatedInputElement(btn) {
+
+    // YouTube specific comment composer hook
+    const ytRoot = document.querySelector('#contenteditable-root, ytd-commentbox #contenteditable-root, div#contenteditable-root[contenteditable="true"]');
+    if (ytRoot) {
+      const val = getTargetText(ytRoot);
+      if (val && val.trim().length >= 2) return ytRoot;
+    }
     // 1. Check if activeElement is currently an input/composer
     const active = document.activeElement;
     if (active && active !== btn && (active.tagName === "TEXTAREA" || active.tagName === "INPUT" || active.isContentEditable || active.getAttribute("role") === "textbox")) {

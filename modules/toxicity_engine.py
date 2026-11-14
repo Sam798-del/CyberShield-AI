@@ -77,7 +77,8 @@ DEFAULT_TAXONOMY = {
         "patterns": [
             "stupid", "idiot", "loser", "ugly", "fat", "dumb", "dumbest", "hate you",
             "freak", "trash", "worthless", "pathetic", "complete joke", "nobody takes you seriously",
-            "embarrassing", "laughs at you behind", "stop talking", "waste of space"
+            "embarrassing", "laughs at you behind", "stop talking", "waste of space",
+            "shut up", "shut your mouth", "nobody cares", "nobody cares about your opinion", "nobody asked you"
         ]
     },
     "profanity": {
@@ -186,6 +187,7 @@ def analyze_cyberbullying(text: str) -> dict:
         ("insult", 50, r"\b(you(\'re|\s+are)|u\s+r)\s+(literally\s+)?(a\s+|an\s+|the\s+)?(dumbest|stupidest|biggest\s+loser|complete\s+joke|joke|laughing\s+stock|waste\s+of\s+space|brainless|moron|idiot|imbecile|retard|failure|clown|freak|loser)\b", "direct insult"),
         ("insult", 45, r"\b(nobody|no\s*one)\s+takes\s+you\s+seriously\b", "intellectual ridicule"),
         ("insult", 40, r"\b(your\s+)?opinions?\s+(are|is)\s+(embarrassing|pathetic|garbage|worthless)\b", "opinion humiliation"),
+        ("insult", 55, r"\b(shut\s+up|shut\s+your\s+mouth|nobody\s+cares\s*(about\s*)?(your\s+opinion|what\s+you\s+say|what\s+you\s+think|u|you)?|nobody\s+asked\s+(you|for\s+your\s+opinion))\b", "aggressive silencing / contempt"),
         # 8. Severe Profanity & Misogynistic Slurs
         ("profanity", 55, r"\b(slut|whore|bitch|cunt|skank|hoe|motherfucker|asshole|bastard|dipshit|douchebag)\b", "abusive profanity / misogynistic slur")
     ]
