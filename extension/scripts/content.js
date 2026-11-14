@@ -1034,7 +1034,12 @@
     document.getElementById("csClearMsgBtn").onclick = () => {
       if (targetElement) {
         if (typeof targetElement.value !== "undefined") targetElement.value = "";
-        else targetElement.innerText = "";
+        targetElement.innerText = "";
+        targetElement.textContent = "";
+        try {
+          targetElement.dispatchEvent(new Event("input", { bubbles: true }));
+          targetElement.dispatchEvent(new Event("change", { bubbles: true }));
+        } catch (e) {}
         targetElement.focus();
       }
       closeModal();
@@ -1065,13 +1070,20 @@
   function getTargetText(el) {
     if (!el) return "";
     if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") return el.value || "";
-    const editable = el.isContentEditable ? el : el.closest('[contenteditable="true"], [role="textbox"]');
+    // If inside a contenteditable element (e.g. WhatsApp Web, Twitter, LinkedIn), climb to the root editable container
+    const editable = el.isContentEditable ? (el.closest('[contenteditable="true"]') || el) : el.closest('[contenteditable="true"], [role="textbox"]');
     if (editable) return editable.innerText || editable.textContent || "";
     return el.value || el.innerText || el.textContent || "";
   }
 
   // Helper to find associated text input/composer when a Send or Post button is clicked across any website
   function findAssociatedInputElement(btn) {
+    // WhatsApp Web specific chat composer hook
+    const waRoot = document.querySelector('footer div[contenteditable="true"], div[data-tab="10"][contenteditable="true"], div[title="Type a message"][contenteditable="true"], div[data-lexical-editor="true"][contenteditable="true"], div._ak1r[contenteditable="true"]');
+    if (waRoot) {
+      const val = getTargetText(waRoot);
+      if (val && val.trim().length >= 2) return waRoot;
+    }
 
     // YouTube specific comment composer hook
     const ytRoot = document.querySelector('#contenteditable-root, ytd-commentbox #contenteditable-root, div#contenteditable-root[contenteditable="true"]');
@@ -1079,6 +1091,7 @@
       const val = getTargetText(ytRoot);
       if (val && val.trim().length >= 2) return ytRoot;
     }
+
     // 1. Check if activeElement is currently an input/composer
     const active = document.activeElement;
     if (active && active !== btn && (active.tagName === "TEXTAREA" || active.tagName === "INPUT" || active.isContentEditable || active.getAttribute("role") === "textbox")) {
@@ -1093,7 +1106,7 @@
       if (inp && getTargetText(inp).trim().length >= 2) return inp;
     }
 
-    // 3. Search upwards in container hierarchies (YouTube, Twitter/X, Reddit, LinkedIn, Discord wrappers)
+    // 3. Search upwards in container hierarchies (YouTube, WhatsApp, Twitter/X, Reddit, LinkedIn, Discord wrappers)
     let parent = btn.parentElement;
     let depth = 0;
     while (parent && depth < 8 && parent !== document.body) {
@@ -1124,11 +1137,13 @@
 
     // 1. Real-Time Typing Guidance ("Think Before You Post" live safety indicator)
     let liveTipTimeout = null;
-    document.addEventListener("input", (e) => {
+    const handleTypingGuidance = (e) => {
       if (config.outboundBlocker === false) return;
       const target = e.target;
       if (!target) return;
-      const el = target.closest('textarea, input[type="text"], input[type="search"], input:not([type]), [contenteditable="true"], [role="textbox"]') || target;
+      const el = (target.closest && target.closest('[contenteditable="true"]')) ||
+                 target.closest('textarea, input[type="text"], input[type="search"], input:not([type]), [role="textbox"]') ||
+                 target;
       if (!el) return;
 
       clearTimeout(liveTipTimeout);
@@ -1179,10 +1194,13 @@
           el.style.boxShadow = "";
         }
       }, 200);
-    }, true);
+    };
+
+    document.addEventListener("input", handleTypingGuidance, true);
+    window.addEventListener("input", handleTypingGuidance, true);
 
     // 2. Intercept Enter Key (Enter, Ctrl+Enter, Cmd+Enter across chat & forum apps)
-    document.addEventListener("keydown", (e) => {
+    const handleKeyDownTrigger = (e) => {
       if (config.outboundBlocker === false) return;
       if (e.key !== "Enter") return;
       if (e.shiftKey && e.target && e.target.tagName === "TEXTAREA") return;
@@ -1190,8 +1208,17 @@
       const target = e.target;
       if (!target) return;
 
-      const el = target.closest('textarea, input[type="text"], input[type="search"], input:not([type]), [contenteditable="true"], [role="textbox"]') || target;
-      const text = getTargetText(el);
+      const el = (target.closest && target.closest('[contenteditable="true"]')) ||
+                 target.closest('textarea, input[type="text"], input[type="search"], input:not([type]), [role="textbox"]') ||
+                 target;
+      
+      let text = getTargetText(el);
+      // Fallback: check WhatsApp Web footer compose box if event target is nested or indirect
+      if (!text || text.trim().length < 2) {
+        const waBox = document.querySelector('footer div[contenteditable="true"], div[data-tab="10"][contenteditable="true"]');
+        if (waBox) text = getTargetText(waBox);
+      }
+
       if (!text || text.trim().length < 2) return;
 
       const analysis = evaluateToxicitySync(text);
@@ -1202,10 +1229,13 @@
         renderOutboundBlockModal(analysis, el);
         return false;
       }
-    }, true);
+    };
+
+    window.addEventListener("keydown", handleKeyDownTrigger, true);
+    document.addEventListener("keydown", handleKeyDownTrigger, true);
 
     // 3. Intercept Form Submissions
-    document.addEventListener("submit", (e) => {
+    const handleFormSubmitTrigger = (e) => {
       if (config.outboundBlocker === false) return;
       const form = e.target;
       if (!form || !form.querySelectorAll) return;
@@ -1224,10 +1254,13 @@
           }
         }
       }
-    }, true);
+    };
 
-    // 4. Intercept Click on Send / Submit / Comment / Tweet / Post Buttons across all websites
-    document.addEventListener("click", (e) => {
+    document.addEventListener("submit", handleFormSubmitTrigger, true);
+    window.addEventListener("submit", handleFormSubmitTrigger, true);
+
+    // 4. Intercept Click & Pointer Events on Send / Submit / Comment / Tweet / Post Buttons across all websites
+    const handleSendActionTrigger = (e) => {
       if (config.outboundBlocker === false) return;
       const target = e.target;
       if (!target) return;
@@ -1237,7 +1270,13 @@
       if (btn.closest("#cybershield-outbound-blocker-modal")) return;
 
       const btnText = (btn.innerText || btn.value || btn.title || btn.getAttribute("aria-label") || btn.getAttribute("data-testid") || "").toLowerCase();
+      const hasSendIcon = btn.querySelector('[data-icon="send"]') ||
+                          (btn.getAttribute("data-tab") === "11") ||
+                          (btn.getAttribute("data-icon") === "send") ||
+                          (btn.parentElement && btn.parentElement.querySelector('[data-icon="send"]'));
+
       const isSendAction = btn.type === "submit" ||
+        hasSendIcon ||
         btnText.includes("send") ||
         btnText.includes("post") ||
         btnText.includes("comment") ||
@@ -1264,7 +1303,13 @@
         renderOutboundBlockModal(analysis, input);
         return false;
       }
-    }, true);
+    };
+
+    // Capture on pointerdown, mousedown, and click to beat fast single-page app listeners (e.g. WhatsApp, React)
+    window.addEventListener("pointerdown", handleSendActionTrigger, true);
+    window.addEventListener("mousedown", handleSendActionTrigger, true);
+    window.addEventListener("click", handleSendActionTrigger, true);
+    document.addEventListener("click", handleSendActionTrigger, true);
   }
 
   // Synchronized Fallback Toxicity Evaluator (Uses full SVO grammar engine)
