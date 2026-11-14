@@ -223,20 +223,28 @@
     banner.querySelector("#csAcknowledgeBreach")?.addEventListener("click", close);
   }
 
-  // 4. In-Page Visual Badge (Safe / Suspicious / Dangerous)
+  let pageHasThreat = false;
+  let pageThreatReason = "";
+
+  // 4. In-Page Visual Badge (Safe = "Secure" / Danger = "Threat Alert")
   function renderPageBadge(riskLevel, score) {
     if (document.getElementById("cybershield-corner-badge")) return;
 
+    const isDanger = (score && score >= 45) || pageHasThreat;
+    const isWarning = !isDanger && (score && score >= 20 && score < 45);
+    const badgeColor = isDanger ? "#ef4444" : (isWarning ? "#f59e0b" : "#10b981");
+    const badgeText = isDanger ? "Threat Alert" : (isWarning ? "Caution" : "Secure");
+
     const badge = document.createElement("div");
     badge.id = "cybershield-corner-badge";
-    badge.title = `CyberShield AI: ${riskLevel} (${score}/100)`;
+    badge.title = `CyberShield AI: ${badgeText} (${score || 0}/100)`;
     badge.style.cssText = `
       position: fixed;
       bottom: 20px;
       right: 20px;
       background: #0f172a;
       color: #f1f5f9;
-      border: 1px solid #10b981;
+      border: 1px solid ${badgeColor};
       padding: 6px 14px;
       border-radius: 20px;
       font-size: 11px;
@@ -248,15 +256,20 @@
       box-shadow: 0 4px 16px rgba(0,0,0,0.6);
       cursor: pointer;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     `;
-    badge.innerHTML = `<span id="cs-badge-dot" style="color:#10b981; font-size:12px;">●</span> <span id="cs-badge-text">Secure</span>`;
+    badge.innerHTML = `<span id="cs-badge-dot" style="color:${badgeColor}; font-size:12px;">●</span> <span id="cs-badge-text">${badgeText}</span>`;
     badge.onclick = () => {
-      alert(`CyberShield AI Verdict:\n\nStatus: ${riskLevel}\nRisk Score: ${score}/100\nDomain: ${window.location.hostname || "Local file"}\n\nAll real-time client defense modules active.`);
+      alert(`🛡️ CyberShield AI Verdict:\n\nStatus: ${badgeText}\nRisk Score: ${score || 0}/100\nDomain: ${window.location.hostname || "Local file"}\n\n${isDanger ? (pageThreatReason ? `⚠️ ${pageThreatReason}` : '⚠️ Threat Alert: Risk detected on this page.') : '✅ Verified Secure: Phishing radar and cyberbullying shields active.'}`);
     };
     document.body.appendChild(badge);
   }
 
-  function updatePageBadge(riskLevel, score) {
+  function updatePageBadge(riskLevel, score, threatNote) {
+    if (threatNote) {
+      pageHasThreat = true;
+      pageThreatReason = threatNote;
+    }
     const badge = document.getElementById("cybershield-corner-badge");
     const dot = document.getElementById("cs-badge-dot");
     const text = document.getElementById("cs-badge-text");
@@ -265,15 +278,18 @@
       return;
     }
 
-    const isDanger = score >= 45;
-    const isWarning = score >= 20 && score < 45;
+    const isDanger = (score && score >= 45) || pageHasThreat;
+    const isWarning = !isDanger && (score && score >= 20 && score < 45);
     const badgeColor = isDanger ? "#ef4444" : (isWarning ? "#f59e0b" : "#10b981");
     const badgeText = isDanger ? "Threat Alert" : (isWarning ? "Caution" : "Secure");
 
     badge.style.borderColor = badgeColor;
     dot.style.color = badgeColor;
     text.innerText = badgeText;
-    badge.title = `CyberShield AI: ${riskLevel} (${score}/100)`;
+    badge.title = `CyberShield AI: ${badgeText} (${score || 0}/100)`;
+    badge.onclick = () => {
+      alert(`🛡️ CyberShield AI Verdict:\n\nStatus: ${badgeText}\nRisk Score: ${score || 0}/100\nDomain: ${window.location.hostname || "Local file"}\n\n${isDanger ? (pageThreatReason ? `⚠️ ${pageThreatReason}` : '⚠️ Threat Alert: Risk detected on this page.') : '✅ Verified Secure: Phishing radar and cyberbullying shields active.'}`);
+    };
   }
 
   // 5. Top Floating Warning Banner for Critical Threats
@@ -445,6 +461,7 @@
 
     if (!element.hasAttribute("data-cybershield-incident-logged")) {
       element.setAttribute("data-cybershield-incident-logged", "true");
+      updatePageBadge("TOXIC_CONTENT_DETECTED", 75, "Abusive cyberbullying or harassment content detected and blurred on page.");
       chrome.runtime.sendMessage({
         action: "RECORD_EXTENSION_INCIDENT",
         incident: {
