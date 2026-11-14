@@ -1,4 +1,4 @@
-// CyberShield AI — Content Script (Injected DOM Security Guard & Analyzer Bridge)
+﻿// CyberShield AI — Content Script (Injected DOM Security Guard & Analyzer Bridge)
 // Features: Live URL Badges, Warning Banners, Toxic Text Blur, Password Security & Real-Time Telemetry
 
 (function () {
@@ -66,7 +66,8 @@
   renderPageBadge("SAFE", 0);
 
   // 2. Initialize configuration from extension storage and run guards
-  chrome.storage.local.get(["autoScan", "toxicBlur", "passwordTips"], (items) => {
+  chrome.storage.local.get(["autoScan", "toxicBlur", "passwordTips", "backendUrl"], (items) => {
+    if (items.backendUrl) config.backendUrl = items.backendUrl;
     if (items.autoScan !== undefined) config.autoScan = items.autoScan;
     if (items.toxicBlur !== undefined) config.toxicBlur = items.toxicBlur;
     if (items.passwordTips !== undefined) config.passwordTips = items.passwordTips;
@@ -161,6 +162,10 @@
     const breachName = res.breaches?.[0]?.name || "Verified Public Incident";
     const breachDate = res.breaches?.[0]?.date ? new Date(res.breaches[0].date).getFullYear() : "Archived";
     const exposedList = (res.breaches?.[0]?.data_exposed || ["Usernames", "Passwords", "Email addresses"]).slice(0, 3).join(", ");
+    const rootName = currentHostname.replace(/^www\./, "");
+    const bName = rootName.split(".")[0];
+    const cleanBrand = bName ? bName.charAt(0).toUpperCase() + bName.slice(1) : currentHostname;
+    const portalBase = (config && config.backendUrl) ? config.backendUrl.replace(/\/+$/, "") : "https://cybershield-ai-5bpo.onrender.com";
 
     banner.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
@@ -190,7 +195,7 @@
       </div>
 
       <div style="display:flex; gap:8px;">
-        <a href="http://localhost:5000/pages/security-analyzer.html?domain=${encodeURIComponent(currentHostname)}&type=domain" target="_blank" style="flex:1; text-align:center; background:linear-gradient(110deg,#6350f4,#7b6bff); color:#fff; text-decoration:none; padding:6px 10px; border-radius:6px; font-size:10px; font-weight:700; box-shadow:0 3px 10px rgba(99,80,244,0.3);">
+        <a href="${portalBase}/pages/security-analyzer.html?domain=${encodeURIComponent(currentHostname)}&type=domain" target="_blank" style="flex:1; text-align:center; background:linear-gradient(110deg,#6350f4,#7b6bff); color:#fff; text-decoration:none; padding:6px 10px; border-radius:6px; font-size:10px; font-weight:700; box-shadow:0 3px 10px rgba(99,80,244,0.3);">
           View Full Breach Audit ↗
         </a>
         <button id="csAcknowledgeBreach" style="background:rgba(255,255,255,0.08); border:1px solid #475569; color:#cbd5e1; padding:6px 12px; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer;">
@@ -741,3 +746,4 @@
     } catch (e) {}
   });
 })();
+
