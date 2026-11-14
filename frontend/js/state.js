@@ -118,6 +118,15 @@ class StateManager {
                 };
             }
         } catch (e) {}
+
+        // Listen for extension postMessage bridge
+        if (typeof window !== "undefined") {
+            window.addEventListener("message", (event) => {
+                if (event.data && event.data.type === "CYBERSHIELD_EXTENSION_INCIDENT" && event.data.incident) {
+                    this.recordExtensionIncident(event.data.incident, true);
+                }
+            });
+        }
     }
 
     loadState() {

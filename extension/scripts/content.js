@@ -2,6 +2,10 @@
 // Features: Live URL Badges, Warning Banners, Toxic Text Blur, Password Security & Real-Time Telemetry
 
 (function () {
+  // Prevent duplicate execution if content.js is injected both by Chrome and by page scripts
+  if (window.__cybershield_content_script_loaded) return;
+  window.__cybershield_content_script_loaded = true;
+
   // Safe environment polyfill for direct testing in browser tabs
   if (typeof window.chrome === "undefined") {
     window.chrome = {};
