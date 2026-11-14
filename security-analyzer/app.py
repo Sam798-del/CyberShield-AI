@@ -635,7 +635,10 @@ def _query_xon_domain(domain: str) -> dict:
         return _api_error("Invalid response from XposedOrNot API.")
 
     # raw is a list of breach objects; filter by domain
-    domain_lower = domain.lower()
+    domain_lower = domain.lower().strip()
+    root_domain = domain_lower[4:] if domain_lower.startswith("www.") else domain_lower
+    # Extract base brand name (e.g. 'adobe' from 'adobe.com')
+    brand_name = root_domain.split(".")[0] if "." in root_domain else root_domain
     matched = []
 
     # The API may return a list or a dict with a key holding the list
@@ -644,9 +647,17 @@ def _query_xon_domain(domain: str) -> dict:
     for b in (breach_list if isinstance(breach_list, list) else []):
         if not isinstance(b, dict):
             continue
-        b_domain = (b.get("domain") or b.get("Domain") or "").lower()
-        b_name = (b.get("breachID") or b.get("breach") or b.get("name") or b.get("Name") or "").lower()
-        if domain_lower in b_domain or domain_lower in b_name:
+        b_domain = (b.get("domain") or b.get("Domain") or "").lower().strip()
+        b_name = (b.get("breachID") or b.get("breach") or b.get("name") or b.get("Name") or "").lower().strip()
+        
+        # Robust match against full domain, root domain, or brand name
+        is_match = (
+            root_domain == b_domain
+            or root_domain in b_domain
+            or (b_domain and b_domain in root_domain)
+            or (brand_name and len(brand_name) >= 3 and (brand_name == b_name or b_name.startswith(brand_name)))
+        )
+        if is_match:
             data_raw = (b.get("exposedData") or b.get("xposed_data")
                         or b.get("DataClasses") or b.get("data_exposed")
                         or b.get("dataclasses") or "")
