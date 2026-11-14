@@ -609,75 +609,80 @@ def detect_cyberbullying():
     if not text:
         return jsonify({"status": "error", "message": "Input text is required"}), 400
         
-    t_lower = text.lower()
-    categories = {
-        "insult": False,
-        "harassment": False,
-        "threat": False,
-        "profanity": False,
-        "hate_speech": False
-    }
-    flagged_words = []
-    score = 0
-    
-    # Harassment / Bullying Lexicon Analysis
-    insult_words = ["stupid", "idiot", "loser", "ugly", "fat", "dumb", "hate you", "freak", "trash", "worthless"]
-    harass_words = ["kill yourself", "die", "go die", "nobody likes you", "shut up", "get a life", "creep", "stalk"]
-    threat_words = ["i will find you", "beat you", "hurt you", "destroy you", "track your ip", "expose you"]
-    profanity_words = ["bitch", "bastard", "fuck", "shit", "asshole"]
-    
-    for w in insult_words:
-        if w in t_lower:
-            categories["insult"] = True
-            flagged_words.append(w)
-            score += 25
-            
-    for w in harass_words:
-        if w in t_lower:
-            categories["harassment"] = True
-            flagged_words.append(w)
-            score += 40
-            
-    for w in threat_words:
-        if w in t_lower:
-            categories["threat"] = True
-            flagged_words.append(w)
-            score += 50
-            
-    for w in profanity_words:
-        if w in t_lower:
-            categories["profanity"] = True
-            flagged_words.append(w)
-            score += 15
+    try:
+        from modules.toxicity_engine import analyze_cyberbullying
+        result = analyze_cyberbullying(text)
+        return jsonify(result)
+    except Exception as _engine_err:
+        # Resilient fallback to inline heuristics if module encounters an issue
+        t_lower = text.lower()
+        categories = {
+            "insult": False,
+            "harassment": False,
+            "threat": False,
+            "profanity": False,
+            "hate_speech": False
+        }
+        flagged_words = []
+        score = 0
+        
+        insult_words = ["stupid", "idiot", "loser", "ugly", "fat", "dumb", "hate you", "freak", "trash", "worthless"]
+        harass_words = ["kill yourself", "die", "go die", "nobody likes you", "shut up", "get a life", "creep", "stalk"]
+        threat_words = ["i will find you", "beat you", "hurt you", "destroy you", "track your ip", "expose you"]
+        profanity_words = ["bitch", "bastard", "fuck", "shit", "asshole"]
+        
+        for w in insult_words:
+            if w in t_lower:
+                categories["insult"] = True
+                flagged_words.append(w)
+                score += 25
+                
+        for w in harass_words:
+            if w in t_lower:
+                categories["harassment"] = True
+                flagged_words.append(w)
+                score += 40
+                
+        for w in threat_words:
+            if w in t_lower:
+                categories["threat"] = True
+                flagged_words.append(w)
+                score += 50
+                
+        for w in profanity_words:
+            if w in t_lower:
+                categories["profanity"] = True
+                flagged_words.append(w)
+                score += 15
 
-    score = min(score, 100)
-    flagged_words = list(set(flagged_words))
-    
-    if score >= 70:
-        toxicity_level = "HIGHLY TOXIC / SEVERE HARASSMENT"
-        status_color = "danger"
-    elif score >= 35:
-        toxicity_level = "MODERATE TOXICITY DETECTED"
-        status_color = "warning"
-    else:
-        toxicity_level = "SAFE / NON-TOXIC CONTENT"
-        status_color = "success"
+        score = min(score, 100)
+        flagged_words = list(set(flagged_words))
+        
+        if score >= 70:
+            toxicity_level = "HIGHLY TOXIC / SEVERE HARASSMENT"
+            status_color = "danger"
+        elif score >= 35:
+            toxicity_level = "MODERATE TOXICITY DETECTED"
+            status_color = "warning"
+        else:
+            toxicity_level = "SAFE / NON-TOXIC CONTENT"
+            status_color = "success"
 
-    return jsonify({
-        "status": "success",
-        "text": text,
-        "toxicity_score": score,
-        "toxicity_level": toxicity_level,
-        "status_color": status_color,
-        "categories": categories,
-        "flagged_words": flagged_words,
-        "safety_actions": [
-            "Block the sender on social media/chat platforms.",
-            "Take screenshot evidence for documentation.",
-            "Report the toxic content to platform moderators.",
-            "Reach out to a trusted counselor or cyber safety hotline."
-        ] if score >= 35 else ["No safety action required."]
-    })
+        return jsonify({
+            "status": "success",
+            "text": text,
+            "toxicity_score": score,
+            "toxicity_level": toxicity_level,
+            "status_color": status_color,
+            "categories": categories,
+            "flagged_words": flagged_words,
+            "safety_actions": [
+                "Block the sender on social media/chat platforms.",
+                "Take screenshot evidence for documentation.",
+                "Report the toxic content to platform moderators.",
+                "Reach out to a trusted counselor or cyber safety hotline."
+            ] if score >= 35 else ["No safety action required."]
+        })
 
 
 def get_local_ip():

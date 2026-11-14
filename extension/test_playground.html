@@ -129,6 +129,19 @@
       border: 1px dashed rgba(56, 189, 248, 0.3);
     }
     .instruction-step strong { color: #fff; }
+  
+    @keyframes csFadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes csPulseModal {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+    .cs-btn-pulse {
+      animation: csPulseModal 2s infinite ease-in-out;
+    }
   </style>
 </head>
 <body>
@@ -159,25 +172,45 @@
       <!-- TEST 2: TOXIC TEXT AUTOMATIC BLURRING -->
       <div class="test-card">
         <div class="test-card-header">
-          <h2 class="test-title">💬 Test 2: In-Page Toxic Content Blurring</h2>
+          <h2 class="test-title">💬 Test 2: In-Page Multi-Category Toxic Blurring</h2>
           <span class="pill pill-amber">Live Social Guard</span>
         </div>
         <p class="test-desc">
-          CyberShield AI scans comments and forum posts on page load. Any abusive harassment or hate speech is automatically blurred with a click-to-reveal shield.
+          CyberShield AI scans comments and forum posts on page load across all major cyberbullying taxonomies (Social Exclusion, Body Shaming, Intimidation, Defamation, Insults).
         </p>
         
         <div class="comment-box">
-          <div class="comment-author">User @Alex99 (Normal Comment)</div>
+          <div class="comment-author">User @Alex99 (Normal Safe Comment)</div>
           <p class="comment-text">Hey everyone, thanks for checking out the new CyberShield defense platform. Looking forward to the demo!</p>
         </div>
 
         <div class="comment-box">
-          <div class="comment-author">User @TrollBot (Abusive Harassment)</div>
+          <div class="comment-author">User @TrollBot (Direct Insult & Overt Abuse)</div>
           <p class="comment-text">You are an idiot loser, go die and leave forever nobody likes you!</p>
         </div>
 
+        <div class="comment-box">
+          <div class="comment-author">User @MeanCircle (Social Exclusion & Ostracization)</div>
+          <p class="comment-text">Don't invite her. Nobody wants her around. Let's make a group without him and ignore all his messages.</p>
+        </div>
+
+        <div class="comment-box">
+          <div class="comment-author">User @Critic9 (Body Shaming & Aesthetic Ridicule)</div>
+          <p class="comment-text">Why would you upload a picture looking like that? You look ridiculous, hide your face.</p>
+        </div>
+
+        <div class="comment-box">
+          <div class="comment-author">User @StalkerX (Digital Intimidation & Stalking)</div>
+          <p class="comment-text">I'll make your life miserable online. Delete your account, you can't escape what I'm going to do to your reputation.</p>
+        </div>
+
+        <div class="comment-box">
+          <div class="comment-author">User @RumorMill (Defamation & Public Humiliation)</div>
+          <p class="comment-text">Let's spread this rumour so nobody trusts him! I made a fake account just to expose you.</p>
+        </div>
+
         <div class="instruction-step">
-          💡 <strong>What to notice:</strong> The abusive comment above is automatically blurred out! Click directly on the blurred text to safely reveal it.
+          💡 <strong>What to notice:</strong> Every toxic category above is automatically blurred out with red alert highlights! Click directly on any blurred box to safely reveal it.
         </div>
       </div>
 
@@ -218,9 +251,73 @@
       </div>
 
       <!-- TEST 5: REAL-TIME SECURITY ANALYZER & DOMAIN BREACH BRIDGE -->
+      <!-- TEST 5: OUTBOUND SEND BLOCKER -->
+      <div class="test-card" style="border: 1.5px solid rgba(239, 68, 68, 0.4);">
+        <div class="test-card-header">
+          <h2 class="test-title">🛑 Test 5: Outbound Send Blocker ("Think Before You Post")</h2>
+          <span class="pill" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444;">Live Intercept Guard</span>
+        </div>
+        <p class="test-desc">
+          CyberShield AI intercepts outgoing forum comments, tweets, and chat messages in real time. If an outbound message contains violent threats, slurs, death wishes, or harassment, the transmission is <strong>instantly blocked</strong> and an interactive prompt appears with <strong>[ ✏️ Edit Message ]</strong> so the user can rephrase safely!
+        </p>
+
+        <!-- Quick Test Selector Pills -->
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+          <button type="button" class="pill" style="cursor: pointer; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);" onclick="fillOutboundDemo('I SHOULD KILL YOU WITH HAMMER')">
+            💣 Test: Violent Threat + Weapon
+          </button>
+          <button type="button" class="pill" style="cursor: pointer; background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4);" onclick="fillOutboundDemo('you die slut here')">
+            🛑 Test: Death Command + Misogynistic Slur
+          </button>
+          <button type="button" class="pill" style="cursor: pointer; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);" onclick="fillOutboundDemo('you SHOULD DIE NO ONE LIKES YOU')">
+            🚫 Test: Death Wish + Social Exclusion
+          </button>
+          <button type="button" class="pill" style="cursor: pointer; background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);" onclick="fillOutboundDemo('Great presentation everyone, best of luck with the viva!')">
+            🌸 Test: Wholesome Safe Message
+          </button>
+        </div>
+
+        <form id="outboundDemoForm" onsubmit="handleDemoSubmit(event)">
+          <textarea id="testOutboundMsg" class="demo-input" style="min-height: 90px; resize: vertical; line-height: 1.5;" placeholder="Type an outbound message here, or click one of the quick test buttons above, then press Enter or click 'Send Comment'..."></textarea>
+          
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px;">
+            <button type="submit" id="testOutboundSendBtn" style="
+              background: linear-gradient(135deg, #0284c7, #0369a1);
+              border: 1px solid #38bdf8;
+              color: #ffffff;
+              padding: 10px 22px;
+              border-radius: 8px;
+              font-size: 13.5px;
+              font-weight: 800;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+            ">
+              <span>Send Comment</span> 🚀
+            </button>
+            <span style="font-size: 12px; color: #94a3b8;">
+              💡 <em>Tip:</em> Hitting <kbd style="background: #1e293b; padding: 2px 6px; border-radius: 4px; color: #fff;">Enter</kbd> inside the box also triggers the interceptor!
+            </span>
+          </div>
+        </form>
+
+        <div id="outboundDeliveryStatus"></div>
+
+        <div class="instruction-step" style="margin-top: 14px;">
+          💡 <strong>What to notice:</strong> 
+          1. Click any red/amber test button above ➔ Click <strong>"Send Comment"</strong>. 
+          2. The comment is <strong>completely blocked</strong> from sending!
+          3. CyberShield AI's modal appears with <strong>🛑 SEND BLOCKED</strong> and <strong>[ ✏️ Edit Message ]</strong>.
+          4. Click <strong>[ ✏️ Edit Message ]</strong> ➔ modal closes, focus returns to the input box with a cyan highlight!
+          5. Now click <strong>"🌸 Wholesome Safe Message"</strong> and send ➔ Delivered successfully!
+        </div>
+      </div>
+
       <div class="test-card" style="border-color: rgba(99, 80, 244, 0.4); background: linear-gradient(135deg, #0e172e, #0c1529);">
         <div class="test-card-header">
-          <h2 class="test-title" style="color: #c7d2fe;">🛡️ Test 5: Real-Time Security Analyzer & Chrome Tab Sync</h2>
+          <h2 class="test-title" style="color: #c7d2fe;">🛡️ Test 6: Real-Time Security Analyzer & Chrome Tab Sync</h2>
           <span class="pill" style="background: rgba(99, 80, 244, 0.2); color: #c7d2fe; border: 1px solid rgba(99, 80, 244, 0.4);">Security Analyzer Bridge</span>
         </div>
         <p class="test-desc">
