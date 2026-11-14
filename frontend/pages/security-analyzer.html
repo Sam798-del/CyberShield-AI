@@ -361,16 +361,16 @@
     const state = {
       mode: 'password',
       activeNav: 'Security Analyzer',
-      password: 'Neeraja@2007',
+      password: '',
       showPassword: false,
-      score: 42,
-      label: 'medium',
-      entropyBits: 52.4,
-      crackTime: 'about 14 days',
+      score: 0,
+      label: 'weak',
+      entropyBits: 0,
+      crackTime: '< 1 sec',
       breached: false,
       breachCount: 0,
-      issues: ['Contains personal structure', 'Common symbol-number suffix pattern'],
-      tips: ['Use 12+ characters', 'Avoid names and predictable patterns'],
+      issues: [],
+      tips: [],
       email: defaultEmail,
       scanned: false,
       fixedServices: {},
@@ -409,8 +409,9 @@
     function notice(title, message, tone='') {
       state.notice = {title, message, tone};
       render();
-      clearTimeout(notice.timer);
-      notice.timer = setTimeout(() => { state.notice = null; render(); }, 4500);
+      if (!notice._timerId) notice._timerId = null;
+      clearTimeout(notice._timerId);
+      notice._timerId = setTimeout(() => { state.notice = null; render(); }, 4500);
     }
 
     // Smart High-Strength Combinations Formed STRICTLY Around User's Letters & Numbers
@@ -544,14 +545,45 @@
       state.password = val;
       calculateLivePasswordHealth(val);
       updateCombinations();
-      render();
+      // Do NOT call render() here — it wipes the DOM while the user is typing,
+      // causing the input to lose focus and jump (the "glitch"). The debounced
+      // API call already calls render() after results come back.
+      // We only need to update the score meter live, so do a targeted DOM patch.
+      patchPasswordScore();
 
       clearTimeout(passwordDebounceTimer);
       passwordDebounceTimer = setTimeout(() => {
         if (state.password && state.password.length >= 3) {
           checkPasswordApiSilently();
         }
-      }, 400);
+      }, 600);
+    }
+
+    // Lightweight DOM patch — updates score/label/meter WITHOUT wiping innerHTML,
+    // so the password input keeps focus and cursor position while typing.
+    function patchPasswordScore() {
+      try {
+        const color = state.label === 'strong' ? '#2bd6a8' : state.label === 'medium' ? '#f2c14d' : '#ee4e81';
+        const tone  = state.label === 'strong' ? 'Strong' : state.label === 'medium' ? 'Fair' : 'Weak';
+
+        const ring = document.querySelector('.score-ring');
+        if (ring) ring.style.background = `conic-gradient(${color} 0 ${state.score}%, #273e73 ${state.score}% 100%)`;
+
+        const scoreVal = document.querySelector('.score-value strong');
+        if (scoreVal) scoreVal.textContent = state.score;
+
+        const scoreH3 = document.querySelector('.score-detail h3');
+        if (scoreH3) { scoreH3.textContent = tone; scoreH3.style.color = color; }
+
+        const meter = document.querySelector('.meter span');
+        if (meter) { meter.style.width = state.score + '%'; meter.style.background = color; }
+
+        const entropyEl = document.querySelector('.score-detail div[style*="8px"]');
+        if (entropyEl) entropyEl.innerHTML = `Entropy: <strong>${state.entropyBits || 0} bits</strong>`;
+
+        const crackEl = document.querySelector('.crack-time');
+        if (crackEl) { crackEl.textContent = state.crackTime; crackEl.style.color = color; }
+      } catch(e) { /* silent — full render() will follow from API */ }
     }
 
     async function checkPasswordApiSilently() {
@@ -1576,7 +1608,8 @@
       render();
       setTimeout(() => scanTarget(targetEmail, 'email'), 150);
     } else {
-      analyzePassword();
+      // No URL params — just render the empty state; user types to analyze
+      render();
     }
   </script>
 </body>

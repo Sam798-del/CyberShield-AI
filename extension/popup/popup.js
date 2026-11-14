@@ -65,12 +65,8 @@ function openPortalUrl(path) {
   const targetUrl = `${base}${cleanPath}`;
 
   try {
-    if (window.chrome && chrome.tabs && typeof chrome.tabs.create === "function") {
-      chrome.tabs.create({ url: targetUrl }, () => {
-        if (chrome.runtime && chrome.runtime.lastError) {
-          window.open(targetUrl, "_blank");
-        }
-      });
+    if (typeof chrome !== "undefined" && chrome.tabs && typeof chrome.tabs.create === "function") {
+      chrome.tabs.create({ url: targetUrl });
     } else {
       window.open(targetUrl, "_blank");
     }
@@ -632,6 +628,23 @@ function setupEventListeners() {
   // Quick Action Tool: AI Security Report
   document.getElementById("toolReportBtn")?.addEventListener("click", () => {
     openPortalUrl("pages/security-report.html");
+  });
+
+  // Additional Feature Navigation Buttons
+  document.getElementById("toolPhishingBtn")?.addEventListener("click", () => {
+    openPortalUrl("pages/phishing-detection.html");
+  });
+
+  document.getElementById("toolIdentityBtn")?.addEventListener("click", () => {
+    openPortalUrl("pages/digital-identity.html");
+  });
+
+  document.getElementById("toolGuideBtn")?.addEventListener("click", () => {
+    openPortalUrl("pages/guide.html");
+  });
+
+  document.getElementById("toolCyberbullyingBtn")?.addEventListener("click", () => {
+    openPortalUrl("pages/cyberbullying-detection.html");
   });
 }
 
