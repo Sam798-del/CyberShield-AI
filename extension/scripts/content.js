@@ -165,7 +165,12 @@
     const rootName = currentHostname.replace(/^www\./, "");
     const bName = rootName.split(".")[0];
     const cleanBrand = bName ? bName.charAt(0).toUpperCase() + bName.slice(1) : currentHostname;
-    const portalBase = (config && config.backendUrl) ? config.backendUrl.replace(/\/+$/, "") : "https://cybershield-ai-5bpo.onrender.com";
+    // Always prefer the cloud Render URL for opening web portal pages (security-analyzer, etc.)
+    // Fall back to whatever the user has configured, but never localhost (it may not be running)
+    const rawBackend = (config && config.backendUrl) ? config.backendUrl.replace(/\/+$/, "") : "https://cybershield-ai-5bpo.onrender.com";
+    const portalBase = (rawBackend.startsWith("http://localhost") || rawBackend.startsWith("http://127.0.0.1"))
+      ? "https://cybershield-ai-5bpo.onrender.com"
+      : rawBackend;
 
     banner.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
@@ -479,6 +484,7 @@
       });
 
       input.addEventListener("input", () => {
+        tipBox.removeAttribute("data-cs-sugg-done");
         const pwd = input.value;
         if (!pwd) {
           tipBox.style.display = "none";
@@ -550,8 +556,9 @@
               `;
             }
 
-            // If Moderate, Weak, or Breached, suggest high-strength variations formed around the user's characters!
-            if (!isHigh) {
+            // If Moderate, Weak, or Breached, suggest high-strength variations (once per debounce)
+            if (!isHigh && !tipBox.hasAttribute('data-cs-sugg-done')) {
+              tipBox.setAttribute('data-cs-sugg-done', '1');
               const variations = generatePersonalPasswordVariations(pwd);
               if (variations.length > 0) {
                 let suggestionsHTML = `
