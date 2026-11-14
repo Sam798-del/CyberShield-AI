@@ -87,9 +87,9 @@ const CyberShieldNav = {
         headerContainer.innerHTML = `
             <header class="topbar">
                 <div class="top-actions">
-                    <a href="guide.html" class="icon-button" title="Guide & Security Center">
-                        ${this.icons.book}
-                    </a>
+                    <button class="icon-button" title="Platform Feature Tour" onclick="if(window.CyberShieldTour){CyberShieldTour.startTour();}else{window.location.href='dashboard.html?onboarding=true';}" style="display:inline-flex; align-items:center; gap:6px; width:auto; padding:0 12px; border-radius:16px; background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.35); color:#a5b4fc; font-size:12px; font-weight:700; cursor:pointer;">
+                        <span>✦</span><span>Feature Tour</span>
+                    </button>
                     <button class="icon-button" title="Alerts" onclick="if(window.CyberShieldUtils) CyberShieldUtils.showToast('Workspace is secure and up to date','success'); else alert('Workspace is secure');">
                         ${this.icons.bell}
                     </button>

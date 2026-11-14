@@ -114,7 +114,8 @@
                         <h1 class="page-title" id="dashGreeting">Good day, <span>Neeraja Shinde</span></h1>
                         <p class="page-subtitle" id="scanMeta">Last full scan completed 6 mins ago · Zero critical vulnerabilities</p>
                     </div>
-                    <div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <button class="btn btn-secondary" onclick="if(window.CyberShieldTour) CyberShieldTour.startTour();" title="Launch Interactive Tour of CyberShield AI Features" style="border-color: rgba(99,102,241,0.5); background: rgba(99,102,241,0.15); color: #c7d2fe; font-weight: 600;">✦ Feature Guide & Tour</button>
                         <button class="btn btn-primary" id="runScanBtn" onclick="runInstantScan()">▶ Run Scan Now</button>
                     </div>
                 </div>
@@ -365,6 +366,7 @@
     <script src="../js/utils.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/navigation.js"></script>
+    <script src="../js/tour.js"></script>
     <script src="../js/app.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {

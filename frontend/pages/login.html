@@ -280,7 +280,7 @@
                     avatarInitials: "NS"
                 });
             }
-            window.location.href = "guide.html";
+            window.location.href = "dashboard.html";
         }
 
         function handleAuth(e) {
@@ -325,7 +325,11 @@
                 });
             }
 
-            window.location.href = "guide.html";
+            if (mode === "signup") {
+                window.location.href = "dashboard.html?onboarding=true";
+            } else {
+                window.location.href = "dashboard.html";
+            }
         }
 
         function showError(msg) {

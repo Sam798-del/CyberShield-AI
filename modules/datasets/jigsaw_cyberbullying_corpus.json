@@ -27,7 +27,7 @@
     },
     "intimidation": {
       "display_name": "Digital Intimidation, Harassment & Stalking",
-      "severity_weight": 45,
+      "severity_weight": 50,
       "legal_context": "Section 354D IPC (Cyberstalking) & Section 66E IT Act",
       "patterns": [
         "keep messaging you until", "to your reputation", "make your life miserable",
@@ -43,7 +43,7 @@
     },
     "defamation": {
       "display_name": "Defamation, Rumours & Public Doxing",
-      "severity_weight": 45,
+      "severity_weight": 50,
       "legal_context": "Section 499/500 IPC (Defamation) & Section 66D IT Act (Cheating by Impersonation)",
       "patterns": [
         "spread this rumour", "spread this rumor", "embarrassing picture",
@@ -58,7 +58,7 @@
     },
     "social_exclusion": {
       "display_name": "Social Exclusion & Ostracization (Relational Bullying)",
-      "severity_weight": 45,
+      "severity_weight": 50,
       "legal_context": "StopBullying.gov Taxonomy: Covert Psychological Aggression",
       "patterns": [
         "don't invite her", "don't invite him", "don't invite them", "nobody wants her around",
@@ -77,7 +77,7 @@
     },
     "body_shaming": {
       "display_name": "Body Shaming & Aesthetic Ridicule",
-      "severity_weight": 45,
+      "severity_weight": 50,
       "legal_context": "StopBullying.gov Taxonomy: Denigration & Physical Mockery",
       "patterns": [
         "looking like that", "look ridiculous", "look disgusting", "hide your face",
