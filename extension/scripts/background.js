@@ -1,7 +1,7 @@
 // CyberShield AI — Background Service Worker (Manifest V3)
 // Real-Time Browser Defense & Security Analyzer Bridge Engine
 
-const CLOUD_API = "https://cybershield-ai-rlk5.onrender.com";
+const CLOUD_API = "https://cybershield-ai-5bpo.onrender.com";
 const LOCAL_API = "http://localhost:5000";
 
 let targetBackend = CLOUD_API;

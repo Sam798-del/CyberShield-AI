@@ -3,7 +3,7 @@
 > **"Think. Detect. Stay Safe."**  
 > CyberShield-AI is an end-to-end, AI-powered cybersecurity suite that protects individuals and organizations from modern digital threats in real time — including phishing campaigns, social media toxicity & cyberbullying, compromised credentials, and vulnerable domains.
 
-🌐 **Live Web Application**: [https://cybershield-ai-rlk5.onrender.com](https://cybershield-ai-rlk5.onrender.com)  
+🌐 **Live Web Application**: [https://cybershield-ai-5bpo.onrender.com](https://cybershield-ai-5bpo.onrender.com)  
 💻 **GitHub Repository**: [https://github.com/Sam798-del/CyberShield-AI](https://github.com/Sam798-del/CyberShield-AI)
 
 ---
@@ -25,7 +25,7 @@
 
 ### Option 1: Live Deployment (Instant Access)
 Open directly in your web browser — no installation needed:  
-👉 **[https://cybershield-ai-rlk5.onrender.com](https://cybershield-ai-rlk5.onrender.com)**
+👉 **[https://cybershield-ai-5bpo.onrender.com](https://cybershield-ai-5bpo.onrender.com)**
 
 ---
 
@@ -90,7 +90,7 @@ The Chrome extension delivers real-time protection directly in your browser as y
 - **Auto-Protection**: Automatically evaluates the security, SSL certificates, and typosquatting risk of any website you visit.
 - **Check Breaches**: Click **⚡ Check Breaches** to verify if the active domain has documented data leaks.
 - **Direct Navigation**: Click on any feature button in the quick action grid (**Analyzer**, **Phishing**, **Identity**, **Dashboard**, **AI Report**, **Guide**, or **Bullying**) to launch the full web interface.
-- **Cloud vs. Local Mode**: Click ⚙️ Settings inside the popup to toggle between the **Live Render Cloud** (`https://cybershield-ai-rlk5.onrender.com`) or **Localhost:5000**.
+- **Cloud vs. Local Mode**: Click ⚙️ Settings inside the popup to toggle between the **Live Render Cloud** (`https://cybershield-ai-5bpo.onrender.com`) or **Localhost:5000**.
 
 ---
 
