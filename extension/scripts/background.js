@@ -28,6 +28,7 @@ chrome.runtime.onInstalled.addListener(() => {
     autoScan: true,
     toxicBlur: true,
     passwordTips: true,
+    outboundBlocker: true,
     backendUrl: CLOUD_API
   });
 });

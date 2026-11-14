@@ -687,7 +687,8 @@ async function checkBackendStatus() {
 
 function loadExtensionSettings() {
   return new Promise((resolve) => {
-    chrome.storage.local.get(["backendUrl", "autoScan", "toxicBlur", "passwordTips"], (items) => {
+    chrome.storage.local.get(["backendUrl", "autoScan", "toxicBlur", "passwordTips", "outboundBlocker"], (items) => {
+      if (items.outboundBlocker !== undefined && document.getElementById("toggleOutboundBlocker")) document.getElementById("toggleOutboundBlocker").checked = items.outboundBlocker;
       if (items.backendUrl) {
         activeBackendUrl = items.backendUrl;
         const select = document.getElementById("backendSelect");

@@ -60,13 +60,14 @@
     });
   } catch (e) {}
 
-  let config = { autoScan: true, toxicBlur: true, passwordTips: true };
+  let config = { autoScan: true, toxicBlur: true, passwordTips: true, outboundBlocker: true };
 
   // 1. Always render corner protection badge immediately
   renderPageBadge("SAFE", 0);
 
   // 2. Initialize configuration from extension storage and run guards
-  chrome.storage.local.get(["autoScan", "toxicBlur", "passwordTips", "backendUrl"], (items) => {
+  chrome.storage.local.get(["autoScan", "toxicBlur", "passwordTips", "outboundBlocker", "backendUrl"], (items) => {
+    if (items.outboundBlocker !== undefined) config.outboundBlocker = items.outboundBlocker;
     if (items.backendUrl) config.backendUrl = items.backendUrl;
     if (items.autoScan !== undefined) config.autoScan = items.autoScan;
     if (items.toxicBlur !== undefined) config.toxicBlur = items.toxicBlur;
@@ -311,6 +312,35 @@
   }
 
   // 6. Blur or Warn on Toxic Text (Social Media & Forums)
+  
+  // Dynamic MutationObserver for Chat Feeds & Live Comment Streams
+  let toxicObserverDebounce = null;
+  const liveToxicObserver = new MutationObserver((mutations) => {
+    if (config.toxicBlur === false) return;
+    let hasNewText = false;
+    for (const m of mutations) {
+      if (m.addedNodes.length > 0) {
+        hasNewText = true;
+        break;
+      }
+    }
+    if (hasNewText) {
+      clearTimeout(toxicObserverDebounce);
+      toxicObserverDebounce = setTimeout(scanPageForToxicContent, 250);
+    }
+  });
+
+  const attachToxicObserver = () => {
+    if (document.body) {
+      liveToxicObserver.observe(document.body, { childList: true, subtree: true });
+    }
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", attachToxicObserver);
+  } else {
+    attachToxicObserver();
+  }
+
   function scanPageForToxicContent() {
     const toxicPatterns = [
       // 1. Extreme Threats & Violence
@@ -351,12 +381,22 @@
       if (el.id === "cybershield-corner-badge" || el.closest("#cybershield-corner-badge")) return;
       if (el.children.length === 0 || (el.children.length === 1 && (el.firstElementChild.tagName === "EM" || el.firstElementChild.tagName === "STRONG"))) {
         const text = (el.innerText || el.textContent || "").toLowerCase();
-        if (text.length >= 8) {
+        if (text.length >= 6) {
+          let found = false;
           for (const pattern of toxicPatterns) {
             if (text.includes(pattern)) {
               applyToxicBlur(el);
+              found = true;
               break;
             }
+          }
+          if (!found && text.length <= 400 && typeof evaluateToxicitySync === "function") {
+            try {
+              const evalRes = evaluateToxicitySync(text);
+              if (evalRes && evalRes.isToxic) {
+                applyToxicBlur(el);
+              }
+            } catch (e) {}
           }
         }
       }
@@ -1063,7 +1103,7 @@
     // 1. Real-Time Typing Guidance ("Think Before You Post" live safety indicator)
     let liveTipTimeout = null;
     document.addEventListener("input", (e) => {
-      if (!config.outboundBlocker) return;
+      if (config.outboundBlocker === false) return;
       const target = e.target;
       if (!target) return;
       const el = target.closest('textarea, input[type="text"], input[type="search"], input:not([type]), [contenteditable="true"], [role="textbox"]') || target;
@@ -1121,7 +1161,7 @@
 
     // 2. Intercept Enter Key (Enter, Ctrl+Enter, Cmd+Enter across chat & forum apps)
     document.addEventListener("keydown", (e) => {
-      if (!config.outboundBlocker) return;
+      if (config.outboundBlocker === false) return;
       if (e.key !== "Enter") return;
       if (e.shiftKey && e.target && e.target.tagName === "TEXTAREA") return;
 
@@ -1144,7 +1184,7 @@
 
     // 3. Intercept Form Submissions
     document.addEventListener("submit", (e) => {
-      if (!config.outboundBlocker) return;
+      if (config.outboundBlocker === false) return;
       const form = e.target;
       if (!form || !form.querySelectorAll) return;
 
@@ -1166,7 +1206,7 @@
 
     // 4. Intercept Click on Send / Submit / Comment / Tweet / Post Buttons across all websites
     document.addEventListener("click", (e) => {
-      if (!config.outboundBlocker) return;
+      if (config.outboundBlocker === false) return;
       const target = e.target;
       if (!target) return;
 
