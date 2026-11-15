@@ -1,6 +1,5 @@
 # CyberShield AI: accounts, Digital Identity, Profile/Settings
 
-Kaveri's share of the project: sign-up and login with password rules, OTP email verification, secure sessions, the login token for the extension, and two working features (Digital Identity, Profile / Settings). Everything runs on real input, with nothing hardcoded.
 
 ## Run it
 
