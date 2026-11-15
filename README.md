@@ -1,148 +1,97 @@
-# 🛡️ CyberShield-AI — Intelligent Cyber Defense & Threat Intelligence Platform
+# CyberShield AI: accounts, Digital Identity, Profile/Settings
 
-> **"Think. Detect. Stay Safe."**  
-> CyberShield-AI is an end-to-end, AI-powered cybersecurity suite that protects individuals and organizations from modern digital threats in real time — including phishing campaigns, social media toxicity & cyberbullying, compromised credentials, and vulnerable domains.
+Kaveri's share of the project: sign-up and login with password rules, OTP email verification, secure sessions, the login token for the extension, and two working features (Digital Identity, Profile / Settings). Everything runs on real input, with nothing hardcoded.
 
-🌐 **Live Web Application**: [https://cybershield-ai-5bpo.onrender.com](https://cybershield-ai-5bpo.onrender.com)  
-💻 **GitHub Repository**: [https://github.com/Sam798-del/CyberShield-AI](https://github.com/Sam798-del/CyberShield-AI)
+## Run it
 
----
-
-## 🌟 Key Features
-
-| Feature | Description |
-|---|---|
-| 🎣 **Phishing & Scam Detection** | Real-time URL and email header scanner that identifies typosquatting, zero-day phishing heuristics, spoofed domains, and deceptive links. |
-| 🔑 **Password Shield & Entropy Analyzer** | Real-time evaluation of password entropy, brute-force crack time estimates, and Have-I-Been-Pwned breach checks with zero typing lag. |
-| 💬 **Cyberbullying & Toxicity Shield** | NLP-powered harassment detection that scans text and social interactions, flagging toxic, abusive, or threatening language. |
-| 🛡️ **Digital Identity Vault** | Centralized credential exposure and cross-service breach monitoring powered by breach footprint mapping (Have I Been Pwned & XposedOrNot). |
-| 📊 **Unified Security Command Center** | Real-time aggregate telemetry score, threat quarantine logs, compliance posture, and downloadable security audit reports. |
-| 🧩 **Browser Defense Extension** | Manifest V3 Chrome Extension providing active in-browser URL auto-scanning, domain leak alerts, and one-click access to all defense tools. |
-
----
-
-## 🚀 Quick Start: Running the Main Web Platform
-
-### Option 1: Live Deployment (Instant Access)
-Open directly in your web browser — no installation needed:  
-👉 **[https://cybershield-ai-5bpo.onrender.com](https://cybershield-ai-5bpo.onrender.com)**
-
----
-
-### Option 2: Run Locally on Your Machine
-
-#### Prerequisites
-- **Python 3.10+** installed
-- **Git** installed
-
-#### 1. Clone the Repository
 ```bash
-git clone https://github.com/Sam798-del/CyberShield-AI.git
-cd CyberShield-AI
-```
-
-#### 2. Install Dependencies
-```bash
+python -m venv venv
+venv\Scripts\activate          # Windows   (Mac/Linux: source venv/bin/activate)
 pip install -r requirements.txt
+copy .env.example .env         # Mac/Linux: cp .env.example .env
 ```
-
-#### 3. Start the Server
-- **Windows (One-Click)**: Double-click `run_server.bat`
-- **Or via Command Line**:
+Then open `.env` and set up email (next section), and start the app:
 ```bash
 python app.py
 ```
+Open http://127.0.0.1:5000
 
-The application will be live at: **[http://127.0.0.1:5000](http://127.0.0.1:5000)**
+Run the tests: `python -m unittest tests.test_flow` (34 tests).
 
-#### 4. Access Platform Modules
-- 🏠 **Portal Home**: [http://127.0.0.1:5000/index.html](http://127.0.0.1:5000/index.html)
-- 📊 **Security Dashboard**: [http://127.0.0.1:5000/pages/dashboard.html](http://127.0.0.1:5000/pages/dashboard.html)
-- 🎣 **Phishing Scanner**: [http://127.0.0.1:5000/pages/phishing-detection.html](http://127.0.0.1:5000/pages/phishing-detection.html)
-- 🔍 **Security & Password Analyzer**: [http://127.0.0.1:5000/pages/security-analyzer.html](http://127.0.0.1:5000/pages/security-analyzer.html)
-- 🛡️ **Digital Identity Vault**: [http://127.0.0.1:5000/pages/digital-identity.html](http://127.0.0.1:5000/pages/digital-identity.html)
-- 💬 **Cyberbullying Detection**: [http://127.0.0.1:5000/pages/cyberbullying-detection.html](http://127.0.0.1:5000/pages/cyberbullying-detection.html)
-- 📖 **Guidance Hub**: [http://127.0.0.1:5000/pages/guide.html](http://127.0.0.1:5000/pages/guide.html)
-- 📄 **AI Security Report**: [http://127.0.0.1:5000/pages/security-report.html](http://127.0.0.1:5000/pages/security-report.html)
+## Email: how every user gets their own code
 
----
+Nothing is pre-set. Every person creates their own account, and the server emails **a new random 6-digit code to the address they typed**. A code works only for that one account, expires in 10 minutes and is stored only as a hash.
 
-## 🧩 Installing & Using the Chrome Browser Extension
-
-The Chrome extension delivers real-time protection directly in your browser as you browse the web.
-
-### Step-by-Step Installation:
-
-1. Open Google Chrome and navigate to:
+The server needs one email account to send from. Gmail is the easiest:
+1. Turn on 2-Step Verification on the Gmail account you'll send from.
+2. Google Account → Security → **App passwords** → create one (you get 16 characters).
+3. In `.env` fill in:
    ```
-   chrome://extensions
+   DEV_MODE=0
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=587
+   SMTP_USER=youraddress@gmail.com
+   SMTP_PASSWORD=the-16-character-app-password
+   MAIL_FROM=CyberShield AI <youraddress@gmail.com>
    ```
-2. Enable **Developer mode** using the toggle switch in the top-right corner.
-3. Click the **"Load unpacked"** button in the top-left corner.
-4. Browse to and select the **`extension`** subfolder inside the project:
-   ```
-   CyberShield-AI/extension
-   ```
-   > ⚠️ **Important**: Do **not** select the root project folder. Make sure you select the `extension` folder which directly contains `manifest.json`.
-5. The **CyberShield AI — Real-Time Browser Defense** extension is now active! Pin it to your Chrome toolbar for easy access.
+4. Restart `python app.py`. Sign up with any email you can open and check the inbox (and spam folder).
 
-### Using the Extension:
-- **Auto-Protection**: Automatically evaluates the security, SSL certificates, and typosquatting risk of any website you visit.
-- **Check Breaches**: Click **⚡ Check Breaches** to verify if the active domain has documented data leaks.
-- **Direct Navigation**: Click on any feature button in the quick action grid (**Analyzer**, **Phishing**, **Identity**, **Dashboard**, **AI Report**, **Guide**, or **Bullying**) to launch the full web interface.
-- **Cloud vs. Local Mode**: Click ⚙️ Settings inside the popup to toggle between the **Live Render Cloud** (`https://cybershield-ai-5bpo.onrender.com`) or **Localhost:5000**.
+If email isn't set up, the sign-up screen says it couldn't send the email. It never shows or reveals the code.
 
----
+**Testing alone on your laptop without email:** set `DEV_MODE=1`. The code is then printed in the terminal and shown on the sign-up screen. This lets anyone skip email verification, so never leave it on for real users.
 
-## 📁 Repository Structure
+## Letting other people use it
 
-```text
-CyberShield-AI/
-├── app.py                             # Unified Flask REST API backend & static file server
-├── requirements.txt                   # Backend Python dependencies
-├── run_server.bat                     # Windows one-click local server launcher
-├── test_backend.py                    # Automated test suite (7/7 unit tests)
-├── vercel.json                        # Serverless cloud deployment config
-│
-├── extension/                         # Chrome Extension (Manifest V3)
-│   ├── manifest.json                  # Extension configuration & permissions
-│   ├── popup/                         # Extension UI (popup.html, popup.js, popup.css)
-│   ├── scripts/                       # Background service worker & content scripts
-│   └── assets/                        # Extension icons & graphics
-│
-├── frontend/                          # Web Application Interface
-│   ├── index.html                     # Portal home landing page
-│   ├── css/ & js/                     # Shared styles, themes, and client utilities
-│   └── pages/                         # Feature-specific platform modules
-│       ├── dashboard.html             # Command Center Dashboard
-│       ├── phishing-detection.html    # Live Phishing & Scam URL Scanner
-│       ├── security-analyzer.html     # Password Strength & Domain Breach Analyzer
-│       ├── digital-identity.html      # Digital Identity Vault & Exposure Tracking
-│       ├── cyberbullying-detection.html # NLP Toxic Text & Harassment Detection
-│       ├── guide.html                 # Interactive Guidance Assistant
-│       ├── security-report.html       # Automated Audit & Compliance Report
-│       ├── settings.html              # System & Zero-Trust Configuration
-│       └── login.html                 # Authentication & Registration
-│
-└── security-analyzer/                 # Security analyzer microservice module
+GitHub stores the code but doesn't run it, so other people can't use `http://127.0.0.1:5000` (that address only exists on your own computer). To let real users sign up, deploy it to a Python host (for example Render or PythonAnywhere): upload the repo, set the same values from `.env` as the host's environment variables, set `COOKIE_SECURE=1` (hosts give you HTTPS), and start it with `gunicorn "app:create_app()"`. Add `gunicorn` to `requirements.txt` for that. SQLite stores data in a file, so choose a host with a persistent disk.
+
+## What's where
+
+| File | What it does |
+|---|---|
+| `app.py` | Starts the app, CORS for the extension, security headers, JSON errors |
+| `security.py` | Password rules, OTP, email sending, sessions/tokens, rate limiting |
+| `routes_auth.py` | Sign-up, OTP, login, logout, token check, device list |
+| `routes_identity.py` | Documents, privacy switches, QR verification, trust score |
+| `routes_profile.py` | Account, password, sensitivity, AI model, privacy controls, `/api/extension/config` |
+| `identity_docs.py` | Aadhaar / PAN / passport / licence / voter ID checks |
+| `services.py` | Settings defaults + the trust-score formula |
+| `static/` | The website: `index.html` (login), `app.html` (identity + settings), `verify.html` (QR page) |
+| `API_HANDOVER.md` | **Give this to the extension team** |
+
+## How the required items are met
+
+- **Password rules:** 8-64 characters, upper + lower case, number, special character, no spaces, not a common password, can't contain your name or email name. Checked live in the browser and again on the server. Stored with scrypt and a per-password salt.
+- **OTP email verification:** a fresh random 6-digit code is emailed to each user's own address, stored only as a keyed hash, tied to that one account, valid 10 minutes, max 5 wrong tries, resend every 30 s, max 6 per hour.
+- **Secure sessions:** signed token (12 h) that is also tracked server-side, so logout really ends it. Website uses an `HttpOnly`, `SameSite=Lax` cookie (JavaScript can't read it) plus a CSRF header. Account locks for 15 min after 5 wrong passwords. Changing the password logs out other devices. Users can see and end their sessions.
+- **Login token for the extension:** `POST /api/auth/login` returns it. `GET /api/auth/verify-token` tells any feature who is logged in.
+- **Digital Identity:** document verification, privacy switches that control what a QR scan reveals, a time-limited QR code, and a trust score (0-100) calculated from real account data with a visible breakdown.
+- **Profile / Settings:** account details, change password, sensitivity thresholds (presets + per-module), AI model choice, privacy controls, active sessions, delete account.
+
+## Protecting your own endpoints (Shreya, Neeraja)
+
+```python
+from flask import Blueprint, g
+from responses import ok
+from security import login_required
+from services import load_settings
+
+bp = Blueprint("phishing", __name__, url_prefix="/api/phishing")
+
+@bp.post("/check")
+@login_required                      # rejects requests without a valid token
+def check():
+    user_id = g.user["id"]           # who is logged in
+    s = load_settings(user_id)       # the user's thresholds, AI model, privacy controls
+    limit = s["thresholds"]["phishing"]   # alert when risk score >= limit
+    ...
+    return ok({"risk": 72, "alert": 72 >= limit})
 ```
+Register it in `create_app` in `app.py` next to the other blueprints.
 
----
+## Things to know before the demo or going live
 
-## 🧪 Testing
-
-To run the automated backend test suite:
-```bash
-python test_backend.py
-```
-Expected output:
-```text
-Ran 7 tests in 0.073s
-OK
-```
-
----
-
-## 🛡️ License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+- **"Verified" document = valid format and checksum**, not confirmed with the government. Say this in your viva or report. A real issuer check (for example DigiLocker) would replace `validate_document`.
+- **AI models** (`fast`, `balanced`, `thorough`) are placeholders. Rename them in `services.py` → `AVAILABLE_AI_MODELS` to the models your team actually uses.
+- **The QR image** is drawn in the browser by a small library from cdnjs, so the page needs internet. If it can't load, the page shows the link instead.
+- On a real server: serve over HTTPS and set `COOKIE_SECURE=1`, set `ALLOWED_ORIGINS` to your extension ID, and run with a production server (for example `gunicorn app:create_app()`) rather than `python app.py`. The rate limiter keeps counts in memory, so use one worker or move it to Redis.
+- Not included (not in the assignment): forgot-password and email change. Both can reuse `issue_otp` / `check_otp` in `security.py` with a new `purpose`.
