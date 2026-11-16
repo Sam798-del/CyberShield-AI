@@ -66,6 +66,31 @@ CREATE TABLE IF NOT EXISTS qr_tokens (
     revoked     INTEGER NOT NULL DEFAULT 0,
     scans       INTEGER NOT NULL DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS linked_accounts (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id          INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    account_name     TEXT    NOT NULL,
+    account_type     TEXT    NOT NULL,
+    identifier       TEXT    NOT NULL,
+    password_health  TEXT    NOT NULL DEFAULT 'medium',
+    is_2fa_enabled   INTEGER NOT NULL DEFAULT 0,
+    breach_status    TEXT    NOT NULL DEFAULT 'clear',
+    breach_details   TEXT,
+    last_checked_at  INTEGER NOT NULL,
+    risk_level       TEXT    NOT NULL DEFAULT 'safe',
+    notes            TEXT,
+    created_at       INTEGER NOT NULL,
+    updated_at       INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS identity_activity_log (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id          INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    action           TEXT    NOT NULL,
+    detail           TEXT,
+    created_at       INTEGER NOT NULL
+);
 """
 
 

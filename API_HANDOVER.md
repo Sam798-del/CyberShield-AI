@@ -144,38 +144,85 @@ Call it after login and again whenever the popup opens (settings can change on t
 
 ---
 
-## 5. Digital Identity endpoints
+## 5. Digital Identity Hub (Who Am I Online?)
+
+Digital Identity keeps ongoing track of the accounts, emails, and phone numbers the user owns online, assessing breach exposure, password health, and 2FA coverage.
 
 | Method | Path | Auth | Purpose |
 |---|---|---|---|
-| GET | `/api/identity` | Bearer | Whole identity screen in one call |
-| POST | `/api/identity/credentials` | Bearer | Add and verify a document |
-| DELETE | `/api/identity/credentials/<id>` | Bearer | Remove a document |
-| GET / PUT | `/api/identity/privacy-switches` | Bearer | What a QR scan reveals |
-| POST | `/api/identity/qr` | Bearer | Create a 5-minute QR code |
-| DELETE | `/api/identity/qr/<token>` | Bearer | Turn the QR code off |
-| GET | `/api/identity/verify/<token>` | **public** | What a scanner sees |
+| GET | `/api/identity` | Bearer | Full digital identity overview: risk score, accounts, recommendations, 2FA stats, activity |
+| POST | `/api/identity/accounts` | Bearer | Link a new account (checks breach intelligence automatically) |
+| PUT | `/api/identity/accounts/<id>` | Bearer | Update account (e.g. toggle 2FA, change password status) |
+| DELETE | `/api/identity/accounts/<id>` | Bearer | Remove linked account |
+| POST | `/api/identity/accounts/<id>/recheck` | Bearer | Re-check breach exposure for single account |
+| POST | `/api/identity/recheck-all` | Bearer | Re-check all linked accounts |
+| POST | `/api/identity/seed-demo` | Bearer | Reset to sample accounts for viva/presentation |
 
 ### GET `/api/identity`
 ```json
 { "ok": true, "data": {
-  "user": { "name": "Kaveri Rao", "email": "kaveri@example.com", "email_verified": true },
-  "trust": { "score": 65, "level": "medium", "breakdown": [
-    { "key": "email", "label": "Email verified", "earned": 20, "max": 20, "note": "Verified with a one-time code" },
-    { "key": "documents", "label": "Verified documents", "earned": 25, "max": 50, "note": "1 verified" },
-    { "key": "name_match", "label": "Name matches a document", "earned": 10, "max": 10, "note": "..." },
-    { "key": "account_age", "label": "Account age", "earned": 0, "max": 10, "note": "0 days old" },
-    { "key": "recent_activity", "label": "Recent activity", "earned": 10, "max": 10, "note": "Logged in within 30 days" }
-  ] },
-  "credentials": [
-    { "id": 3, "doc_type": "pan", "doc_label": "PAN card", "holder_name": "Kaveri Rao", "number_masked": "••••234F",
-      "name_matches_account": true, "status": "verified", "added_at": 1794560500 }
+  "user": { "name": "Neeraja / Kaveri", "email": "neeraja@gmail.com", "email_verified": true },
+  "identity_risk": {
+    "score": 78,
+    "level": "high",
+    "summary": "2 accounts lack 2FA, 1 password reused across sites, 1 account exposed in a 2023 breach",
+    "stats": { "total": 5, "safe": 1, "review": 2, "high": 2, "two_fa_enabled": 2, "two_fa_percentage": 40 }
+  },
+  "accounts": [
+    {
+      "id": 1,
+      "account_name": "Instagram",
+      "account_type": "social",
+      "identifier": "neeraja@gmail.com",
+      "password_health": "weak",
+      "is_2fa_enabled": false,
+      "breach_status": "exposed",
+      "breach_badge": "Exposed 2023",
+      "breach_details": { "source": "Instagram Scraped Credential Leak", "year": "2023", "data_classes": ["Passwords", "Email addresses"] },
+      "last_checked_at": 1794560000,
+      "risk_level": "high",
+      "notes": "Main social profile"
+    }
   ],
-  "privacy_switches": { "share_name": true, "share_email": false, "share_trust_score": true, "share_verified_documents": false, "share_masked_numbers": false },
-  "doc_types": [ { "id": "aadhaar", "label": "Aadhaar" }, { "id": "pan", "label": "PAN card" }, { "id": "passport", "label": "Passport" }, { "id": "driving_license", "label": "Driving licence" }, { "id": "voter_id", "label": "Voter ID" } ]
+  "recommendations": [
+    {
+      "id": "breach_pw_1",
+      "account_name": "Instagram",
+      "priority": 1,
+      "impact": "High Impact",
+      "title": "Change the compromised password for Instagram",
+      "detail": "Exposed in a 2023 breach and uses a weak or reused password.",
+      "action": "fix_breach"
+    },
+    {
+      "id": "2fa_1",
+      "account_name": "Instagram",
+      "priority": 2,
+      "impact": "High Impact",
+      "title": "Turn on 2FA for Instagram",
+      "detail": "Adding two-factor authentication blocks 99% of automated credential attacks.",
+      "action": "fix_2fa"
+    }
+  ],
+  "activity_log": [
+    { "id": 1, "action": "Added Instagram", "detail": "Identified breach exposure from 2023", "created_at": 1794560100 }
+  ]
 } }
 ```
-Trust `level`: `low` (0-39), `medium` (40-69), `high` (70-100).
+
+### POST `/api/identity/accounts`
+Input:
+```json
+{
+  "account_name": "Instagram",
+  "account_type": "social",
+  "identifier": "neeraja@gmail.com",
+  "password_health": "weak",
+  "is_2fa_enabled": false
+}
+```
+*Note: Never send plaintext passwords.* Pass only `password_health` (`strong`, `medium`, `weak`, `reused`, `sso`).
+
 
 ### POST `/api/identity/credentials`
 Input:
