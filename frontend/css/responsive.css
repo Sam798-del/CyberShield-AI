@@ -74,7 +74,9 @@
         flex-direction: column;
     }
 
-    .primary-button, .btn {
+    .input-row .primary-button, 
+    .input-row .btn,
+    .btn-block {
         min-height: 35px;
         width: 100%;
     }

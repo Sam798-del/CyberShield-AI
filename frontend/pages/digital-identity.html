@@ -329,6 +329,30 @@
         .priority-item.high { border-left-color: var(--pill-risk); }
         .priority-item.medium { border-left-color: var(--pill-review); }
 
+        @media (max-width: 600px) {
+            .priority-item {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 10px !important;
+                padding: 14px 12px !important;
+            }
+            .priority-item > div:first-child {
+                width: 100% !important;
+            }
+            .priority-item .btn,
+            .priority-item button {
+                width: 100% !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                padding: 9px 16px !important;
+                font-size: 13px !important;
+                border-radius: 8px !important;
+                margin-top: 4px !important;
+                white-space: nowrap !important;
+            }
+        }
+
         /* Donut Chart Box */
         .donut-wrap {
             display: flex;
