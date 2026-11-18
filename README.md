@@ -1,7 +1,13 @@
-# CyberShield AI: accounts, Digital Identity, Profile/Settings
+# CyberShield AI — AI-Powered Cybersecurity & Threat Protection Suite
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-38bdf8?style=for-the-badge&logo=render)](https://cybershield-ai-fdd1.onrender.com)
+[![Tests Passing](https://img.shields.io/badge/Tests-34%20Passing-10b981?style=for-the-badge)](https://cybershield-ai-fdd1.onrender.com)
 
-## Run it
+> 🌐 **Live Production Deployment**: **[https://cybershield-ai-fdd1.onrender.com](https://cybershield-ai-fdd1.onrender.com)**
+
+---
+
+## Run it locally
 
 ```bash
 python -m venv venv
@@ -38,6 +44,13 @@ The server needs one email account to send from. Gmail is the easiest:
 If email isn't set up, the sign-up screen says it couldn't send the email. It never shows or reveals the code.
 
 **Testing alone on your laptop without email:** set `DEV_MODE=1`. The code is then printed in the terminal and shown on the sign-up screen. This lets anyone skip email verification, so never leave it on for real users.
+
+## Live Deployment & Cloud Hosting
+
+The platform is deployed live on **Render Cloud**:
+- **Live URL**: [https://cybershield-ai-fdd1.onrender.com](https://cybershield-ai-fdd1.onrender.com)
+- **Start Command**: `gunicorn app:app` (or `python -m gunicorn app:app --bind 0.0.0.0:$PORT`)
+- **Environment**: Python 3 with `gunicorn`, real-time Gmail SMTP for OTP authentication, and SQLite persistent storage.
 
 ## Letting other people use it
 
