@@ -170,6 +170,11 @@ class StateManager {
         this.saveState();
     }
 
+    updateSettings(settingsData) {
+        this.state.settings = { ...(this.state.settings || {}), ...settingsData };
+        this.saveState();
+    }
+
     login(userData) {
         if (userData) {
             this.updateUser(userData);
@@ -184,6 +189,10 @@ class StateManager {
         this.state.identity.score = 98;
         this.recalculateScore();
         this.saveState();
+    }
+
+    verifyUserIdentity() {
+        return this.verifyIdentity();
     }
 
     recordPhishingScan(result) {
@@ -413,6 +422,7 @@ class StateManager {
         if (fixed.phishlink) score += 2;
         if (fixed.cyberbully) score += 2;
         if (fixed["2fa"]) score += 2;
+        if (this.state.identity?.verified || this.state.user?.identityVerified) score += 3;
 
         score = Math.max(35, Math.min(100, Math.round(score)));
         if (!this.state.securityReport) this.state.securityReport = {};

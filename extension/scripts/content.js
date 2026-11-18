@@ -1,4 +1,4 @@
-﻿// CyberShield AI — Content Script (Injected DOM Security Guard & Analyzer Bridge)
+// CyberShield AI — Content Script (Injected DOM Security Guard & Analyzer Bridge)
 // Features: Live URL Badges, Warning Banners, Toxic Text Blur, Password Security & Real-Time Telemetry
 
 (function () {
@@ -233,12 +233,12 @@
     banner.querySelector("#csAcknowledgeBreach")?.addEventListener("click", close);
   }
 
-  // 4. In-Page Visual Badge (Safe = "● Secure" / Danger = "● Threat Alert")
+  // 4. In-Page Visual Badge (Safe = "Secure" / Danger = "Threat Alert")
   function renderPageBadge(riskLevel, score) {
     if (document.getElementById("cybershield-corner-badge")) return;
 
-    const targetParent = document.documentElement || document.body;
-    if (!targetParent) {
+    const mount = document.body || document.documentElement;
+    if (!mount) {
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", () => renderPageBadge(riskLevel, score), { once: true });
       } else {
@@ -256,37 +256,33 @@
     badge.id = "cybershield-corner-badge";
     badge.title = `CyberShield AI: ${badgeText} (${score || 0}/100)`;
     badge.style.cssText = `
-      position: fixed !important;
-      bottom: 20px !important;
-      right: 20px !important;
-      background: #0f172a !important;
-      color: #f1f5f9 !important;
-      border: 1.5px solid ${badgeColor} !important;
-      padding: 6px 14px !important;
-      border-radius: 20px !important;
-      font-size: 11px !important;
-      font-weight: 700 !important;
-      display: flex !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      align-items: center !important;
-      gap: 6px !important;
-      z-index: 2147483647 !important;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.6) !important;
-      cursor: pointer !important;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
-      pointer-events: auto !important;
-      width: auto !important;
-      height: auto !important;
-      line-height: normal !important;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0f172a;
+      color: #f1f5f9;
+      border: 1.5px solid ${badgeColor};
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      visibility: visible;
+      opacity: 1;
+      align-items: center;
+      gap: 6px;
+      z-index: 2147483647;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      pointer-events: auto;
     `;
-    badge.innerHTML = `<span id="cs-badge-dot" style="color:${badgeColor} !important; font-size:12px !important; line-height:1 !important;">●</span> <span id="cs-badge-text" style="color:#f1f5f9 !important; font-size:11px !important; font-weight:700 !important;">${badgeText}</span>`;
-    badge.onclick = (e) => {
-      e.stopPropagation();
+    badge.innerHTML = `<span id="cs-badge-dot" style="color:${badgeColor}; font-size:12px;">●</span> <span id="cs-badge-text">${badgeText}</span>`;
+    badge.onclick = () => {
       alert(`🛡️ CyberShield AI Verdict:\n\nStatus: ${badgeText}\nRisk Score: ${score || 0}/100\nDomain: ${window.location.hostname || "Local file"}\n\n${isDanger ? (pageThreatReason ? `⚠️ ${pageThreatReason}` : '⚠️ Threat Alert: Risk detected on this page.') : '✅ Verified Secure: Phishing radar and cyberbullying shields active.'}`);
     };
-    targetParent.appendChild(badge);
+    mount.appendChild(badge);
   }
 
   function updatePageBadge(riskLevel, score, threatNote) {
@@ -307,15 +303,11 @@
     const badgeColor = isDanger ? "#ef4444" : (isWarning ? "#f59e0b" : "#10b981");
     const badgeText = isDanger ? "Threat Alert" : (isWarning ? "Caution" : "Secure");
 
-    badge.style.setProperty("border-color", badgeColor, "important");
-    if (dot) dot.style.setProperty("color", badgeColor, "important");
-    if (text) {
-      text.innerText = badgeText;
-      text.style.setProperty("color", "#f1f5f9", "important");
-    }
+    badge.style.borderColor = badgeColor;
+    dot.style.color = badgeColor;
+    text.innerText = badgeText;
     badge.title = `CyberShield AI: ${badgeText} (${score || 0}/100)`;
-    badge.onclick = (e) => {
-      e.stopPropagation();
+    badge.onclick = () => {
       alert(`🛡️ CyberShield AI Verdict:\n\nStatus: ${badgeText}\nRisk Score: ${score || 0}/100\nDomain: ${window.location.hostname || "Local file"}\n\n${isDanger ? (pageThreatReason ? `⚠️ ${pageThreatReason}` : '⚠️ Threat Alert: Risk detected on this page.') : '✅ Verified Secure: Phishing radar and cyberbullying shields active.'}`);
     };
   }
@@ -1464,5 +1456,66 @@
       }
     } catch (e) {}
   });
+  // 10. Automated Login Form Detection & Zero-Trust Metadata Extraction
+  function attachLoginFormDetector() {
+    document.addEventListener("submit", (e) => {
+      try {
+        const form = e.target;
+        if (!form || !form.querySelector) return;
+        const passInput = form.querySelector('input[type="password"]');
+        if (!passInput || !passInput.value) return;
+
+        const userInput = form.querySelector('input[type="email"], input[type="text"], input[name*="user"], input[name*="login"], input[name*="email"]');
+        const identifier = userInput ? userInput.value.trim() : "";
+        if (!identifier || identifier.length < 3) return;
+
+        const hostname = window.location.hostname.replace(/^www\./, "");
+        if (hostname === "localhost" || hostname === "127.0.0.1") return;
+
+        const serviceName = hostname.split(".")[0];
+        const formattedName = serviceName.charAt(0).toUpperCase() + serviceName.slice(1);
+        const password = passInput.value;
+
+        // Local entropy calculation (never transmit plaintext password)
+        let strength = 75;
+        if (password.length < 8) strength = 35;
+        else if (password.length >= 14 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password)) strength = 95;
+        else if (password.length >= 10) strength = 80;
+
+        // Salted hash fingerprint for local reuse detection
+        let hash = 0;
+        const salted = "cybershield_salt_" + password;
+        for (let i = 0; i < salted.length; i++) {
+          hash = ((hash << 5) - hash) + salted.charCodeAt(i);
+          hash |= 0;
+        }
+        const fingerprint = "fp_" + Math.abs(hash).toString(16);
+
+        // Check local fingerprint reuse in storage
+        chrome.storage.local.get(["passwordFingerprints"], (store) => {
+          const fps = store.passwordFingerprints || {};
+          const isReused = fps[fingerprint] && fps[fingerprint] !== hostname;
+          fps[fingerprint] = hostname;
+          chrome.storage.local.set({ passwordFingerprints: fps });
+
+          // Post ONLY metadata to backend (Never plaintext password!)
+          chrome.runtime.sendMessage({
+            action: "DETECTED_ACCOUNT_LOGIN",
+            metadata: {
+              service_name: formattedName,
+              service_type: userInput.type === "email" ? "email" : "online",
+              domain: hostname,
+              identifier: identifier,
+              password_strength: strength,
+              password_reused: isReused,
+              password_fingerprint: fingerprint,
+              two_factor_enabled: false
+            }
+          });
+        });
+      } catch (err) {}
+    }, true);
+  }
+  attachLoginFormDetector();
 })();
 

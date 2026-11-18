@@ -241,17 +241,18 @@
                     </div>
                 </div>
 
-                <!-- DIGITAL IDENTITY ENGINE (SPACE RESERVED FOR PENDING MODULE INTEGRATION) -->
-                <div class="cs-card" style="margin-bottom: 20px; border: 1px dashed rgba(99, 80, 244, 0.4); background: linear-gradient(135deg, rgba(99, 80, 244, 0.05), rgba(7, 26, 58, 0.7));">
+                <!-- DIGITAL IDENTITY ENGINE (LIVE INTEGRATION) -->
+                <div id="dashIdentityCard" class="cs-card" style="margin-bottom: 20px; border: 1px dashed rgba(99, 80, 244, 0.4); background: linear-gradient(135deg, rgba(99, 80, 244, 0.05), rgba(7, 26, 58, 0.7)); transition: all 0.3s ease;">
                     <div class="cs-card-header" style="margin-bottom: 6px;">
-                        <div class="cs-card-title" style="color: #c7d2fe;"><span>🪪</span> Digital Identity Engine</div>
-                        <span class="badge" style="background: rgba(99, 80, 244, 0.2); color: #c7d2fe; border: 1px solid rgba(99, 80, 244, 0.4); font-size: 10px;">Reserved for Module Integration</span>
+                        <div class="cs-card-title" style="color: #c7d2fe;"><span>🪪</span> Digital Identity Engine & Vault</div>
+                        <span id="dashIdentityBadge" class="badge" style="background: rgba(99, 80, 244, 0.2); color: #c7d2fe; border: 1px solid rgba(99, 80, 244, 0.4); font-size: 10px;">Checking Status...</span>
                     </div>
-                    <div style="font-size: 12px; color: var(--muted); margin-bottom: 6px;">
-                        Space reserved for Digital Identity Vault, decentralized credentials, and privacy controls.
+                    <div id="dashIdentityDesc" style="font-size: 12px; color: var(--muted); margin-bottom: 6px;">
+                        Zero-trust cryptographic credentials, privacy controls, and verifiable identity tokens.
                     </div>
-                    <div style="font-size: 11px; color: #8494be;">
-                        Currently active & linked: <strong>Security Analyzer</strong> (Passwords & Leaks), <strong>Phishing Detection</strong> (URL Quarantine), and <strong>Cyberbullying Detection</strong> (NLP Harassment Shield).
+                    <div style="font-size: 11px; color: #8494be; display: flex; justify-content: space-between; align-items: center;">
+                        <span>Decentralized privacy controls & document verification active.</span>
+                        <a href="digital-identity.html" style="color: #7467f5; text-decoration: none; font-weight: 600;">Open Identity Vault →</a>
                     </div>
                 </div>
 
@@ -473,6 +474,33 @@
                 } else {
                     elThreatText.textContent = "🛡 Normal Operations";
                     elThreatText.style.color = "var(--cyber-cyan)";
+                }
+            }
+
+            // 4b. Digital Identity Vault Status
+            const isIdVerified = user.identityVerified || (state.identity && state.identity.verified);
+            const elIdBadge = document.getElementById("dashIdentityBadge");
+            const elIdDesc = document.getElementById("dashIdentityDesc");
+            const elIdCard = document.getElementById("dashIdentityCard");
+            if (elIdBadge && elIdDesc && elIdCard) {
+                if (isIdVerified) {
+                    elIdBadge.className = "badge badge-success";
+                    elIdBadge.textContent = "✓ Verified (Zero-Trust)";
+                    elIdBadge.style.background = "rgba(49, 213, 174, 0.15)";
+                    elIdBadge.style.color = "#31d5ae";
+                    elIdBadge.style.border = "1px solid #177e6d";
+                    elIdCard.style.border = "1px solid rgba(49, 213, 174, 0.4)";
+                    elIdCard.style.background = "linear-gradient(135deg, rgba(28, 173, 132, 0.12), rgba(7, 26, 58, 0.85))";
+                    elIdDesc.innerHTML = `<span style="color: #31d5ae; font-weight: 600;">✓ Zero-Trust Identity Active:</span> Cryptographic credentials match verified hashes. Trust Score: <strong>${(state.identity && state.identity.score) || 98}/100</strong>.`;
+                } else {
+                    elIdBadge.className = "badge";
+                    elIdBadge.textContent = "Action Recommended";
+                    elIdBadge.style.background = "rgba(245, 158, 11, 0.15)";
+                    elIdBadge.style.color = "#fbbf24";
+                    elIdBadge.style.border = "1px solid rgba(245, 158, 11, 0.4)";
+                    elIdCard.style.border = "1px dashed rgba(99, 80, 244, 0.4)";
+                    elIdCard.style.background = "linear-gradient(135deg, rgba(99, 80, 244, 0.05), rgba(7, 26, 58, 0.7))";
+                    elIdDesc.innerHTML = `Zero-Trust ID token pending verification. <a href="digital-identity.html" style="color: #7467f5; text-decoration: underline;">Verify your identity in the Vault →</a>`;
                 }
             }
 

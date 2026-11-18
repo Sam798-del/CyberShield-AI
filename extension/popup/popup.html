@@ -124,6 +124,42 @@
         </div>
       </section>
 
+      <!-- DIGITAL IDENTITY & ACCOUNTS INVENTORY CARD -->
+      <section class="scan-card identity-inventory-card" style="margin-top: 10px; border-color: rgba(99, 102, 241, 0.45); background: linear-gradient(135deg, #0d1a3a, #09142b);">
+        <div class="card-header">
+          <span class="card-label" style="color: #c7d2fe; font-weight: 700;">🪪 DIGITAL IDENTITY INVENTORY</span>
+          <span class="auto-badge" id="extIdentityBadge" style="background: rgba(99, 102, 241, 0.2); color: #c7d2fe; border: 1px solid rgba(99, 102, 241, 0.4);">Loading...</span>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin: 8px 0 6px;">
+          <div>
+            <div style="font-size: 9.5px; color: #8da2c9; text-transform: uppercase; font-weight: 700;">Identity Protection Score</div>
+            <div style="display: flex; align-items: baseline; gap: 4px; margin-top: 2px;">
+              <span id="extIdScoreVal" style="font-size: 20px; font-weight: 900; color: #10b981;">--</span>
+              <span style="font-size: 10px; color: #8494be;">/ 100</span>
+              <span id="extIdScorePill" class="auto-badge" style="font-size: 9px; padding: 1px 6px; margin-left: 6px; background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4);">Safe</span>
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 9.5px; color: #8da2c9; text-transform: uppercase; font-weight: 700;">2FA Coverage</div>
+            <strong id="extId2FACoverage" style="font-size: 13px; color: #38bdf8;">-- of --</strong>
+          </div>
+        </div>
+
+        <div id="extIdExplanation" style="font-size: 10.5px; color: #cbd5e1; margin-bottom: 8px; line-height: 1.4; background: rgba(15, 23, 42, 0.6); padding: 6px 8px; border-radius: 6px; border: 1px solid #1e293b;">
+          Evaluating linked accounts, breach history, and 2FA coverage...
+        </div>
+
+        <!-- Quick Mini Accounts Strip -->
+        <div id="extMiniAccountsList" style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;">
+          <!-- Dynamically populated -->
+        </div>
+
+        <button class="primary-btn" id="openDigitalIdentityBtn" style="width: 100%; text-align: center; border: 1px solid rgba(99, 102, 241, 0.5); border-radius: 6px; padding: 6px; color: #c7d2fe; background: rgba(99, 102, 241, 0.2); font-size: 10.5px; font-weight: 700; cursor: pointer;">
+          🪪 Open Digital Identity Vault & Accounts Manager ↗
+        </button>
+      </section>
+
       <!-- UNIFIED DASHBOARD & REPORT TELEMETRY CARD -->
       <section class="scan-card telemetry-card" style="margin-top: 10px; border-color: rgba(0, 242, 254, 0.35); background: linear-gradient(135deg, #091a38, #071329);">
         <div class="card-header">

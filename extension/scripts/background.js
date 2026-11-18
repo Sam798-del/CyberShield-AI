@@ -64,7 +64,63 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     handleRecordExtensionIncident(req.incident).then(sendResponse);
     return true; // asynchronous reply
   }
+
+  if (req.action === "DETECTED_ACCOUNT_LOGIN") {
+    handleDetectedAccountLogin(req.metadata).then(sendResponse);
+    return true; // asynchronous reply
+  }
 });
+
+// Real-Time Account Login Detection (Only metadata sent, NEVER plaintext passwords)
+async function handleDetectedAccountLogin(meta) {
+  if (!meta || !meta.service_name || !meta.identifier) return { status: "ignored" };
+
+  try {
+    const backend = "http://127.0.0.1:5000";
+    const res = await fetch(`${backend}/api/identity/accounts`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(meta)
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const title = meta.password_reused
+        ? `New account detected: ${meta.service_name}. Password reused.`
+        : (meta.password_strength < 50
+            ? `New account detected: ${meta.service_name}. Weak password.`
+            : `New account detected: ${meta.service_name}.`);
+
+      if (chrome.notifications && chrome.notifications.create) {
+        try {
+          chrome.notifications.create({
+            type: "basic",
+            iconUrl: "assets/icon-48.png",
+            title: "CyberShield AI — Identity Guard",
+            message: title,
+            priority: meta.password_reused ? 2 : 1
+          });
+        } catch (e) {}
+      }
+
+      await handleRecordExtensionIncident({
+        id: "id_acc_" + Date.now(),
+        title: title,
+        module: "Digital Identity",
+        target: meta.service_name,
+        date: "Just now",
+        severity: meta.password_reused || meta.password_strength < 50 ? "High" : "Low",
+        status: meta.password_reused || meta.password_strength < 50 ? "Action Needed" : "Monitored",
+        link: "digital-identity.html"
+      });
+
+      return { status: "success", data };
+    }
+  } catch (err) {
+    console.error("Failed to post detected login account:", err);
+  }
+  return { status: "fallback" };
+}
 
 // Broadcast Real-Time Incident from Web Extension to Web Portals (Dashboard & AI Report)
 async function handleRecordExtensionIncident(incident) {

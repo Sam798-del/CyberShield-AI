@@ -311,14 +311,14 @@
 
                 <!-- 4 MODULE METRICS CARDS -->
                 <div class="metrics-grid">
-                    <div class="cs-card" style="border: 1px dashed rgba(99, 80, 244, 0.45); background: rgba(99, 80, 244, 0.05);">
+                    <div id="reportIdentityCard" class="cs-card" style="border: 1px dashed rgba(99, 80, 244, 0.45); background: rgba(99, 80, 244, 0.05); cursor: pointer;" onclick="window.location.href='digital-identity.html'">
                         <div class="cs-card-title" style="margin-bottom: 12px; color: #c7d2fe;">
                             <span>🪪</span> Digital Identity
-                            <span class="badge" style="background: rgba(99, 80, 244, 0.2); color: #c7d2fe; border: 1px solid rgba(99, 80, 244, 0.4); font-size: 8px; margin-left: 6px;">Reserved Space</span>
+                            <span id="reportIdentityBadge" class="badge" style="background: rgba(99, 80, 244, 0.2); color: #c7d2fe; border: 1px solid rgba(99, 80, 244, 0.4); font-size: 8px; margin-left: 6px;">Checking...</span>
                         </div>
-                        <div class="metric-row"><span>Status</span><b style="color:#a5b4fc;">Pending Integration</b></div>
-                        <div class="metric-row"><span>Vault Hook</span><b style="color:var(--muted);">Space Allocated</b></div>
-                        <div class="metric-row"><span>Telemetry Bridge</span><b style="color:var(--success);" id="vaultStatusText">Ready</b></div>
+                        <div class="metric-row"><span>Status</span><b id="reportIdentityStatus" style="color:#a5b4fc;">Pending</b></div>
+                        <div class="metric-row"><span>Vault Hook</span><b id="reportIdentityHook" style="color:var(--muted);">Decentralized Hashes</b></div>
+                        <div class="metric-row"><span>Telemetry Bridge</span><b style="color:var(--success);" id="vaultStatusText">Active</b></div>
                     </div>
 
                     <div class="cs-card" onclick="openFixModal('weakpass')" style="cursor: pointer;">
@@ -624,6 +624,36 @@
             document.getElementById("bullyFlagText").style.color = fixed.cyberbully ? "var(--success)" : "var(--danger)";
             document.getElementById("bullyStatusText").textContent = fixed.cyberbully ? "Resolved" : (bullyCount > 0 ? "High Severity" : "Monitored Safe");
             document.getElementById("bullyStatusText").style.color = fixed.cyberbully ? "var(--success)" : "var(--danger)";
+
+            // Digital Identity metrics
+            const isIdVerified = (state.user && state.user.identityVerified) || (state.identity && state.identity.verified);
+            const elIdBadge = document.getElementById("reportIdentityBadge");
+            const elIdStatus = document.getElementById("reportIdentityStatus");
+            const elIdHook = document.getElementById("reportIdentityHook");
+            const elIdCard = document.getElementById("reportIdentityCard");
+            if (elIdBadge && elIdStatus && elIdHook && elIdCard) {
+                if (isIdVerified) {
+                    elIdBadge.textContent = "✓ VERIFIED";
+                    elIdBadge.style.background = "rgba(49, 213, 174, 0.2)";
+                    elIdBadge.style.color = "#31d5ae";
+                    elIdBadge.style.border = "1px solid #177e6d";
+                    elIdStatus.textContent = "Zero-Trust Active";
+                    elIdStatus.style.color = "var(--success)";
+                    elIdHook.textContent = "Hashes Verified";
+                    elIdHook.style.color = "var(--success)";
+                    elIdCard.style.border = "1px solid rgba(49, 213, 174, 0.4)";
+                } else {
+                    elIdBadge.textContent = "PENDING";
+                    elIdBadge.style.background = "rgba(245, 158, 11, 0.2)";
+                    elIdBadge.style.color = "#fbbf24";
+                    elIdBadge.style.border = "1px solid rgba(245, 158, 11, 0.4)";
+                    elIdStatus.textContent = "Action Recommended";
+                    elIdStatus.style.color = "var(--warning)";
+                    elIdHook.textContent = "Pending Verification";
+                    elIdHook.style.color = "var(--muted)";
+                    elIdCard.style.border = "1px dashed rgba(99, 80, 244, 0.45)";
+                }
+            }
 
             // 6. AI EXECUTIVE SYNTHESIS
             const aiSynthesis = document.getElementById("aiSynthesisText");
