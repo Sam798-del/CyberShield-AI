@@ -158,3 +158,38 @@ def extension_config():
         "trust": {"score": trust["score"], "level": trust["level"]},
         "fetched_at": now(),
     })
+
+
+# ─── Per-user app state (saves/restores dashboard data across sessions) ───────
+
+@bp.get("/user-state")
+@login_required
+def get_user_state():
+    """Return the saved client-side state for the logged-in user."""
+    import json as _json
+    db = get_db()
+    row = db.execute("SELECT state_json FROM user_app_state WHERE user_id=?", (g.user["id"],)).fetchone()
+    state = _json.loads(row["state_json"]) if row else {}
+    return ok({"state": state})
+
+
+@bp.put("/user-state")
+@login_required
+def save_user_state():
+    """Save (upsert) the client-side state for the logged-in user."""
+    import json as _json
+    data = get_json()
+    state = data.get("state")
+    if state is None or not isinstance(state, dict):
+        raise ApiError("INVALID_STATE", "state must be a JSON object.", 422)
+    # Remove sensitive fields before saving
+    state.pop("token", None)
+    state_json = _json.dumps(state)
+    db = get_db()
+    db.execute(
+        "INSERT INTO user_app_state (user_id, state_json, updated_at) VALUES (?,?,?) "
+        "ON CONFLICT(user_id) DO UPDATE SET state_json=excluded.state_json, updated_at=excluded.updated_at",
+        (g.user["id"], state_json, now()),
+    )
+    db.commit()
+    return ok({"saved": True})

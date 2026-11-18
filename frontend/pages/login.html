@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberShield AI — Sign In & Registration</title>
+    <title>CyberShield AI — Sign In &amp; Registration</title>
     <link rel="icon" type="image/png" href="../assets/icon-48.png">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/components.css">
@@ -16,7 +16,6 @@
             justify-content: center;
             padding: 40px 20px 80px;
         }
-
         .login-container {
             max-width: 1000px;
             width: 100%;
@@ -24,7 +23,6 @@
             gap: 30px;
             align-items: center;
         }
-
         .login-left {
             flex: 1;
             padding: 36px;
@@ -33,334 +31,611 @@
             border: 1px solid rgba(116,103,245,0.4);
             box-shadow: 0 16px 40px rgba(0,0,0,0.4);
         }
-
         .shield-graphic {
-            width: 140px;
-            height: 160px;
+            width: 140px; height: 160px;
             margin: 20px auto;
             border: 3px solid #6350f4;
             border-radius: 45% 45% 50% 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             box-shadow: 0 0 30px rgba(99,80,244,0.35), inset 0 0 30px rgba(99,80,244,0.2);
             font-size: 54px;
         }
+        .login-right { flex: 1; max-width: 460px; }
 
-        .login-right {
-            flex: 1;
-            max-width: 460px;
-        }
-
+        /* Tabs — only 2 now */
         .tabs {
             display: flex;
             border-bottom: 1px solid rgba(111,129,201,.18);
             margin-bottom: 20px;
         }
-
         .tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            color: #8494be;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 700;
-            transition: all 0.2s;
+            flex: 1; text-align: center; padding: 10px;
+            color: #8494be; cursor: pointer;
+            font-size: 13px; font-weight: 700; transition: all 0.2s;
         }
+        .tab.active { color: #edf0ff; border-bottom: 3px solid #6350f4; }
 
-        .tab.active {
-            color: #edf0ff;
-            border-bottom: 3px solid #6350f4;
-        }
-
-        .password-rules {
-            display: none;
-            margin: 6px 0 14px;
+        /* Password rules — always block when in signup/forgot */
+        .pw-rules {
+            margin: 4px 0 12px;
             padding: 10px;
             background: rgba(4,16,39,.6);
             border: 1px solid rgba(99,120,199,.3);
             border-radius: 7px;
-            font-size: 10px;
-            line-height: 1.6;
+            font-size: 10px; line-height: 1.8;
         }
+        .pw-rules .ok  { color: #31d5ae; }
+        .pw-rules .bad { color: #f05a8b; }
+        .pw-rules .neutral { color: #8494be; }
 
-        .password-rules .ok { color: #31d5ae; }
-        .password-rules .bad { color: #f05a8b; }
-
-        .otp-box {
-            display: none;
-            margin-bottom: 16px;
-        }
-
+        .otp-box { display: none; margin-bottom: 16px; }
         .otp-box input {
-            text-align: center;
-            letter-spacing: 6px;
-            font-size: 18px;
-            font-weight: 800;
+            text-align: center; letter-spacing: 6px;
+            font-size: 18px; font-weight: 800;
         }
 
         .auth-error {
-            display: none;
-            padding: 10px;
-            border-radius: 7px;
-            background: rgba(240,90,139,.15);
-            border: 1px solid #f05a8b;
-            color: #f05a8b;
-            font-size: 11px;
-            margin-bottom: 14px;
+            display: none; padding: 10px; border-radius: 7px;
+            background: rgba(240,90,139,.15); border: 1px solid #f05a8b;
+            color: #f05a8b; font-size: 11px; margin-bottom: 14px;
+        }
+        .auth-success {
+            display: none; padding: 10px; border-radius: 7px;
+            background: rgba(49,213,174,.15); border: 1px solid #31d5ae;
+            color: #31d5ae; font-size: 11px; margin-bottom: 14px;
         }
 
-        .auth-success {
+        /* "Forgot password?" inline panel */
+        .forgot-panel {
             display: none;
-            padding: 10px;
-            border-radius: 7px;
-            background: rgba(49,213,174,.15);
-            border: 1px solid #31d5ae;
-            color: #31d5ae;
-            font-size: 11px;
-            margin-bottom: 14px;
+            margin-top: 18px;
+            padding: 16px;
+            background: rgba(4,16,39,.7);
+            border: 1px solid rgba(99,120,199,.35);
+            border-radius: 10px;
         }
+        .forgot-panel h4 { font-size: 13px; font-weight: 700; color:#edf0ff; margin-bottom: 12px; }
+
+        .forgot-link {
+            display: block; text-align: right;
+            font-size: 11px; color: #7b70ff;
+            cursor: pointer; margin-top: 4px; margin-bottom: 2px;
+            text-decoration: none; background: none; border: none;
+        }
+        .forgot-link:hover { text-decoration: underline; }
+
+        /* Password show/hide toggle */
+        .password-field-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .password-field-wrapper input {
+            padding-right: 42px !important;
+            width: 100%;
+        }
+        .pw-toggle-btn {
+            position: absolute;
+            right: 12px;
+            background: transparent;
+            border: none;
+            color: #8494be;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+            user-select: none;
+            z-index: 2;
+        }
+        .pw-toggle-btn:hover {
+            color: #edf0ff;
+        }
+
+        .spinner {
+            display: inline-block; width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff; border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle; margin-right: 6px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         @media (max-width: 900px) {
-            .login-container {
-                flex-direction: column;
-            }
-            .login-left {
-                width: 100%;
-            }
+            .login-container { flex-direction: column; }
+            .login-left { width: 100%; }
         }
     </style>
 </head>
 <body data-page-id="login">
 
-    <div class="login-wrapper">
-        <div class="login-container">
+<div class="login-wrapper">
+  <div class="login-container">
 
-            <!-- LEFT BRAND GRAPHIC -->
-            <div class="login-left">
-                <span class="ai-badge" style="margin-bottom: 10px;">✦ CyberShield AI Security</span>
-                <h1 style="font-size: 28px; font-weight: 800; margin-bottom: 10px; color: #edf0ff;">Stronger <span style="color: #7b70ff;">Identities</span>.<br>Safer Tomorrows.</h1>
-                <p style="color: #8494be; font-size: 12px; line-height: 1.6;">CyberShield AI protects your digital identity, evaluates online threats in real time, and secures your workspace with zero-trust telemetry.</p>
-                <div class="shield-graphic"><img src="../assets/icon-128.png" alt="CyberShield Logo" style="width: 80px; height: 80px; object-fit: contain;"></div>
-
-                <div style="display: flex; justify-content: space-around; margin-top: 16px; text-align: center;">
-                    <div><span style="font-size: 18px;">🛡️</span><div style="font-size: 10px; color: #8494be;">Identity Vault</div></div>
-                    <div><span style="font-size: 18px;">🔍</span><div style="font-size: 10px; color: #8494be;">Threat Scanner</div></div>
-                    <div><span style="font-size: 18px;">📈</span><div style="font-size: 10px; color: #8494be;">AI Audit Logs</div></div>
-                </div>
-            </div>
-
-            <!-- RIGHT LOGIN CARD -->
-            <div class="login-right">
-                <section class="panel" style="padding: 24px;">
-                    <div class="tabs">
-                        <div class="tab active" id="tabLogin" onclick="showLogin()">Sign In</div>
-                        <div class="tab" id="tabSignup" onclick="showSignup()">Create Account</div>
-                    </div>
-
-                    <h2 id="formTitle" style="font-size: 18px; font-weight: 800; margin-bottom: 4px; color: #edf0ff;">Welcome Back</h2>
-                    <p style="color: #8494be; font-size: 11px; margin-bottom: 16px;" id="formSubtitle">Log in to access your CyberShield AI dashboard</p>
-
-                    <div id="authError" class="auth-error"></div>
-                    <div id="authSuccess" class="auth-success"></div>
-
-                    <div class="badge badge-info" style="margin-bottom: 16px; width: 100%; justify-content: flex-start;" id="securityNote">
-                        🔐 Protected Sign-In: Authenticated accounts access CyberShield AI Modules.
-                    </div>
-
-                    <!-- QUICK DEMO SIGN IN BUTTON -->
-                    <button type="button" class="btn btn-secondary" style="width: 100%; margin-bottom: 16px; padding: 12px; font-weight: 700; cursor: pointer;" onclick="quickDemoLogin()">
-                        ⚡ One-Click Demo Sign In as Neeraja Shinde
-                    </button>
-
-                    <form id="authForm" onsubmit="handleAuth(event)">
-                        <div id="nameGroup" class="form-group" style="display:none">
-                            <label class="form-label">Full Name</label>
-                            <input id="fullName" type="text" class="text-field" value="Neeraja Shinde" placeholder="Full name">
-                        </div>
-
-                        <div id="phoneGroup" class="form-group" style="display:none">
-                            <label class="form-label">Phone Number</label>
-                            <input id="phone" type="tel" class="text-field" value="+91 98765 43210" placeholder="Phone number">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Email Address</label>
-                            <input id="email" type="email" class="text-field" value="neeraja.shinde@cybershield.ai" placeholder="Email address" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Password</label>
-                            <input id="password" type="password" class="text-field" value="Neeraja@2026Sec" placeholder="Password" oninput="checkPasswordRules(this.value)" required>
-                        </div>
-
-                        <div id="passwordRules" class="password-rules">
-                            <div id="rLength">○ At least 8 characters</div>
-                            <div id="rUpper">○ One uppercase letter</div>
-                            <div id="rLower">○ One lowercase letter</div>
-                            <div id="rNumber">○ One number</div>
-                            <div id="rSpecial">○ One special character</div>
-                        </div>
-
-                        <div id="otpBox" class="otp-box form-group">
-                            <div id="otpInbox" class="badge badge-info" style="margin-bottom: 8px; width: 100%;"></div>
-                            <label class="form-label">Enter 4-Digit Verification Code</label>
-                            <input id="otpInput" type="text" maxlength="4" class="text-field" placeholder="1234">
-                        </div>
-
-                        <button id="authBtn" type="submit" class="primary-button" style="width: 100%; padding: 12px; margin-top: 6px;"><span>🔐 Sign In to CyberShield AI →</span></button>
-                    </form>
-                </section>
-            </div>
-
+    <!-- LEFT BRAND PANEL -->
+    <div class="login-left">
+        <span class="ai-badge" style="margin-bottom:10px;">✦ CyberShield AI Security</span>
+        <h1 style="font-size:28px;font-weight:800;margin-bottom:10px;color:#edf0ff;">
+            Stronger <span style="color:#7b70ff;">Identities</span>.<br>Safer Tomorrows.
+        </h1>
+        <p style="color:#8494be;font-size:12px;line-height:1.6;">
+            CyberShield AI protects your digital identity, evaluates online threats in real time,
+            and secures your workspace with zero-trust telemetry.
+        </p>
+        <div class="shield-graphic">
+            <img src="../assets/icon-128.png" alt="CyberShield" style="width:80px;height:80px;object-fit:contain;">
+        </div>
+        <div style="display:flex;justify-content:space-around;margin-top:16px;text-align:center;">
+            <div><span style="font-size:18px;">🛡️</span><div style="font-size:10px;color:#8494be;">Identity Vault</div></div>
+            <div><span style="font-size:18px;">🔍</span><div style="font-size:10px;color:#8494be;">Threat Scanner</div></div>
+            <div><span style="font-size:18px;">📈</span><div style="font-size:10px;color:#8494be;">AI Audit Logs</div></div>
         </div>
     </div>
 
-    <script src="../js/state.js"></script>
-    <script src="../js/utils.js"></script>
-    <script src="../js/api.js"></script>
-    <script src="../js/app.js"></script>
-    <script>
-        let mode = "login";
-        let generatedOtp = null;
+    <!-- RIGHT AUTH CARD -->
+    <div class="login-right">
+      <section class="panel" style="padding:24px;">
 
-        function showLogin() {
-            mode = "login";
-            document.getElementById("tabLogin").classList.add("active");
-            document.getElementById("tabSignup").classList.remove("active");
-            document.getElementById("formTitle").textContent = "Welcome Back";
-            document.getElementById("formSubtitle").textContent = "Log in to access your CyberShield AI dashboard";
-            document.getElementById("nameGroup").style.display = "none";
-            document.getElementById("phoneGroup").style.display = "none";
-            document.getElementById("passwordRules").style.display = "none";
-            document.getElementById("otpBox").style.display = "none";
-            document.getElementById("authBtn").querySelector("span").textContent = "🔐 Sign In to CyberShield AI →";
-            hideMessages();
+        <!-- TABS: only Sign In & Create Account -->
+        <div class="tabs">
+            <div class="tab active" id="tabLogin"  onclick="showLogin()">Sign In</div>
+            <div class="tab"        id="tabSignup" onclick="showSignup()">Create Account</div>
+        </div>
+
+        <h2 id="formTitle"    style="font-size:18px;font-weight:800;margin-bottom:4px;color:#edf0ff;">Welcome Back</h2>
+        <p  id="formSubtitle" style="color:#8494be;font-size:11px;margin-bottom:16px;">Log in to access your CyberShield AI dashboard</p>
+
+        <div id="authError"   class="auth-error"></div>
+        <div id="authSuccess" class="auth-success"></div>
+
+        <!-- ONE-CLICK DEMO (only on Sign In tab) -->
+        <button type="button" class="btn btn-secondary" id="demoBtn"
+                style="width:100%;margin-bottom:16px;padding:12px;font-weight:700;cursor:pointer;"
+                onclick="quickDemoLogin()">
+            ⚡ One-Click Demo Sign In (XYZ)
+        </button>
+
+        <!-- ═══════════════ SIGN IN FORM ═══════════════ -->
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input id="loginEmail" type="email" class="text-field" placeholder="your@email.com" autocomplete="email" required>
+            </div>
+            <div class="form-group" style="margin-bottom:4px;">
+                <label class="form-label">Password</label>
+                <div class="password-field-wrapper">
+                    <input id="loginPassword" type="password" class="text-field" placeholder="Password" autocomplete="current-password" required>
+                    <button type="button" class="pw-toggle-btn" onclick="togglePasswordVisibility('loginPassword', this)" title="Show/Hide Password">👁️</button>
+                </div>
+            </div>
+            <!-- Forgot password link sits right below password field -->
+            <button type="button" class="forgot-link" onclick="toggleForgotPanel()">Forgot password?</button>
+
+            <!-- Inline forgot-password panel -->
+            <div class="forgot-panel" id="forgotPanel">
+                <h4>🔑 Reset Password</h4>
+                <div class="form-group">
+                    <label class="form-label">Your Account Email</label>
+                    <input id="forgotEmail" type="email" class="text-field" placeholder="your@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <div class="password-field-wrapper">
+                        <input id="newPassword" type="password" class="text-field" placeholder="New password"
+                               oninput="checkRules(this.value,'f')" autocomplete="new-password">
+                        <button type="button" class="pw-toggle-btn" onclick="togglePasswordVisibility('newPassword', this)" title="Show/Hide Password">👁️</button>
+                    </div>
+                </div>
+                <div class="pw-rules" id="rulesF">
+                    <div id="fLen"  class="neutral">○ At least 8 characters</div>
+                    <div id="fUp"   class="neutral">○ One uppercase letter</div>
+                    <div id="fLo"   class="neutral">○ One lowercase letter</div>
+                    <div id="fNum"  class="neutral">○ One number</div>
+                    <div id="fSpec" class="neutral">○ One special character</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Repeat New Password</label>
+                    <div class="password-field-wrapper">
+                        <input id="confirmPassword" type="password" class="text-field" placeholder="Repeat new password" autocomplete="new-password">
+                        <button type="button" class="pw-toggle-btn" onclick="togglePasswordVisibility('confirmPassword', this)" title="Show/Hide Password">👁️</button>
+                    </div>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:4px;">
+                    <button type="button" class="btn btn-secondary" style="flex:1;padding:9px;" onclick="toggleForgotPanel()">Cancel</button>
+                    <button type="button" id="forgotBtn" class="primary-button" style="flex:2;padding:9px;" onclick="handleForgot()">
+                        <span>Update Password →</span>
+                    </button>
+                </div>
+            </div>
+
+            <button id="loginBtn" type="submit" class="primary-button" style="width:100%;padding:12px;margin-top:14px;">
+                <span>🔐 Sign In to CyberShield AI →</span>
+            </button>
+        </form>
+
+        <!-- ═══════════════ SIGN UP FORM ═══════════════ -->
+        <form id="signupForm" style="display:none;" onsubmit="handleSignup(event)">
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input id="signupName" type="text" class="text-field" placeholder="Your full name" autocomplete="name" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input id="signupEmail" type="email" class="text-field" placeholder="your@email.com" autocomplete="email" required>
+            </div>
+            <div class="form-group" style="margin-bottom:4px;">
+                <label class="form-label">Password</label>
+                <div class="password-field-wrapper">
+                    <input id="signupPassword" type="password" class="text-field" placeholder="Create a strong password"
+                           oninput="checkRules(this.value,'s')" autocomplete="new-password" required>
+                    <button type="button" class="pw-toggle-btn" onclick="togglePasswordVisibility('signupPassword', this)" title="Show/Hide Password">👁️</button>
+                </div>
+            </div>
+            <!-- Password rules — always visible in signup -->
+            <div class="pw-rules" id="rulesS">
+                <div id="sLen"  class="neutral">○ At least 8 characters</div>
+                <div id="sUp"   class="neutral">○ One uppercase letter</div>
+                <div id="sLo"   class="neutral">○ One lowercase letter</div>
+                <div id="sNum"  class="neutral">○ One number</div>
+                <div id="sSpec" class="neutral">○ One special character</div>
+            </div>
+
+            <!-- OTP box — shown after first submit -->
+            <div id="otpBox" class="otp-box form-group">
+                <div id="otpInfo" class="badge badge-info" style="margin-bottom:8px;width:100%;word-break:break-word;"></div>
+                <label class="form-label">Enter the 6-digit code sent to your email</label>
+                <input id="otpInput" type="text" maxlength="6" class="text-field" placeholder="123456" autocomplete="one-time-code">
+                <div style="margin-top:6px;font-size:10px;color:#8494be;">
+                    Didn't get it? <a href="#" style="color:#7b70ff;" onclick="resendOtp(event)">Resend code</a>
+                </div>
+            </div>
+
+            <button id="signupBtn" type="submit" class="primary-button" style="width:100%;padding:12px;margin-top:6px;">
+                <span>📩 Send Verification Code →</span>
+            </button>
+        </form>
+
+      </section>
+    </div>
+
+  </div>
+</div>
+
+<script src="../js/state.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script>
+/* ─── Password show / hide toggle ───────────────────────── */
+function togglePasswordVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "🙈";
+        btn.title = "Hide password";
+    } else {
+        input.type = "password";
+        btn.textContent = "👁️";
+        btn.title = "Show password";
+    }
+}
+
+/* ─── Tab switching ─────────────────────────────────────── */
+function showLogin() {
+    document.getElementById("tabLogin").classList.add("active");
+    document.getElementById("tabSignup").classList.remove("active");
+    document.getElementById("loginForm").style.display  = "block";
+    document.getElementById("signupForm").style.display = "none";
+    document.getElementById("demoBtn").style.display    = "block";
+    document.getElementById("formTitle").textContent    = "Welcome Back";
+    document.getElementById("formSubtitle").textContent = "Log in to access your CyberShield AI dashboard";
+    closeForgotPanel();
+    hideMessages();
+}
+
+function showSignup() {
+    document.getElementById("tabSignup").classList.add("active");
+    document.getElementById("tabLogin").classList.remove("active");
+    document.getElementById("signupForm").style.display = "block";
+    document.getElementById("loginForm").style.display  = "none";
+    document.getElementById("demoBtn").style.display    = "none";
+    document.getElementById("formTitle").textContent    = "Create Account";
+    document.getElementById("formSubtitle").textContent = "Register your free CyberShield AI account";
+    // Reset signup state
+    _signupStep = "form";
+    document.getElementById("otpBox").style.display = "none";
+    document.getElementById("signupBtn").querySelector("span").textContent = "📩 Send Verification Code →";
+    hideMessages();
+}
+
+/* ─── Forgot password panel (inline, below password field) ─ */
+function toggleForgotPanel() {
+    const p = document.getElementById("forgotPanel");
+    p.style.display = p.style.display === "block" ? "none" : "block";
+    if (p.style.display === "block") {
+        // Pre-fill email if already typed
+        const e = document.getElementById("loginEmail").value.trim();
+        if (e) document.getElementById("forgotEmail").value = e;
+    }
+    hideMessages();
+}
+function closeForgotPanel() {
+    document.getElementById("forgotPanel").style.display = "none";
+}
+
+/* ─── Message helpers ───────────────────────────────────── */
+function hideMessages() {
+    document.getElementById("authError").style.display   = "none";
+    document.getElementById("authSuccess").style.display = "none";
+}
+function showError(msg) {
+    const el = document.getElementById("authError");
+    el.textContent = msg; el.style.display = "block";
+    document.getElementById("authSuccess").style.display = "none";
+}
+function showSuccess(msg) {
+    const el = document.getElementById("authSuccess");
+    el.textContent = msg; el.style.display = "block";
+    document.getElementById("authError").style.display = "none";
+}
+function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    btn.disabled = loading;
+    const sp = btn.querySelector("span");
+    if (loading) {
+        btn._orig = sp ? sp.innerHTML : btn.innerHTML;
+        if (sp) sp.innerHTML = '<span class="spinner"></span> Please wait…';
+    } else {
+        if (sp && btn._orig) sp.innerHTML = btn._orig;
+    }
+}
+
+/* ─── Password rules checker (prefix: 's' = signup, 'f' = forgot) ─ */
+function checkRules(pw, prefix) {
+    const rules = [
+        [prefix+"Len",  pw.length >= 8,       "At least 8 characters"],
+        [prefix+"Up",   /[A-Z]/.test(pw),     "One uppercase letter"],
+        [prefix+"Lo",   /[a-z]/.test(pw),     "One lowercase letter"],
+        [prefix+"Num",  /[0-9]/.test(pw),     "One number"],
+        [prefix+"Spec", /[^A-Za-z0-9]/.test(pw), "One special character"],
+    ];
+    rules.forEach(([id, valid, label]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.className = valid ? "ok" : "bad";
+        el.textContent = (valid ? "✓ " : "○ ") + label;
+    });
+}
+
+/* ─── Demo login ────────────────────────────────────────── */
+function quickDemoLogin() {
+    try {
+        if (window.CyberShieldState) {
+            CyberShieldState.login({ name: "XYZ Demo", email: "demo@cybershield.ai", phone: "", avatarInitials: "XD" });
         }
+    } catch (_) {}
+    window.location.href = "dashboard.html";
+}
 
-        function showSignup() {
-            mode = "signup";
-            document.getElementById("tabSignup").classList.add("active");
-            document.getElementById("tabLogin").classList.remove("active");
-            document.getElementById("formTitle").textContent = "Create Account";
-            document.getElementById("formSubtitle").textContent = "Register a new zero-trust administrator account";
-            document.getElementById("nameGroup").style.display = "block";
-            document.getElementById("phoneGroup").style.display = "block";
-            document.getElementById("passwordRules").style.display = "block";
-            document.getElementById("authBtn").querySelector("span").textContent = "📩 Send 2FA Verification Code →";
-            hideMessages();
-        }
+/* ─── SIGN IN ───────────────────────────────────────────── */
+async function handleLogin(e) {
+    e.preventDefault();
+    hideMessages();
+    const email    = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    if (!email || !password) { showError("Please fill in both email and password."); return; }
 
-        function hideMessages() {
-            document.getElementById("authError").style.display = "none";
-            document.getElementById("authSuccess").style.display = "none";
-        }
+    setLoading("loginBtn", true);
+    try {
+        const res  = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Requested-With": "CyberShield" },
+            credentials: "include",
+            body: JSON.stringify({ email, password })
+        });
+        const json = await res.json();   // shape: {ok, data} or {ok, error}
 
-        function checkPasswordRules(pw) {
-            if (mode !== "signup") return;
-            const check = (id, valid) => {
-                const el = document.getElementById(id);
-                el.className = valid ? "ok" : "bad";
-                el.textContent = (valid ? "✓ " : "○ ") + el.textContent.substring(2);
-            };
-            check("rLength", pw.length >= 8);
-            check("rUpper", /[A-Z]/.test(pw));
-            check("rLower", /[a-z]/.test(pw));
-            check("rNumber", /[0-9]/.test(pw));
-            check("rSpecial", /[^A-Za-z0-9]/.test(pw));
-        }
-
-        function quickDemoLogin() {
-            try {
-                if (window.CyberShieldState) {
-                    const demoUser = {
-                        name: "Neeraja Shinde",
-                        email: "neeraja.shinde@cybershield.ai",
-                        phone: "+91 98765 43210",
-                        avatarInitials: "NS"
-                    };
-                    if (typeof CyberShieldState.login === "function") {
-                        CyberShieldState.login(demoUser);
-                    } else if (typeof CyberShieldState.updateUser === "function") {
-                        CyberShieldState.updateUser(demoUser);
-                    }
-                }
-            } catch (err) {
-                console.warn("Could not save demo user state:", err);
-            }
-            window.location.href = "dashboard.html";
-        }
-
-        function handleAuth(e) {
-            e.preventDefault();
-            hideMessages();
-
-            const email = document.getElementById("email").value.trim();
-            const password = document.getElementById("password").value;
-
-            if (!email || !password) {
-                showError("Please fill out all required fields.");
-                return;
-            }
-
-            if (mode === "signup" && !generatedOtp) {
-                generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
-                document.getElementById("otpBox").style.display = "block";
-                document.getElementById("otpInbox").textContent = `🔔 Demo 2FA SMS Code: ${generatedOtp}`;
-                document.getElementById("authBtn").querySelector("span").textContent = "✓ Verify Code & Create Account";
-                showSuccess("Verification code sent! Enter the 4-digit code above.");
-                return;
-            }
-
-            if (mode === "signup" && generatedOtp) {
-                const entered = document.getElementById("otpInput").value.trim();
-                if (entered !== generatedOtp) {
-                    showError("Invalid 2FA verification code. Please try again.");
-                    return;
-                }
-            }
-
-            const name = document.getElementById("fullName").value.trim() || "Neeraja Shinde";
-            const parts = name.split(" ");
+        if (res.ok) {
+            const u = (json.data && json.data.user) || {};
+            const parts = (u.name || "User").split(" ");
             const initials = (parts[0][0] + (parts[1] ? parts[1][0] : "")).toUpperCase();
-
             try {
                 if (window.CyberShieldState) {
-                    const userPayload = {
-                        name: name,
-                        email: email,
-                        phone: document.getElementById("phone").value || "+91 98765 43210",
-                        avatarInitials: initials
-                    };
-                    if (typeof CyberShieldState.login === "function") {
-                        CyberShieldState.login(userPayload);
-                    } else if (typeof CyberShieldState.updateUser === "function") {
-                        CyberShieldState.updateUser(userPayload);
-                    }
+                    CyberShieldState.login({
+                        name: u.name || "User",
+                        email: u.email || email,
+                        phone: u.phone || "",
+                        avatarInitials: initials,
+                        userId: u.id
+                    });
                 }
-            } catch (err) {
-                console.warn("Could not save user state:", err);
-            }
+            } catch (_) {}
+            window.location.href = "dashboard.html";
+        } else {
+            const code = (json.error && json.error.code) || "";
+            const msg  = (json.error && json.error.message) || "Login failed.";
+            if (code === "INVALID_CREDENTIALS")
+                showError("❌ Wrong email or password. Please check and try again.");
+            else if (code === "ACCOUNT_LOCKED")
+                showError("🔒 " + msg);
+            else if (code === "EMAIL_NOT_VERIFIED")
+                showError("📧 Email not verified. Please complete sign-up verification first.");
+            else
+                showError("🚫 " + msg);
+        }
+    } catch (err) {
+        showError("Network error — make sure the server is running.");
+    } finally {
+        setLoading("loginBtn", false);
+    }
+}
 
-            if (mode === "signup") {
+/* ─── SIGN UP ───────────────────────────────────────────── */
+let _signupStep  = "form";   // "form" | "otp"
+let _signupEmail = null;
+
+async function handleSignup(e) {
+    e.preventDefault();
+    hideMessages();
+
+    if (_signupStep === "form") {
+        const name     = document.getElementById("signupName").value.trim();
+        const email    = document.getElementById("signupEmail").value.trim();
+        const password = document.getElementById("signupPassword").value;
+        if (!name || !email || !password) { showError("Please fill in all fields."); return; }
+
+        setLoading("signupBtn", true);
+        try {
+            const res  = await fetch("/api/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, password })
+            });
+            const json = await res.json();   // {ok, data} or {ok, error}
+
+            if (res.ok) {
+                // res.ok covers 200 & 201
+                _signupStep  = "otp";
+                _signupEmail = email;
+
+                const infoEl = document.getElementById("otpInfo");
+                infoEl.textContent = "📬 A 6-digit verification code has been sent to " + email + ". Please check your inbox (and spam folder).";
+
+                document.getElementById("otpBox").style.display = "block";
+                document.getElementById("signupBtn").querySelector("span").textContent = "✓ Verify Code & Create Account";
+                showSuccess("Verification code sent to your email! Please check your inbox.");
+            } else {
+                const err  = json.error || {};
+                const code = err.code || "";
+                let msg    = err.message || "Sign up failed.";
+                if (code === "EMAIL_TAKEN")
+                    msg = "An account with this email already exists — please sign in instead.";
+                else if (code === "WEAK_PASSWORD")
+                    msg = "Weak password: " + ((err.fields && err.fields.password) || msg);
+                else if (code === "INVALID_NAME")
+                    msg = "Name must be 2–60 characters with no special symbols.";
+                showError(msg);
+            }
+        } catch (err) {
+            showError("Network error — make sure the server is running.");
+        } finally {
+            setLoading("signupBtn", false);
+        }
+
+    } else {
+        // OTP step
+        const otp = document.getElementById("otpInput").value.trim();
+        if (!otp) { showError("Please enter the 6-digit verification code."); return; }
+
+        setLoading("signupBtn", true);
+        try {
+            const res  = await fetch("/api/auth/verify-otp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ email: _signupEmail, otp })
+            });
+            const json = await res.json();
+
+            if (res.ok) {
+                const u      = (json.data && json.data.user) || {};
+                const parts  = (u.name || "User").split(" ");
+                const initials = (parts[0][0] + (parts[1] ? parts[1][0] : "")).toUpperCase();
+                try {
+                    if (window.CyberShieldState) {
+                        CyberShieldState.login({
+                            name: u.name || "User",
+                            email: u.email || _signupEmail,
+                            phone: u.phone || "",
+                            avatarInitials: initials,
+                            userId: u.id
+                        });
+                    }
+                } catch (_) {}
                 window.location.href = "dashboard.html?onboarding=true";
             } else {
-                window.location.href = "dashboard.html";
+                const code = (json.error && json.error.code) || "";
+                const msg  = (json.error && json.error.message) || "Invalid code.";
+                if (code === "OTP_INVALID")  showError("❌ Incorrect code. Check and try again.");
+                else if (code === "OTP_EXPIRED") showError("⏰ Code expired — click Resend to get a new one.");
+                else if (code === "OTP_LOCKED")  showError("🔒 Too many wrong attempts — click Resend.");
+                else showError(msg);
             }
+        } catch (err) {
+            showError("Network error — make sure the server is running.");
+        } finally {
+            setLoading("signupBtn", false);
         }
+    }
+}
 
-        function showError(msg) {
-            const err = document.getElementById("authError");
-            err.textContent = msg;
-            err.style.display = "block";
+async function resendOtp(e) {
+    e.preventDefault();
+    if (!_signupEmail) return;
+    hideMessages();
+    try {
+        const res  = await fetch("/api/auth/resend-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: _signupEmail })
+        });
+        const json = await res.json();
+        const data = json.data || {};
+        if (res.ok) {
+            const infoEl = document.getElementById("otpInfo");
+            infoEl.textContent = "📬 A new 6-digit verification code has been sent to " + _signupEmail + ". Please check your inbox.";
+            showSuccess("New verification code sent to your email!");
+        } else {
+            showError((json.error && json.error.message) || "Could not resend — please wait and try again.");
         }
+    } catch (_) { showError("Network error."); }
+}
 
-        function showSuccess(msg) {
-            const succ = document.getElementById("authSuccess");
-            succ.textContent = msg;
-            succ.style.display = "block";
+/* ─── FORGOT PASSWORD (inline panel inside Sign In form) ── */
+async function handleForgot() {
+    hideMessages();
+    const email    = document.getElementById("forgotEmail").value.trim();
+    const newPw    = document.getElementById("newPassword").value;
+    const confirm  = document.getElementById("confirmPassword").value;
+
+    if (!email || !newPw || !confirm) { showError("Please fill in all reset fields."); return; }
+    if (newPw !== confirm)            { showError("❌ Passwords do not match."); return; }
+
+    setLoading("forgotBtn", true);
+    try {
+        const res  = await fetch("/api/auth/forgot-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, new_password: newPw, confirm_password: confirm })
+        });
+        const json = await res.json();
+
+        if (res.ok) {
+            const msg = (json.data && json.data.message) || "Password updated successfully!";
+            showSuccess("✅ " + msg + " You can now sign in.");
+            // Close the panel and clear fields
+            document.getElementById("forgotPanel").style.display = "none";
+            document.getElementById("forgotEmail").value = "";
+            document.getElementById("newPassword").value = "";
+            document.getElementById("confirmPassword").value = "";
+        } else {
+            const err  = json.error || {};
+            const code = err.code || "";
+            if (code === "PASSWORD_MISMATCH")
+                showError("❌ Passwords do not match.");
+            else if (code === "WEAK_PASSWORD")
+                showError("Weak password: " + ((err.fields && err.fields.password) || err.message));
+            else
+                showError(err.message || "Could not update password.");
         }
-    </script>
+    } catch (_) { showError("Network error — make sure the server is running."); }
+    finally { setLoading("forgotBtn", false); }
+}
+</script>
 </body>
 </html>

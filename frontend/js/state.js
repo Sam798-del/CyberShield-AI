@@ -3,21 +3,27 @@
    ========================================================= */
 
 const CS_STORAGE_KEY = "cybershield_shared_state_v1";
+const CS_SESSION_KEY = "cs_active_user_email";
+
+function getStorageKey(email) {
+    if (!email) return CS_STORAGE_KEY;
+    return "cybershield_state_" + email.toLowerCase().replace(/[^a-z0-9]/g, "_");
+}
 
 const DEFAULT_STATE = {
     user: {
-        name: "Neeraja Shinde",
-        email: "neeraja.shinde@cybershield.ai",
-        phone: "+91 98765 43210",
-        role: "Lead Security Administrator",
-        digitalId: "CS-8F29-A91B",
+        name: "",
+        email: "",
+        phone: "",
+        role: "Security User",
+        digitalId: "",
         identityVerified: false,
-        avatarInitials: "NS"
+        avatarInitials: "?"
     },
     identity: {
         verified: false,
         lastVerified: null,
-        score: 92,
+        score: 0,
         privacyControls: {
             showEmail: true,
             showPhone: false,
@@ -25,61 +31,30 @@ const DEFAULT_STATE = {
         }
     },
     passwordSecurity: {
-        score: 72,
-        healthLabel: "Moderate",
-        crackTime: "~3 months",
-        weakCount: 1,
-        reusedCount: 1
+        score: 0,
+        healthLabel: "Not checked",
+        crackTime: "—",
+        weakCount: 0,
+        reusedCount: 0
     },
     emailFootprint: {
-        emailScanned: "neeraja.shinde@cybershield.ai",
+        emailScanned: "",
         breachesFound: 0,
-        accountsMonitored: 6,
-        domainHealth: "Clean",
-        spfDkimStatus: "Valid"
+        accountsMonitored: 0,
+        domainHealth: "Unknown",
+        spfDkimStatus: "Unknown"
     },
     phishing: {
-        scansCount: 42,
-        threatsBlocked: 2,
+        scansCount: 0,
+        threatsBlocked: 0,
         lastScan: null
     },
     cyberbullying: {
-        scansCount: 12,
-        flaggedCount: 1,
+        scansCount: 0,
+        flaggedCount: 0,
         lastScan: null
     },
-    incidents: [
-        {
-            id: "inc_init_1",
-            title: "Suspicious Phishing URL Blocked",
-            module: "Phishing Detection",
-            target: "login-verify-account.xyz",
-            date: "Today",
-            severity: "High",
-            status: "Quarantined",
-            link: "phishing-detection.html"
-        },
-        {
-            id: "inc_init_2",
-            title: "Abusive Harassment Flagged",
-            module: "Cyberbullying Detection",
-            target: "Social comments feed",
-            date: "Yesterday",
-            severity: "High",
-            status: "Flagged",
-            link: "cyberbullying-detection.html"
-        },
-        {
-            id: "inc_init_3",
-            title: "Weak Master Password Identified",
-            module: "Security Analyzer",
-            target: "Master credentials",
-            date: "2 days ago",
-            severity: "Medium",
-            status: "Action Needed",
-            link: "security-analyzer.html"
-        }
-    ],
+    incidents: [],
     securityReport: {
         baseScore: 90,
         score: 90,
@@ -104,6 +79,7 @@ const DEFAULT_STATE = {
 
 class StateManager {
     constructor() {
+        this._email = sessionStorage.getItem(CS_SESSION_KEY) || localStorage.getItem(CS_SESSION_KEY) || null;
         this.state = this.loadState();
         try {
             if (typeof BroadcastChannel !== "undefined") {
@@ -129,12 +105,15 @@ class StateManager {
         }
     }
 
+    _storageKey() {
+        return getStorageKey(this._email);
+    }
+
     loadState() {
         try {
-            const raw = localStorage.getItem(CS_STORAGE_KEY);
-            if (!raw) return { ...DEFAULT_STATE };
+            const raw = localStorage.getItem(this._storageKey());
+            if (!raw) return JSON.parse(JSON.stringify(DEFAULT_STATE));
             const parsed = JSON.parse(raw);
-            // Ensure default structure merge
             return {
                 ...DEFAULT_STATE,
                 ...parsed,
@@ -143,22 +122,58 @@ class StateManager {
             };
         } catch (e) {
             console.warn("Failed to load CyberShield state from localStorage, resetting to default.", e);
-            return { ...DEFAULT_STATE };
+            return JSON.parse(JSON.stringify(DEFAULT_STATE));
         }
     }
 
     saveState(broadcastToBus = true) {
         try {
-            localStorage.setItem(CS_STORAGE_KEY, JSON.stringify(this.state));
+            localStorage.setItem(this._storageKey(), JSON.stringify(this.state));
             window.dispatchEvent(new CustomEvent("cybershield-state-changed", { detail: this.state }));
             if (broadcastToBus && this.broadcastBus) {
                 try {
                     this.broadcastBus.postMessage({ type: "STATE_UPDATED", state: this.state });
                 } catch (e) {}
             }
+            // Debounced server sync (only when user is logged in via real account)
+            if (this._email && this._email !== "demo@cybershield.ai") {
+                clearTimeout(this._syncTimer);
+                this._syncTimer = setTimeout(() => this._syncToServer(), 1500);
+            }
         } catch (e) {
             console.error("Failed to save state to localStorage", e);
         }
+    }
+
+    async _syncToServer() {
+        try {
+            await fetch("/api/user-state", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json", "X-Requested-With": "CyberShield" },
+                credentials: "include",
+                body: JSON.stringify({ state: this.state })
+            });
+        } catch (_) { /* silent – offline or not logged in */ }
+    }
+
+    async loadFromServer() {
+        try {
+            const res = await fetch("/api/user-state", { credentials: "include" });
+            if (res.ok) {
+                const json = await res.json();
+                if (json.state && typeof json.state === "object" && Object.keys(json.state).length > 0) {
+                    this.state = {
+                        ...JSON.parse(JSON.stringify(DEFAULT_STATE)),
+                        ...json.state,
+                        user: { ...DEFAULT_STATE.user, ...(json.state.user || {}) },
+                        securityReport: { ...DEFAULT_STATE.securityReport, ...(json.state.securityReport || {}) }
+                    };
+                    // Also update localStorage
+                    localStorage.setItem(this._storageKey(), JSON.stringify(this.state));
+                    window.dispatchEvent(new CustomEvent("cybershield-state-changed", { detail: this.state }));
+                }
+            }
+        } catch (_) { /* silent */ }
     }
 
     getState() {
@@ -176,10 +191,25 @@ class StateManager {
     }
 
     login(userData) {
+        // Switch storage scope to this user's email
+        const email = (userData && userData.email) ? userData.email.toLowerCase() : null;
+        if (email && email !== this._email) {
+            this._email = email;
+            localStorage.setItem(CS_SESSION_KEY, email);
+            sessionStorage.setItem(CS_SESSION_KEY, email);
+            // Load this user's saved state (or fresh defaults)
+            this.state = this.loadState();
+        }
         if (userData) {
             this.updateUser(userData);
         }
         return this.state.user;
+    }
+
+    logout() {
+        this._email = null;
+        localStorage.removeItem(CS_SESSION_KEY);
+        sessionStorage.removeItem(CS_SESSION_KEY);
     }
 
     verifyIdentity() {

@@ -94,6 +94,12 @@ CREATE TABLE IF NOT EXISTS identity_activity (
     description TEXT    NOT NULL,
     created_at  INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS user_app_state (
+    user_id     INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    state_json  TEXT    NOT NULL DEFAULT '{}',
+    updated_at  INTEGER NOT NULL
+);
 """
 
 

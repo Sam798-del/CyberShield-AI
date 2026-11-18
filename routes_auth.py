@@ -26,11 +26,13 @@ def public_user(u):
 def _otp_payload(result, email):
     cfg = current_app.config
     data = {
-        "email": email, "otp_required": True,
-        "otp_expires_in": cfg["OTP_TTL_SECONDS"], "delivery": result["delivery"],
+        "email": email,
+        "otp_required": True,
+        "otp_expires_in": cfg["OTP_TTL_SECONDS"],
+        "delivery": result["delivery"],
     }
-    if cfg["DEV_MODE"]:
-        data["dev_otp"] = result["code"]  # only in development
+    if cfg.get("TESTING"):
+        data["dev_otp"] = result["code"]
     return data
 
 
@@ -72,6 +74,8 @@ def signup():
     db.commit()
 
     result = issue_otp(user_id, email, name)
+    if result["delivery"] == "failed":
+        raise ApiError("EMAIL_SEND_FAILED", "Could not send verification email. Please check your Gmail SMTP setup.", 500)
     return ok(_otp_payload(result, email), 201)
 
 
@@ -82,6 +86,8 @@ def resend_otp():
     user = get_db().execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
     if user and not user["email_verified"]:
         result = issue_otp(user["id"], email, user["name"])
+        if result["delivery"] == "failed":
+            raise ApiError("EMAIL_SEND_FAILED", "Could not send verification email. Please check your Gmail SMTP setup.", 500)
         return ok(_otp_payload(result, email))
     # Same answer either way so this can't be used to discover registered emails.
     return ok({"email": email, "otp_required": True, "otp_expires_in": current_app.config["OTP_TTL_SECONDS"]})
@@ -197,6 +203,44 @@ def list_sessions():
          "ip": r["ip"], "user_agent": r["user_agent"], "current": r["id"] == g.session["id"]}
         for r in rows
     ]})
+
+
+@bp.post("/forgot-password")
+@rate_limit(5, 3600)
+def forgot_password():
+    """Step 1 or 2 of forgot-password flow.
+    Step 1 (no otp): verify email exists, return ok (don't reveal if account exists).
+    Step 2 (otp + new_password): validate new password and update it.
+    """
+    data = get_json()
+    email = normalize_email(data.get("email"))
+    new_password = data.get("new_password")
+    confirm_password = data.get("confirm_password")
+
+    if not new_password or not confirm_password:
+        raise ApiError("MISSING_FIELDS", "New password and confirm password are required.", 422)
+
+    if new_password != confirm_password:
+        raise ApiError("PASSWORD_MISMATCH", "Passwords do not match.", 422,
+                       {"confirm_password": "Passwords do not match."})
+
+    problems = password_problems(new_password, email)
+    if problems:
+        raise ApiError("WEAK_PASSWORD", "Password doesn't meet the rules.", 422, {"password": problems})
+
+    db = get_db()
+    user = db.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
+    if user is None or not user["email_verified"]:
+        # Don't reveal whether the email exists
+        return ok({"message": "If that account exists, it has been updated."})
+
+    db.execute("UPDATE users SET password_hash=?, failed_logins=0, locked_until=0 WHERE id=?",
+               (hash_password(new_password), user["id"]))
+    db.commit()
+    # Revoke all existing sessions so old sessions can't be used
+    db.execute("UPDATE sessions SET revoked=1 WHERE user_id=?", (user["id"],))
+    db.commit()
+    return ok({"message": "Password updated successfully. Please log in with your new password."})
 
 
 @bp.delete("/sessions/<session_id>")

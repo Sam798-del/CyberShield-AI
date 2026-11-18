@@ -124,7 +124,10 @@ def send_email(to, subject, text):
         return "console"
 
     msg = EmailMessage()
-    msg["From"], msg["To"], msg["Subject"] = cfg["MAIL_FROM"], to, subject
+    mail_from = cfg["MAIL_FROM"]
+    if cfg["SMTP_USER"] and ("@" not in mail_from or "localhost" in mail_from):
+        mail_from = f"CyberShield AI <{cfg['SMTP_USER']}>"
+    msg["From"], msg["To"], msg["Subject"] = mail_from, to, subject
     msg.set_content(text)
     ctx = ssl.create_default_context()
     if cfg["SMTP_SSL"]:
