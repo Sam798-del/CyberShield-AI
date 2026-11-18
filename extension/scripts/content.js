@@ -233,12 +233,12 @@
     banner.querySelector("#csAcknowledgeBreach")?.addEventListener("click", close);
   }
 
-  // 4. In-Page Visual Badge (Safe = "Secure" / Danger = "Threat Alert")
+  // 4. In-Page Visual Badge (Safe = "● Secure" / Danger = "● Threat Alert")
   function renderPageBadge(riskLevel, score) {
     if (document.getElementById("cybershield-corner-badge")) return;
 
-    const mount = document.body || document.documentElement;
-    if (!mount) {
+    const targetParent = document.documentElement || document.body;
+    if (!targetParent) {
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", () => renderPageBadge(riskLevel, score), { once: true });
       } else {
@@ -256,33 +256,37 @@
     badge.id = "cybershield-corner-badge";
     badge.title = `CyberShield AI: ${badgeText} (${score || 0}/100)`;
     badge.style.cssText = `
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #0f172a;
-      color: #f1f5f9;
-      border: 1.5px solid ${badgeColor};
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      display: flex;
-      visibility: visible;
-      opacity: 1;
-      align-items: center;
-      gap: 6px;
-      z-index: 2147483647;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
-      cursor: pointer;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      pointer-events: auto;
+      position: fixed !important;
+      bottom: 20px !important;
+      right: 20px !important;
+      background: #0f172a !important;
+      color: #f1f5f9 !important;
+      border: 1.5px solid ${badgeColor} !important;
+      padding: 6px 14px !important;
+      border-radius: 20px !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      align-items: center !important;
+      gap: 6px !important;
+      z-index: 2147483647 !important;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6) !important;
+      cursor: pointer !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
+      pointer-events: auto !important;
+      width: auto !important;
+      height: auto !important;
+      line-height: normal !important;
     `;
-    badge.innerHTML = `<span id="cs-badge-dot" style="color:${badgeColor}; font-size:12px;">●</span> <span id="cs-badge-text">${badgeText}</span>`;
-    badge.onclick = () => {
+    badge.innerHTML = `<span id="cs-badge-dot" style="color:${badgeColor} !important; font-size:12px !important; line-height:1 !important;">●</span> <span id="cs-badge-text" style="color:#f1f5f9 !important; font-size:11px !important; font-weight:700 !important;">${badgeText}</span>`;
+    badge.onclick = (e) => {
+      e.stopPropagation();
       alert(`🛡️ CyberShield AI Verdict:\n\nStatus: ${badgeText}\nRisk Score: ${score || 0}/100\nDomain: ${window.location.hostname || "Local file"}\n\n${isDanger ? (pageThreatReason ? `⚠️ ${pageThreatReason}` : '⚠️ Threat Alert: Risk detected on this page.') : '✅ Verified Secure: Phishing radar and cyberbullying shields active.'}`);
     };
-    mount.appendChild(badge);
+    targetParent.appendChild(badge);
   }
 
   function updatePageBadge(riskLevel, score, threatNote) {
@@ -303,11 +307,15 @@
     const badgeColor = isDanger ? "#ef4444" : (isWarning ? "#f59e0b" : "#10b981");
     const badgeText = isDanger ? "Threat Alert" : (isWarning ? "Caution" : "Secure");
 
-    badge.style.borderColor = badgeColor;
-    dot.style.color = badgeColor;
-    text.innerText = badgeText;
+    badge.style.setProperty("border-color", badgeColor, "important");
+    if (dot) dot.style.setProperty("color", badgeColor, "important");
+    if (text) {
+      text.innerText = badgeText;
+      text.style.setProperty("color", "#f1f5f9", "important");
+    }
     badge.title = `CyberShield AI: ${badgeText} (${score || 0}/100)`;
-    badge.onclick = () => {
+    badge.onclick = (e) => {
+      e.stopPropagation();
       alert(`🛡️ CyberShield AI Verdict:\n\nStatus: ${badgeText}\nRisk Score: ${score || 0}/100\nDomain: ${window.location.hostname || "Local file"}\n\n${isDanger ? (pageThreatReason ? `⚠️ ${pageThreatReason}` : '⚠️ Threat Alert: Risk detected on this page.') : '✅ Verified Secure: Phishing radar and cyberbullying shields active.'}`);
     };
   }
