@@ -114,6 +114,10 @@ def create_app(test_config=None):
     def serve_pages_folder(filename):
         return send_from_directory(Path(app.static_folder) / "pages", filename)
 
+    @app.get("/manifest.json")
+    def serve_manifest():
+        return send_from_directory('frontend', 'manifest.json', mimetype='application/manifest+json')
+
     @app.get("/healthz")
     def healthz():
         return jsonify({"ok": True})

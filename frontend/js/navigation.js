@@ -120,8 +120,10 @@ const CyberShieldNav = {
         window.location.href = "login.html";
     },
 
-    renderMobileBottomNav() {
-        this.removeMobileBottomNav();
+    renderMobileBottomNav(activePageId) {
+        if (window.CyberShieldMobile && CyberShieldMobile.isMobile()) {
+            CyberShieldMobile.initBottomNav(activePageId);
+        }
     }
 };
 

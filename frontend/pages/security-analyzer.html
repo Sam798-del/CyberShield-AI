@@ -1,10 +1,11 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CyberShield AI — Security Analyzer</title>
   <link rel="icon" type="image/png" href="../assets/icon-48.png">
+  <link rel="stylesheet" href="../css/mobile.css">
   <style>
     :root {
       --bg: #071027;
@@ -212,9 +213,16 @@
     @media (max-width: 760px) { .app-shell { display: block; }.sidebar { width: 100%; min-height: 0; padding: 13px 13px 10px; border-right: 0; border-bottom: 1px solid rgba(111,129,201,.18); }.brand { padding: 0 5px 12px; }.nav-label,.sidebar-spacer,.sidebar-promo { display: none; }.nav { display: flex; gap: 4px; overflow-x: auto; }.nav-item { width: auto; flex: 0 0 auto; padding: 8px 10px; font-size: 9px; }.topbar { height: 45px; padding: 0 16px; }.page { padding: 18px 13px 35px; }.password-analysis,.risk-grid { grid-template-columns: 1fr; }.footprint-stage { min-height: 286px; }.service-node { transform: scale(.9); }.footprint-donut { right: 12px; }.footprint-legend { top: auto; right: 10px; bottom: 10px; } }
     @media (max-width: 420px) { .nav-item { padding: 8px; }.nav-item span { display: none; }.nav-item.active span { display: inline; }.input-row { flex-direction: column; }.primary-button { min-height: 35px; }.risk-highlight { grid-template-columns: auto 1fr; }.risk-highlight .small-button { grid-column: 2; justify-self: start; }.risk-meta { grid-column: 2; }.generate-row { flex-wrap: wrap; } }
   </style>
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#071027">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CyberShield AI">
 </head>
 <body>
   <div id="app"></div>
+  <script src="../js/mobile.js"></script>
   <script src="../js/state.js"></script>
   <script src="../js/utils.js"></script>
   <script>
@@ -1659,5 +1667,11 @@
       render();
     }
   </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.CyberShieldMobile) { CyberShieldMobile.init('security-analyzer'); }
+        });
+    </script>
 </body>
 </html>

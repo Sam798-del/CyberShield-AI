@@ -1,0 +1,31 @@
+{
+  "name": "CyberShield AI",
+  "short_name": "CyberShield",
+  "description": "AI-powered cybersecurity: threat detection, digital identity protection, and security analysis.",
+  "start_url": "/pages/dashboard.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#071027",
+  "background_color": "#071027",
+  "icons": [
+    {
+      "src": "/assets/icon-48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-48.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon-48.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["security", "utilities"],
+  "lang": "en"
+}

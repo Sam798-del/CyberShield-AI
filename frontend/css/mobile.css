@@ -1,0 +1,442 @@
+/* =========================================================
+   CYBERSHIELD AI — MOBILE ANDROID-LIKE EXPERIENCE
+   Material Design 3 inspired, dark theme
+   ========================================================= */
+
+/* ── Splash Screen ─────────────────────────────────────── */
+#cs-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #071027;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+#cs-splash.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.splash-logo {
+  width: 90px;
+  height: 90px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #1a1060, #2d1fa8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 60px rgba(99, 80, 244, 0.6), 0 0 120px rgba(99, 80, 244, 0.2);
+  animation: splashPulse 1.5s ease-in-out infinite;
+  margin-bottom: 24px;
+}
+
+.splash-logo img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.splash-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #edf0ff;
+  margin-bottom: 6px;
+}
+
+.splash-subtitle {
+  font-size: 12px;
+  color: #6b7fa8;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 48px;
+}
+
+.splash-loader {
+  width: 160px;
+  height: 3px;
+  background: rgba(99, 80, 244, 0.2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.splash-loader-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #6350f4, #31d5ae);
+  border-radius: 99px;
+  animation: splashLoad 2s ease forwards;
+}
+
+@keyframes splashPulse {
+  0%, 100% { box-shadow: 0 0 40px rgba(99,80,244,.5), 0 0 80px rgba(99,80,244,.15); }
+  50% { box-shadow: 0 0 80px rgba(99,80,244,.8), 0 0 160px rgba(99,80,244,.3); }
+}
+
+@keyframes splashLoad {
+  0% { width: 0%; }
+  60% { width: 80%; }
+  100% { width: 100%; }
+}
+
+/* ── Bottom Navigation Bar ─────────────────────────────── */
+#cs-bottom-nav {
+  display: none; /* shown only on mobile via media query */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 64px;
+  background: rgba(7, 10, 32, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(93, 118, 205, 0.2);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5);
+  safe-area-inset-bottom: env(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 64px;
+  padding: 0 8px;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: #526188;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 8px 4px;
+  border-radius: 12px;
+  transition: color 0.2s ease;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  min-width: 48px;
+}
+
+.bottom-nav-item.active {
+  color: #7b6fff;
+}
+
+.bottom-nav-item.active .bottom-nav-pill {
+  background: rgba(99, 80, 244, 0.18);
+}
+
+.bottom-nav-pill {
+  width: 48px;
+  height: 28px;
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+  position: relative;
+}
+
+.bottom-nav-pill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 99px;
+  background: rgba(255,255,255,0);
+  transition: background 0.15s ease;
+}
+
+.bottom-nav-item:active .bottom-nav-pill::after {
+  background: rgba(255,255,255,0.08);
+}
+
+.bottom-nav-pill svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bottom-nav-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+/* ── Mobile Page Transitions ───────────────────────────── */
+@keyframes slideInRight {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Android Toast Notifications ───────────────────────── */
+.cs-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(30, 40, 72, 0.97);
+  border: 1px solid rgba(93, 118, 205, 0.3);
+  backdrop-filter: blur(16px);
+  color: #edf0ff;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 24px;
+  z-index: 9000;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  white-space: nowrap;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  pointer-events: none;
+}
+
+.cs-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Mobile Card Ripple Effect ─────────────────────────── */
+.cs-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.cs-ripple::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 60%);
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.cs-ripple:active::after {
+  transform: scale(2.5);
+  opacity: 1;
+  transition: 0s;
+}
+
+/* ── Mobile FAB (Floating Action Button) ───────────────── */
+.cs-fab {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 900;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #5b4cf1, #7760fb);
+  color: #fff;
+  border: none;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(83, 69, 230, 0.5);
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cs-fab:active {
+  transform: scale(0.94);
+}
+
+.cs-fab svg {
+  width: 24px;
+  height: 24px;
+  stroke: white;
+  fill: none;
+  stroke-width: 2;
+}
+
+/* ── Mobile-only Media Queries ─────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Show bottom nav */
+  #cs-bottom-nav {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Show FAB on mobile */
+  .cs-fab {
+    display: flex;
+  }
+
+  /* Hide sidebar on mobile */
+  #cs-sidebar-container {
+    display: none !important;
+  }
+
+  /* Hide desktop topbar on mobile, show mobile header instead */
+  #cs-header-container .topbar {
+    display: none;
+  }
+
+  /* Mobile top header */
+  .cs-mobile-header {
+    display: flex !important;
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    height: 56px;
+    padding: 0 16px;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(7, 10, 32, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(93, 118, 205, 0.15);
+  }
+
+  .cs-mobile-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .cs-mobile-header-brand img {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    object-fit: contain;
+  }
+
+  .cs-mobile-header-brand span {
+    font-size: 15px;
+    font-weight: 800;
+    color: #edf0ff;
+    letter-spacing: -0.03em;
+  }
+
+  .cs-mobile-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cs-mobile-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #604bff, #8068fb);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    text-decoration: none;
+  }
+
+  /* Page content needs bottom padding for nav bar */
+  .main, .main-content {
+    padding-bottom: 72px;
+  }
+
+  .page, .page-container {
+    padding: 16px 14px 24px;
+    animation: slideInUp 0.3s ease both;
+  }
+
+  /* Full-width app shell */
+  .app-shell {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Cards get full width with less gap */
+  .panel, .card {
+    border-radius: 12px;
+  }
+
+  /* Grids go single column */
+  .gauges-grid,
+  .password-analysis,
+  .risk-grid,
+  .middle-grid,
+  .bottom-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Hide logout from topbar on mobile (it's in mobile menu instead) */
+  #cs-header-container .topbar .btn {
+    display: none;
+  }
+
+  /* Touch-friendly tap targets */
+  .nav-item, .bottom-nav-item, button, .btn, .primary-button {
+    min-height: 44px;
+  }
+
+  /* Page heading adjustments */
+  .page-heading h1, .page-title {
+    font-size: 20px;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Better form inputs on mobile */
+  .text-field, .form-control {
+    font-size: 16px; /* prevents iOS zoom on focus */
+    padding: 12px 14px;
+    border-radius: 10px;
+  }
+
+  /* Wider primary buttons */
+  .primary-button, .btn-primary {
+    padding: 12px 20px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Extra small tweaks */
+  .cs-mobile-header-brand span {
+    font-size: 14px;
+  }
+}
+
+/* Mobile header is hidden on desktop */
+.cs-mobile-header {
+  display: none;
+}
