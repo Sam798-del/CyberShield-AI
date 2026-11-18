@@ -282,6 +282,167 @@
   stroke-width: 2;
 }
 
+/* Global Overflow Protection */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+.app-shell, .main, .main-content {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* ── Dashboard Feature Grid ────────────────────────────── */
+.dashboard-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.dash-feature-tile {
+  background: rgba(11, 31, 65, 0.7);
+  border: 1px solid rgba(93, 118, 205, 0.25);
+  border-radius: 12px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dash-feature-tile:hover, .dash-feature-tile:active {
+  background: rgba(99, 80, 244, 0.18);
+  border-color: rgba(99, 80, 244, 0.5);
+  transform: translateY(-2px);
+}
+
+.dash-feature-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.dash-feature-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #edf0ff;
+}
+
+.dash-feature-desc {
+  font-size: 11px;
+  color: #8494be;
+  line-height: 1.35;
+}
+
+/* ── Android Bottom Sheet ───────────────────────────────── */
+.cs-bottom-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.cs-bottom-sheet-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.cs-bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #0b152d;
+  border-top: 1.5px solid rgba(99, 102, 241, 0.4);
+  border-radius: 22px 22px 0 0;
+  padding: 14px 20px 32px;
+  z-index: 2001;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.85);
+  max-height: 82vh;
+  overflow-y: auto;
+}
+
+.cs-bottom-sheet.open {
+  transform: translateY(0);
+}
+
+.cs-sheet-handle {
+  width: 44px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 99px;
+  margin: 0 auto 16px;
+}
+
+.cs-sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.cs-sheet-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #edf0ff;
+  letter-spacing: -0.02em;
+}
+
+.cs-sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px 10px;
+  margin-bottom: 20px;
+}
+
+.cs-sheet-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 10px 6px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #edf0ff;
+  background: rgba(14, 28, 63, 0.6);
+  border: 1px solid rgba(93, 118, 205, 0.2);
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cs-sheet-item:active {
+  background: rgba(99, 80, 244, 0.2);
+  transform: scale(0.96);
+}
+
+.cs-sheet-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.cs-sheet-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #c7d2fe;
+  line-height: 1.2;
+}
+
 /* ── Mobile-only Media Queries ─────────────────────────── */
 @media (max-width: 768px) {
 

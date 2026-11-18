@@ -205,9 +205,26 @@
                     background: rgba(255, 255, 255, 0.12);
                     color: #ffffff;
                 }
+                @media (max-width: 600px) {
+                    .cs-tour-box {
+                        padding: 16px 14px !important;
+                        max-height: 86vh !important;
+                        overflow-y: auto !important;
+                    }
+                    .cs-tour-footer {
+                        flex-direction: column !important;
+                        gap: 10px !important;
+                        align-items: stretch !important;
+                    }
+                    .cs-tour-controls {
+                        width: 100% !important;
+                        justify-content: space-between !important;
+                        flex-wrap: wrap !important;
+                    }
+                }
             </style>
 
-            <div style="
+            <div class="cs-tour-box" style="
                 background: linear-gradient(145deg, #0f172a, #0b1120);
                 border: 1.5px solid #38bdf8;
                 border-radius: 18px;
@@ -271,7 +288,7 @@
                 </div>
 
                 <!-- Footer Action Bar -->
-                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <div class="cs-tour-footer" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
                     <!-- Step Dots -->
                     <div style="display: flex; align-items: center; gap: 6px;">
                         ${TOUR_FEATURES.map((_, idx) => `
@@ -280,7 +297,7 @@
                     </div>
 
                     <!-- Navigation Controls -->
-                    <div style="display: flex; align-items: center; gap: 8px;">
+                    <div class="cs-tour-controls" style="display: flex; align-items: center; gap: 8px;">
                         <a href="${feat.link}" target="_self" class="cs-tour-btn-secondary" style="text-decoration: none; font-size: 12px; padding: 7px 12px;">
                             ${feat.linkText}
                         </a>

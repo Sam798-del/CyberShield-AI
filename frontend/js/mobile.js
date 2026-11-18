@@ -45,6 +45,9 @@ const CyberShieldMobile = {
     const existing = document.getElementById('cs-bottom-nav');
     if (existing) existing.remove();
 
+    const morePages = ['phishing-detection', 'cyberbullying-detection', 'settings', 'guide'];
+    const isMoreActive = morePages.includes(activePageId);
+
     const navItems = [
       {
         id: 'dashboard',
@@ -71,10 +74,10 @@ const CyberShieldMobile = {
         icon: `<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v7c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12v7c0 1.7 3.6 3 8 3s8-1.3 8-3v-7"/></svg>`
       },
       {
-        id: 'settings',
-        label: 'Profile',
-        href: 'settings.html',
-        icon: `<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>`
+        id: 'more',
+        label: 'Features',
+        isAction: true,
+        icon: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>`
       }
     ];
 
@@ -87,9 +90,9 @@ const CyberShieldMobile = {
     inner.className = 'bottom-nav-inner';
 
     navItems.forEach(item => {
-      const isActive = item.id === activePageId;
-      const link = document.createElement('a');
-      link.href = item.href;
+      const isActive = item.isAction ? isMoreActive : item.id === activePageId;
+      const link = document.createElement(item.isAction ? 'button' : 'a');
+      if (!item.isAction) link.href = item.href;
       link.className = 'bottom-nav-item' + (isActive ? ' active' : '');
       link.setAttribute('aria-label', item.label);
       link.setAttribute('aria-current', isActive ? 'page' : 'false');
@@ -98,16 +101,104 @@ const CyberShieldMobile = {
         <span class="bottom-nav-label">${item.label}</span>
       `;
 
-      // Ripple on tap
-      link.addEventListener('click', (e) => {
-        if (navigator.vibrate) navigator.vibrate(10);
-      });
+      if (item.isAction) {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (navigator.vibrate) navigator.vibrate(10);
+          CyberShieldMobile.toggleBottomSheet();
+        });
+      } else {
+        link.addEventListener('click', () => {
+          if (navigator.vibrate) navigator.vibrate(10);
+        });
+      }
 
       inner.appendChild(link);
     });
 
     nav.appendChild(inner);
     document.body.appendChild(nav);
+    this.initBottomSheet(activePageId);
+  },
+
+  /* ── Android Bottom Sheet (More Features) ────────────── */
+  initBottomSheet(activePageId) {
+    const existing = document.getElementById('cs-sheet-wrap');
+    if (existing) existing.remove();
+
+    const wrap = document.createElement('div');
+    wrap.id = 'cs-sheet-wrap';
+    wrap.innerHTML = `
+      <div class="cs-bottom-sheet-overlay" id="csSheetOverlay" onclick="CyberShieldMobile.toggleBottomSheet(false)"></div>
+      <div class="cs-bottom-sheet" id="csBottomSheet">
+        <div class="cs-sheet-handle"></div>
+        <div class="cs-sheet-header">
+          <div class="cs-sheet-title">🛡️ All CyberShield AI Features</div>
+          <button type="button" onclick="CyberShieldMobile.toggleBottomSheet(false)" style="background:transparent; border:none; color:#8494be; font-size:16px; cursor:pointer;">✕</button>
+        </div>
+        <div class="cs-sheet-grid">
+          <a href="dashboard.html" class="cs-sheet-item ${activePageId === 'dashboard' ? 'active' : ''}">
+            <div class="cs-sheet-icon">📊</div>
+            <div class="cs-sheet-label">Dashboard</div>
+          </a>
+          <a href="digital-identity.html" class="cs-sheet-item ${activePageId === 'digital-identity' ? 'active' : ''}">
+            <div class="cs-sheet-icon">🔑</div>
+            <div class="cs-sheet-label">Identity Vault</div>
+          </a>
+          <a href="security-analyzer.html" class="cs-sheet-item ${activePageId === 'security-analyzer' ? 'active' : ''}">
+            <div class="cs-sheet-icon">🔍</div>
+            <div class="cs-sheet-label">Analyzer</div>
+          </a>
+          <a href="phishing-detection.html" class="cs-sheet-item ${activePageId === 'phishing-detection' ? 'active' : ''}">
+            <div class="cs-sheet-icon">📧</div>
+            <div class="cs-sheet-label">Phishing</div>
+          </a>
+          <a href="cyberbullying-detection.html" class="cs-sheet-item ${activePageId === 'cyberbullying-detection' ? 'active' : ''}">
+            <div class="cs-sheet-icon">💬</div>
+            <div class="cs-sheet-label">Cyberbullying</div>
+          </a>
+          <a href="security-report.html" class="cs-sheet-item ${activePageId === 'security-report' ? 'active' : ''}">
+            <div class="cs-sheet-icon">📈</div>
+            <div class="cs-sheet-label">Reports</div>
+          </a>
+          <a href="guide.html" class="cs-sheet-item ${activePageId === 'guide' ? 'active' : ''}">
+            <div class="cs-sheet-icon">📖</div>
+            <div class="cs-sheet-label">User Guide</div>
+          </a>
+          <a href="javascript:void(0)" onclick="CyberShieldMobile.toggleBottomSheet(false); if(window.CyberShieldTour) CyberShieldTour.startTour();" class="cs-sheet-item">
+            <div class="cs-sheet-icon">✦</div>
+            <div class="cs-sheet-label">Feature Tour</div>
+          </a>
+          <a href="settings.html" class="cs-sheet-item ${activePageId === 'settings' ? 'active' : ''}">
+            <div class="cs-sheet-icon">⚙️</div>
+            <div class="cs-sheet-label">Settings</div>
+          </a>
+        </div>
+        <div style="border-top: 1px solid rgba(239,68,68,0.2); padding-top: 12px; display: flex; justify-content: center;">
+          <button onclick="if(window.CyberShieldNav) CyberShieldNav.logout();" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); color: #fca5a5; font-size: 13px; font-weight: 700; padding: 10px 24px; border-radius: 10px; display: flex; align-items: center; gap: 8px; cursor: pointer; width: 100%; justify-content: center;">
+            <span>🚪</span> Log Out
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(wrap);
+  },
+
+  toggleBottomSheet(force) {
+    const overlay = document.getElementById('csSheetOverlay');
+    const sheet = document.getElementById('csBottomSheet');
+    if (!overlay || !sheet) return;
+
+    const isOpen = overlay.classList.contains('open');
+    const nextState = typeof force === 'boolean' ? force : !isOpen;
+
+    if (nextState) {
+      overlay.classList.add('open');
+      sheet.classList.add('open');
+    } else {
+      overlay.classList.remove('open');
+      sheet.classList.remove('open');
+    }
   },
 
   /* ── Mobile Header ───────────────────────────────────── */

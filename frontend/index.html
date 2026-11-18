@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#071027">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CyberShield AI">
     <link rel="icon" type="image/png" href="assets/icon-48.png">
     <style>
         .landing-nav {
@@ -128,9 +135,47 @@
             box-shadow: 0 10px 30px var(--blue-glow);
         }
 
-        @media (max-width: 900px) {
-            .nav-links { display: none; }
-            .hero-banner h1 { font-size: 28px; }
+        @media (max-width: 768px) {
+            .landing-nav {
+                height: 56px;
+                padding: 0 16px;
+            }
+            .landing-nav a span {
+                font-size: 16px;
+            }
+            .nav-links {
+                display: flex !important;
+                gap: 6px;
+            }
+            .nav-links a:first-child {
+                display: none;
+            }
+            .nav-links .btn {
+                padding: 6px 12px !important;
+                font-size: 11.5px !important;
+                margin-left: 0 !important;
+            }
+            .hero-banner {
+                padding: 30px 16px !important;
+                margin-bottom: 24px !important;
+            }
+            .hero-banner h1 {
+                font-size: 24px !important;
+            }
+            .hero-banner p {
+                font-size: 13px !important;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 10px !important;
+            }
+            .modules-grid {
+                grid-template-columns: 1fr !important;
+                gap: 14px !important;
+            }
+            .page-container {
+                padding: 16px 14px 40px !important;
+            }
         }
     </style>
 </head>
