@@ -59,6 +59,10 @@ const CyberShieldNav = {
                 <div class="nav-label">Workspace</div>
                 <nav class="nav">
                     ${navHtml}
+                    <a href="javascript:void(0)" onclick="CyberShieldNav.logout()" class="nav-item" style="color: #fca5a5; margin-top: 8px; border-top: 1px solid rgba(239, 68, 68, 0.2); padding-top: 10px;">
+                        <svg viewBox="0 0 24 24" style="stroke: #fca5a5;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                        <span>Log Out</span>
+                    </a>
                 </nav>
                 <div class="sidebar-spacer"></div>
                 <div class="sidebar-promo">
@@ -94,9 +98,26 @@ const CyberShieldNav = {
                         ${this.icons.bell}
                     </button>
                     <a href="settings.html" class="avatar" title="${userName}">${initials}</a>
+                    <button class="btn btn-sm" onclick="CyberShieldNav.logout()" title="Log Out" style="display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:8px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.4); color:#fca5a5; font-size:12px; font-weight:700; cursor:pointer; margin-left:6px;">
+                        <span>🚪</span><span>Log Out</span>
+                    </button>
                 </div>
             </header>
         `;
+    },
+
+    async logout() {
+        try {
+            await fetch("/api/auth/logout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-Requested-With": "CyberShield" },
+                credentials: "include"
+            });
+        } catch (_) {}
+        if (window.CyberShieldState && typeof CyberShieldState.logout === "function") {
+            CyberShieldState.logout();
+        }
+        window.location.href = "login.html";
     },
 
     renderMobileBottomNav() {

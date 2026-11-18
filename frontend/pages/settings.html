@@ -156,29 +156,36 @@
 
                 <!-- USER PROFILE OVERVIEW HEADER -->
                 <section class="panel">
-                    <div class="profile-card-top">
-                        <div class="big-avatar" id="avatarDisplay">NS</div>
+                    <div class="profile-card-top" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <div class="big-avatar" id="avatarDisplay">NS</div>
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <h2 style="font-size: 16px; margin: 0;" id="displayName">Neeraja Shinde</h2>
+                                    <span class="badge badge-success">● Lead Administrator</span>
+                                    <span class="ai-badge">✦ Zero-Trust Active</span>
+                                </div>
+                                <p style="margin: 4px 0 0; font-size: 10px; color: #8494be;" id="displayEmail">neeraja.shinde@cybershield.ai</p>
+                                <div class="profile-stats">
+                                    <div class="stat-badge">
+                                        <span style="color: #8494be;">Security Score</span>
+                                        <strong style="color: #31d5ae;" id="statScore">90/100</strong>
+                                    </div>
+                                    <div class="stat-badge">
+                                        <span style="color: #8494be;">Monitored Accounts</span>
+                                        <strong>6 Accounts</strong>
+                                    </div>
+                                    <div class="stat-badge">
+                                        <span style="color: #8494be;">Breach Exposures</span>
+                                        <strong style="color: #31d5ae;">0 Active</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <h2 style="font-size: 16px; margin: 0;" id="displayName">Neeraja Shinde</h2>
-                                <span class="badge badge-success">● Lead Administrator</span>
-                                <span class="ai-badge">✦ Zero-Trust Active</span>
-                            </div>
-                            <p style="margin: 4px 0 0; font-size: 10px; color: #8494be;" id="displayEmail">neeraja.shinde@cybershield.ai</p>
-                            <div class="profile-stats">
-                                <div class="stat-badge">
-                                    <span style="color: #8494be;">Security Score</span>
-                                    <strong style="color: #31d5ae;" id="statScore">90/100</strong>
-                                </div>
-                                <div class="stat-badge">
-                                    <span style="color: #8494be;">Monitored Accounts</span>
-                                    <strong>6 Accounts</strong>
-                                </div>
-                                <div class="stat-badge">
-                                    <span style="color: #8494be;">Breach Exposures</span>
-                                    <strong style="color: #31d5ae;">0 Active</strong>
-                                </div>
-                            </div>
+                            <button type="button" class="btn" onclick="CyberShieldNav.logout()" title="Log out and return to sign in page" style="background: rgba(239, 68, 68, 0.16); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; font-weight: 700; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                                <span>🚪</span> Log Out
+                            </button>
                         </div>
                     </div>
                 </section>
