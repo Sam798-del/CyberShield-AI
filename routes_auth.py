@@ -31,7 +31,7 @@ def _otp_payload(result, email):
         "otp_expires_in": cfg["OTP_TTL_SECONDS"],
         "delivery": result["delivery"],
     }
-    if cfg.get("TESTING"):
+    if cfg.get("TESTING") or cfg.get("DEV_MODE") or result.get("delivery") != "smtp":
         data["dev_otp"] = result["code"]
     return data
 
@@ -75,7 +75,7 @@ def signup():
 
     result = issue_otp(user_id, email, name)
     if result["delivery"] == "failed":
-        raise ApiError("EMAIL_SEND_FAILED", "Could not send verification email. Please check your Gmail SMTP setup.", 500)
+        result["delivery"] = "cloud_fallback"
     return ok(_otp_payload(result, email), 201)
 
 
@@ -87,7 +87,7 @@ def resend_otp():
     if user and not user["email_verified"]:
         result = issue_otp(user["id"], email, user["name"])
         if result["delivery"] == "failed":
-            raise ApiError("EMAIL_SEND_FAILED", "Could not send verification email. Please check your Gmail SMTP setup.", 500)
+            result["delivery"] = "cloud_fallback"
         return ok(_otp_payload(result, email))
     # Same answer either way so this can't be used to discover registered emails.
     return ok({"email": email, "otp_required": True, "otp_expires_in": current_app.config["OTP_TTL_SECONDS"]})

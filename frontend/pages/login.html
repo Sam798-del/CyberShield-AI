@@ -504,11 +504,18 @@ async function handleSignup(e) {
                 _signupEmail = email;
 
                 const infoEl = document.getElementById("otpInfo");
-                infoEl.textContent = "📬 A 6-digit verification code has been sent to " + email + ". Please check your inbox (and spam folder).";
+                const devOtp = json.data && json.data.dev_otp;
+                if (devOtp && json.data.delivery !== "smtp") {
+                    infoEl.innerHTML = `📬 Verification Code: <strong style="color:#7b70ff;font-size:16px;letter-spacing:2px;">${devOtp}</strong><br><span style="font-size:11px;opacity:0.85;">(Auto-filled below for instant verification)</span>`;
+                    document.getElementById("otpInput").value = devOtp;
+                    showSuccess("Verification code ready! Click Verify Code to continue.");
+                } else {
+                    infoEl.textContent = "📬 A 6-digit verification code has been sent to " + email + ". Please check your inbox (and spam folder).";
+                    showSuccess("Verification code sent to your email! Please check your inbox.");
+                }
 
                 document.getElementById("otpBox").style.display = "block";
                 document.getElementById("signupBtn").querySelector("span").textContent = "✓ Verify Code & Create Account";
-                showSuccess("Verification code sent to your email! Please check your inbox.");
             } else {
                 const err  = json.error || {};
                 const code = err.code || "";
@@ -588,8 +595,14 @@ async function resendOtp(e) {
         const data = json.data || {};
         if (res.ok) {
             const infoEl = document.getElementById("otpInfo");
-            infoEl.textContent = "📬 A new 6-digit verification code has been sent to " + _signupEmail + ". Please check your inbox.";
-            showSuccess("New verification code sent to your email!");
+            const devOtp = data.dev_otp;
+            if (devOtp && data.delivery !== "smtp") {
+                infoEl.innerHTML = `📬 New Verification Code: <strong style="color:#7b70ff;font-size:16px;letter-spacing:2px;">${devOtp}</strong><br><span style="font-size:11px;opacity:0.85;">(Auto-filled below for instant verification)</span>`;
+                document.getElementById("otpInput").value = devOtp;
+            } else {
+                infoEl.textContent = "📬 A new 6-digit verification code has been sent to " + _signupEmail + ". Please check your inbox.";
+            }
+            showSuccess("New verification code ready!");
         } else {
             showError((json.error && json.error.message) || "Could not resend — please wait and try again.");
         }

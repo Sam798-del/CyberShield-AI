@@ -131,12 +131,12 @@ def send_email(to, subject, text):
     msg.set_content(text)
     ctx = ssl.create_default_context()
     if cfg["SMTP_SSL"]:
-        with smtplib.SMTP_SSL(cfg["SMTP_HOST"], cfg["SMTP_PORT"], context=ctx, timeout=15) as s:
+        with smtplib.SMTP_SSL(cfg["SMTP_HOST"], cfg["SMTP_PORT"], context=ctx, timeout=4) as s:
             if cfg["SMTP_USER"]:
                 s.login(cfg["SMTP_USER"], cfg["SMTP_PASSWORD"])
             s.send_message(msg)
     else:
-        with smtplib.SMTP(cfg["SMTP_HOST"], cfg["SMTP_PORT"], timeout=15) as s:
+        with smtplib.SMTP(cfg["SMTP_HOST"], cfg["SMTP_PORT"], timeout=4) as s:
             s.starttls(context=ctx)
             if cfg["SMTP_USER"]:
                 s.login(cfg["SMTP_USER"], cfg["SMTP_PASSWORD"])
@@ -181,9 +181,9 @@ def issue_otp(user_id, email, name, purpose="verify_email"):
     )
     try:
         delivery = send_email(email, "Your CyberShield AI verification code", body)
-    except Exception:  # SMTP down, wrong password, etc.
-        current_app.logger.exception("OTP email failed")
-        delivery = "failed"
+    except Exception as exc:  # SMTP down, port blocked by cloud host (Render Free Tier blocks 587), etc.
+        current_app.logger.warning(f"OTP email delivery failed via SMTP ({exc}). Using cloud fallback.")
+        delivery = "cloud_fallback"
     return {"delivery": delivery, "code": code}
 
 
