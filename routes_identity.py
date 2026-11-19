@@ -267,6 +267,74 @@ def _format_account(r):
     }
 
 
+SECURITY_SETTINGS_URLS = {
+    "google": {
+        "enable_2fa": "https://myaccount.google.com/signinoptions/two-step-verification",
+        "breach_password": "https://myaccount.google.com/signinoptions/password",
+        "unique_password": "https://myaccount.google.com/signinoptions/password",
+        "strong_password": "https://myaccount.google.com/signinoptions/password",
+        "default": "https://myaccount.google.com/security",
+    },
+    "linkedin": {
+        "enable_2fa": "https://www.linkedin.com/psettings/two-step-verification",
+        "breach_password": "https://www.linkedin.com/psettings/change-password",
+        "unique_password": "https://www.linkedin.com/psettings/change-password",
+        "strong_password": "https://www.linkedin.com/psettings/change-password",
+        "default": "https://www.linkedin.com/psettings/privacy",
+    },
+    "github": {
+        "enable_2fa": "https://github.com/settings/security",
+        "breach_password": "https://github.com/settings/security",
+        "unique_password": "https://github.com/settings/security",
+        "strong_password": "https://github.com/settings/security",
+        "default": "https://github.com/settings/security",
+    },
+    "instagram": {
+        "enable_2fa": "https://www.instagram.com/accounts/two_factor_authentication/",
+        "breach_password": "https://www.instagram.com/accounts/password/change/",
+        "unique_password": "https://www.instagram.com/accounts/password/change/",
+        "strong_password": "https://www.instagram.com/accounts/password/change/",
+        "default": "https://www.instagram.com/accounts/privacy_and_security/",
+    },
+    "amazon": {
+        "enable_2fa": "https://www.amazon.com/ap/cnep",
+        "breach_password": "https://www.amazon.com/ap/cnep",
+        "unique_password": "https://www.amazon.com/ap/cnep",
+        "strong_password": "https://www.amazon.com/ap/cnep",
+        "default": "https://www.amazon.com/ap/cnep",
+    },
+    "twitter": {
+        "enable_2fa": "https://twitter.com/settings/account/login_verification",
+        "breach_password": "https://twitter.com/settings/password",
+        "unique_password": "https://twitter.com/settings/password",
+        "strong_password": "https://twitter.com/settings/password",
+        "default": "https://twitter.com/settings/security",
+    },
+    "x": {
+        "enable_2fa": "https://x.com/settings/account/login_verification",
+        "breach_password": "https://x.com/settings/password",
+        "unique_password": "https://x.com/settings/password",
+        "strong_password": "https://x.com/settings/password",
+        "default": "https://x.com/settings/security",
+    },
+    "microsoft": {
+        "enable_2fa": "https://account.live.com/proofs/manage/additional",
+        "default": "https://account.microsoft.com/security",
+    },
+}
+
+
+def _get_security_url(service_name, fix_type, domain=None):
+    key = (service_name or "").strip().lower()
+    mapping = SECURITY_SETTINGS_URLS.get(key)
+    if mapping:
+        return mapping.get(fix_type, mapping.get("default", "https://google.com"))
+    if domain:
+        clean = domain.replace("https://", "").replace("http://", "").strip("/")
+        return f"https://{clean}"
+    return f"https://www.google.com/search?q={service_name}+security+settings"
+
+
 def _calculate_identity_summary(user_id):
     db = get_db()
     _seed_default_accounts_if_empty(user_id)
@@ -321,6 +389,7 @@ def _calculate_identity_summary(user_id):
                 "severity": "high",
                 "fix_type": "breach_password",
                 "points_gain": 15,
+                "security_url": _get_security_url(a["service_name"], "breach_password", a.get("domain")),
                 "steps": [
                     f"Navigate to {a['service_name']} account security page.",
                     "Request a password reset and generate a 16+ character unique passphrase.",
@@ -339,6 +408,7 @@ def _calculate_identity_summary(user_id):
                 "severity": "high",
                 "fix_type": "unique_password",
                 "points_gain": 10,
+                "security_url": _get_security_url(a["service_name"], "unique_password", a.get("domain")),
                 "steps": [
                     f"Open {a['service_name']} Security Settings.",
                     "Replace the reused password with a unique, randomized password.",
@@ -357,6 +427,7 @@ def _calculate_identity_summary(user_id):
                 "severity": "medium",
                 "fix_type": "strong_password",
                 "points_gain": 10,
+                "security_url": _get_security_url(a["service_name"], "strong_password", a.get("domain")),
                 "steps": [
                     f"Change password on {a['service_name']} to 12+ characters.",
                     "Mix uppercase, lowercase, numbers, and symbols.",
@@ -375,6 +446,7 @@ def _calculate_identity_summary(user_id):
                 "severity": "medium",
                 "fix_type": "enable_2fa",
                 "points_gain": 5,
+                "security_url": _get_security_url(a["service_name"], "enable_2fa", a.get("domain")),
                 "steps": [
                     f"Open {a['service_name']} Security or Sign-in preferences.",
                     "Activate 2-Step Verification using an Authenticator app (TOTP) or Security Key.",
