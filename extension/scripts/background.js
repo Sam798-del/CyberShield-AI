@@ -1,7 +1,7 @@
 // CyberShield AI — Background Service Worker (Manifest V3)
 // Real-Time Browser Defense & Security Analyzer Bridge Engine
 
-const CLOUD_API = "https://cybershield-ai-5bpo.onrender.com";
+const CLOUD_API = "https://cybershield-ai-fdd1.onrender.com";
 const LOCAL_API = "http://localhost:5000";
 
 let targetBackend = CLOUD_API;
@@ -10,6 +10,10 @@ let targetBackend = CLOUD_API;
 async function resolveBackendEndpoint() {
   const custom = await chrome.storage.local.get("backendUrl");
   if (custom && custom.backendUrl) {
+    if (custom.backendUrl.includes("5bpo")) {
+      custom.backendUrl = CLOUD_API;
+      chrome.storage.local.set({ backendUrl: CLOUD_API });
+    }
     targetBackend = custom.backendUrl;
     return targetBackend;
   }
@@ -17,7 +21,11 @@ async function resolveBackendEndpoint() {
     const res = await fetch(`${CLOUD_API}/api/analyzer/health`, { method: "GET" });
     if (res.ok) { targetBackend = CLOUD_API; return targetBackend; }
   } catch (e) {}
-  targetBackend = LOCAL_API;
+  try {
+    const res = await fetch(`${LOCAL_API}/api/analyzer/health`, { method: "GET" });
+    if (res.ok) { targetBackend = LOCAL_API; return targetBackend; }
+  } catch (e) {}
+  targetBackend = CLOUD_API;
   return targetBackend;
 }
 

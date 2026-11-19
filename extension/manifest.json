@@ -13,7 +13,7 @@
   "host_permissions": [
     "http://localhost:5000/*",
     "http://127.0.0.1:5000/*",
-    "https://cybershield-ai-5bpo.onrender.com/*",
+    "https://cybershield-ai-fdd1.onrender.com/*",
     "<all_urls>"
   ],
   "background": {

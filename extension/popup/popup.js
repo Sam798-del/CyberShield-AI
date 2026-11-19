@@ -54,7 +54,7 @@ if (!window.chrome.runtime) {
   };
 }
 
-let activeBackendUrl = "http://localhost:5000";
+let activeBackendUrl = "https://cybershield-ai-fdd1.onrender.com";
 let currentTabDomain = "";
 let currentTabUrl = "";
 
@@ -697,6 +697,10 @@ function loadExtensionSettings() {
     chrome.storage.local.get(["backendUrl", "autoScan", "toxicBlur", "passwordTips", "outboundBlocker"], (items) => {
       if (items.outboundBlocker !== undefined && document.getElementById("toggleOutboundBlocker")) document.getElementById("toggleOutboundBlocker").checked = items.outboundBlocker;
       if (items.backendUrl) {
+        if (items.backendUrl.includes("5bpo") || items.backendUrl.includes("cybershield-ai-5bpo")) {
+          items.backendUrl = "https://cybershield-ai-fdd1.onrender.com";
+          chrome.storage.local.set({ backendUrl: "https://cybershield-ai-fdd1.onrender.com" });
+        }
         activeBackendUrl = items.backendUrl;
         const select = document.getElementById("backendSelect");
         if (select) select.value = items.backendUrl;
@@ -712,7 +716,7 @@ function loadExtensionSettings() {
 // ==================== 6. DIGITAL IDENTITY INVENTORY SUMMARY ====================
 async function loadDigitalIdentitySummary() {
   try {
-    const backend = "http://127.0.0.1:5000";
+    const backend = activeBackendUrl || "https://cybershield-ai-fdd1.onrender.com";
     const [sumRes, accRes] = await Promise.all([
       fetch(`${backend}/api/identity/summary`).catch(() => null),
       fetch(`${backend}/api/identity/accounts`).catch(() => null)

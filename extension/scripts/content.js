@@ -182,12 +182,8 @@
     const rootName = currentHostname.replace(/^www\./, "");
     const bName = rootName.split(".")[0];
     const cleanBrand = bName ? bName.charAt(0).toUpperCase() + bName.slice(1) : currentHostname;
-    // Always prefer the cloud Render URL for opening web portal pages (security-analyzer, etc.)
-    // Fall back to whatever the user has configured, but never localhost (it may not be running)
-    const rawBackend = (config && config.backendUrl) ? config.backendUrl.replace(/\/+$/, "") : "https://cybershield-ai-5bpo.onrender.com";
-    const portalBase = (rawBackend.startsWith("http://localhost") || rawBackend.startsWith("http://127.0.0.1"))
-      ? "https://cybershield-ai-5bpo.onrender.com"
-      : rawBackend;
+    const rawBackend = (config && config.backendUrl) ? config.backendUrl.replace(/\/+$/, "") : "https://cybershield-ai-fdd1.onrender.com";
+    const portalBase = rawBackend.includes("5bpo") ? "https://cybershield-ai-fdd1.onrender.com" : rawBackend;
 
     banner.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
