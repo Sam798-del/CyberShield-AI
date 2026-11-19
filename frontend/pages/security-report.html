@@ -396,6 +396,8 @@
                 sev: "high",
                 badgeClass: "badge-warning",
                 desc: "Your Outlook account password has low entropy and shares patterns with breached password databases.",
+                targetUrl: "https://account.microsoft.com/security",
+                targetName: "Microsoft / Outlook Account Security",
                 steps: [
                     "Open Outlook → Security Settings",
                     "Generate a unique 16+ character passphrase",
@@ -408,6 +410,8 @@
                 sev: "high",
                 badgeClass: "badge-warning",
                 desc: "1 account uses a password shared with external services.",
+                targetUrl: "security-analyzer.html",
+                targetName: "CyberShield Security Analyzer",
                 steps: [
                     "Identify shared credentials across services",
                     "Replace shared passwords with unique passphrases",
@@ -420,6 +424,8 @@
                 sev: "medium",
                 badgeClass: "badge-warning",
                 desc: "The URL matched deceptive phishing patterns and was quarantined.",
+                targetUrl: "phishing-detection.html",
+                targetName: "Phishing Detection Center",
                 steps: [
                     "Do not click or open masked URL shorteners from unrecognized senders",
                     "Confirm block in CyberShield AI telemetry",
@@ -432,6 +438,8 @@
                 sev: "high",
                 badgeClass: "badge-danger",
                 desc: "Cyberbullying detector flagged targeted abuse message directed at user.",
+                targetUrl: "cyberbullying-detection.html",
+                targetName: "Cyberbullying Shield",
                 steps: [
                     "Export screenshot/chat log evidence",
                     "Block sender and report to platform moderators",
@@ -444,6 +452,8 @@
                 sev: "medium",
                 badgeClass: "badge-warning",
                 desc: "2FA adds an essential second check when signing in.",
+                targetUrl: "digital-identity.html",
+                targetName: "Digital Identity 2FA Manager",
                 steps: [
                     "Open Account Settings → Security",
                     "Bind an Authenticator app (TOTP) or FIDO2 hardware key",
@@ -582,7 +592,14 @@
                             <span class="badge ${isFixed ? 'badge-success' : item.badgeClass}">${isFixed ? '✓ Fixed' : item.sev.toUpperCase()}</span>
                             <b style="color: white; font-size: 13.5px;">${item.title}</b>
                         </div>
-                        <span style="color: var(--blue-light); font-weight: 700; font-size: 12px;">${isFixed ? 'Resolved' : 'Take Action →'}</span>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            ${item.targetUrl ? `
+                                <a href="${item.targetUrl}" ${item.targetUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''} onclick="event.stopPropagation();" class="btn btn-sm btn-secondary" style="text-decoration: none; padding: 5px 10px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.35); color: #c7d2fe; border-radius: 6px;">
+                                    <span>🚀 Launch Fix</span> ↗
+                                </a>
+                            ` : ''}
+                            <span style="color: var(--blue-light); font-weight: 700; font-size: 12px;">${isFixed ? 'Resolved' : 'Review →'}</span>
+                        </div>
                     </div>
                 `;
             }).join("");
@@ -746,6 +763,18 @@
                         ✓ ${issue.resolvedMsg}
                     </div>
                 ` : `
+                    ${issue.targetUrl ? `
+                        <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(56, 189, 248, 0.1)); border: 1px solid rgba(99, 102, 241, 0.35); border-radius: 8px; padding: 12px 14px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                            <div>
+                                <div style="font-size: 10.5px; text-transform: uppercase; font-weight: 700; color: #a5b4fc; letter-spacing: 0.5px;">Direct Remediation Link</div>
+                                <div style="font-size: 13px; font-weight: 600; color: #fff;">${issue.targetName || 'Open security configuration'}</div>
+                            </div>
+                            <a href="${issue.targetUrl}" ${issue.targetUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''} class="btn btn-primary" style="flex-shrink: 0; padding: 8px 14px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+                                <span>🚀 Launch Page</span> ↗
+                            </a>
+                        </div>
+                    ` : ''}
+
                     <div style="margin-bottom: 20px;">
                         <h4 style="font-size: 13.5px; font-weight: 700; margin-bottom: 8px; color: white;">Recommended Action Steps:</h4>
                         <ol style="padding-left: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
@@ -758,8 +787,8 @@
                     ${isFixed ? `
                         <button class="btn btn-secondary" style="width: 100%;" onclick="closeFixModal()">Close</button>
                     ` : `
-                        <button class="btn btn-primary" style="flex: 1;" onclick="applyFix('${id}')">Mark as Fixed & Update Score ✓</button>
-                        <button class="btn btn-secondary" onclick="closeFixModal()">Cancel</button>
+                        <button class="btn btn-primary" style="flex: 2; padding: 10px;" onclick="applyFix('${id}')">Mark as Fixed & Update Score ✓</button>
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="closeFixModal()">Cancel</button>
                     `}
                 </div>
             `;
